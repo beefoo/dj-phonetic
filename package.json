@@ -1,0 +1,10 @@
+{
+  "name": "dj-phonetic",
+  "description": "Extract beats, rhythms, melodies, and instruments from speech",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>DJ Phonetic - The Decoder</title>
+  <meta name="description" content="Extract beats, rhythms, melodies, and instruments from speech">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content=""> -->
+
+  <link rel="stylesheet" href="../shared/css/vendor/normalize.css">
+  <link rel="stylesheet" href="../shared/css/base.css">
+  <link rel="stylesheet" href="css/app.css">
+
+  <link rel="apple-touch-icon" href="../shared/img/icon.png">
+
+  <script defer src="../shared/js/vendor/jquery-3.6.0.min.js"></script>
+  <script defer src="../shared/js/vendor/meyda-5.2.2.min.js"></script>
+  <script defer src="../shared/js/vendor/underscore_umd-1.13.1.min.js"></script>
+
+  <script defer src="../shared/js/analyzer.js"></script>
+  <script defer src="../shared/js/loader.js"></script>
+  <script defer src="../shared/js/loaders/selectFileLoader.js"></script>
+  <script defer src="../shared/js/util.js"></script>
+
+  <script defer src="js/app.js"></script>
+
+</head>
+
+<body>
+
+  <div id="app" class="app">
+    <audio id="audio-file-player" crossorigin="anonymous" controls></audio>
+    <input id="user-audio-file-select" class="audio-file-select" type="file" accept="audio/*" />
+  </div>
+</body>
+
+</html>
