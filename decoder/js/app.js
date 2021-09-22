@@ -12,8 +12,8 @@ var App = (function() {
   App.prototype.init = function(){
     this.analyzer = new Analyzer();
     this.selectFileLoader = new SelectFileLoader({
-      onAudioLoaded: (audioContext, audioSource) => {
-        this.analyzer.load(audioContext, audioSource);
+      onAudioLoaded: (audioBuffer) => {
+        this.analyzer.analyze(audioBuffer);
       }
     });
   };

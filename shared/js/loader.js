@@ -2,9 +2,7 @@ var Loader = (function() {
 
   function Loader(config) {
     var defaults = {
-      parentEl: '#app',
-      audioEl: '#audio-file-player',
-      onAudioLoaded: function(audioContext, audioSource){}
+      onAudioLoaded: function(audioBuffer){}
     };
     this.opt = _.extend({}, defaults, config);
 
@@ -12,28 +10,28 @@ var Loader = (function() {
   }
 
   Loader.prototype.init = function(){
-    this.$parent = $(this.opt.parentEl);
-    this.$audio = $(this.opt.audioEl);
-    this.audio = this.$audio[0];
     this.audioLoaded = false;
-
-    this.$audio.on('canplay', () => {
-      this.onAudioLoaded();
-    });
   };
 
-  Loader.prototype.loadFileFromUrl = function(url){
+  Loader.prototype.loadFileFromLocal = function(file){
     this.audioLoaded = false;
-    this.$audio.attr('src', url);
-  };
-
-  Loader.prototype.onAudioLoaded = function(){
-    //this.audio.play();
     this.audioContext = new AudioContext();
-    this.audioSource = this.audioContext.createMediaElementSource(this.audio);
-    this.audioSource.connect(this.audioContext.destination);
-    this.opt.onAudioLoaded(this.audioContext, this.audioSource);
-    this.audioLoaded = true;
+
+    var reader = new FileReader();
+    reader.onload = (e) => {
+
+      // Decode audio
+      console.log('Decoding audio...')
+      this.audioContext.decodeAudioData(e.target.result).then((buffer) => {
+        this.audioSource = this.audioContext.createBufferSource();
+        this.audioSource.buffer = buffer;
+        this.audioLoaded = true;
+        this.opt.onAudioLoaded(this.audioSource.buffer);
+
+      });
+    };
+    console.log('Reading local file...');
+    reader.readAsArrayBuffer(file);
   };
 
   Loader.prototype.onSelectLocalFiles = function(files){
@@ -41,9 +39,8 @@ var Loader = (function() {
     if (files.length < 1) return;
 
     var selectedFile = files[0];
-    var fileUrl = URL.createObjectURL(selectedFile);
 
-    this.loadFileFromUrl(fileUrl);
+    this.loadFileFromLocal(selectedFile);
   };
 
   return Loader;
