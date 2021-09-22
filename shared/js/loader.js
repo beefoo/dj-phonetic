@@ -4,6 +4,7 @@ var Loader = (function() {
     var defaults = {
       selectLocalFileEl: '.audio-file-select',
       selectUrlEl: '.audio-url-select',
+      fileDropEl: '.file-droppable',
       onAudioLoaded: function(audioBuffer){}
     };
     this.opt = _.extend({}, defaults, config);
@@ -43,16 +44,37 @@ var Loader = (function() {
   Loader.prototype.loadListeners = function(){
     var _this = this;
 
-    $(this.opt.selectLocalFileEl).on('change', function(e){
-      var files = this.files;
+    var onFileSelect = (files) => {
       console.log('Local file select: ', files);
       if (files.length < 1) return;
       var selectedFile = files[0];
-      _this.loadFileFromLocal(selectedFile);
+      this.loadFileFromLocal(selectedFile);
+    };
+
+    $(this.opt.selectLocalFileEl).on('change', function(e){
+      onFileSelect(this.files);
     });
 
     $(this.opt.selectUrlEl).on('click', function(e){
       _this.loadFileFromUrl($(this).attr('data-url'));
+    });
+
+    $(this.opt.fileDropEl).on('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).addClass('dragging');
+    });
+
+    $(this.opt.fileDropEl).on('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).removeClass('dragging');
+    });
+
+    $(this.opt.fileDropEl).on('drop', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      onFileSelect(e.originalEvent.dataTransfer.files);
     });
   };
 
