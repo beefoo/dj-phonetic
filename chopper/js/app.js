@@ -11,8 +11,15 @@ var App = (function() {
 
   App.prototype.init = function(){
     this.analyzer = new Analyzer();
+
     var loader = new Loader({
       onAudioLoaded: (audioBuffer) => {
+        this.analyzer.analyze(audioBuffer);
+      }
+    });
+
+    var recorder = new MicRecorder({
+      onAudioRecorded: (audioBuffer) => {
         this.analyzer.analyze(audioBuffer);
       }
     });
