@@ -13,9 +13,9 @@ var MicRecorder = (function() {
   MicRecorder.prototype.init = function(){
     this.audioRecorder = false;
     this.recording = false;
-    this.userGavePermission = false;
     this.$buttons = $(this.opt.recordButton);
     this.loadListeners();
+    this.render();
   };
 
   MicRecorder.prototype.initAudioStream = function(stream){
@@ -33,11 +33,10 @@ var MicRecorder = (function() {
 
     var audioRecorder = new Recorder( inputPoint );
 
+    this.audioStream = stream;
     this.audioContext = audioContext;
     this.audioRecorder = audioRecorder;
     this.analyserNode = analyserNode;
-    this.pcmData = new Float32Array(analyserNode.fftSize);
-    this.render();
   };
 
   MicRecorder.prototype.loadListeners = function(){
@@ -55,7 +54,7 @@ var MicRecorder = (function() {
   };
 
   MicRecorder.prototype.renderVolume = function(){
-    if (!this.recording) return;
+    if (!this.recording || !this.analyserNode) return;
 
     var freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount);
     this.analyserNode.getByteFrequencyData(freqByteData);
@@ -80,6 +79,8 @@ var MicRecorder = (function() {
   MicRecorder.prototype.stopRecording = function(){
     this.$buttons.text('Record').removeClass('active');
 
+    if (!this.audioRecorder) return;
+
     this.audioRecorder.stop();
     this.audioRecorder.getBuffers((buffers) => {
       // console.log(buffers);
@@ -93,6 +94,11 @@ var MicRecorder = (function() {
       }
       this.opt.onAudioRecorded(audioBuffer);
     });
+
+    if (!this.audioStream) return;
+
+    this.audioStream.getTracks().forEach( track => track.stop() );
+
   };
 
   MicRecorder.prototype.toggleRecord = function(){
@@ -111,21 +117,16 @@ var MicRecorder = (function() {
     };
 
     if (this.recording) {
-      if (this.userGavePermission) {
-        this.startRecording();
-
-      } else {
-        navigator.mediaDevices.getUserMedia(constraints)
-          .then((stream) => {
-            this.userGavePermission = true;
-            this.initAudioStream(stream);
-            this.startRecording();
-          })
-          .catch((err) => {
-            alert('Could not retrieve microphone. Make sure you have an active microphone and you give permission for this app to use it!');
-            console.log('Microphone error', err);
-          });
-      }
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then((stream) => {
+          this.userGavePermission = true;
+          this.initAudioStream(stream);
+          this.startRecording();
+        })
+        .catch((err) => {
+          alert('Could not retrieve microphone. Make sure you have an active microphone and you give permission for this app to use it!');
+          console.log('Microphone error', err);
+        });
 
     } else {
       this.stopRecording();
