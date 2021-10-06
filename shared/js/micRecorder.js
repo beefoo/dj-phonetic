@@ -33,6 +33,7 @@ var MicRecorder = (function() {
 
     var audioRecorder = new Recorder( inputPoint );
 
+    this.audioContext = audioContext;
     this.audioRecorder = audioRecorder;
     this.analyserNode = analyserNode;
     this.pcmData = new Float32Array(analyserNode.fftSize);
@@ -56,11 +57,17 @@ var MicRecorder = (function() {
   MicRecorder.prototype.renderVolume = function(){
     if (!this.recording) return;
 
-    this.analyserNode.getFloatTimeDomainData(this.pcmData);
-    var sumSquares = 0.0;
-    for (var amplitude of pcmData) { sumSquares += amplitude*amplitude; }
-    var volume = Math.sqrt(sumSquares / this.pcmData.length);
-    console.log(volume);
+    var freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount);
+    this.analyserNode.getByteFrequencyData(freqByteData);
+    var values = 0;
+    var length = freqByteData.length;
+    if (length <= 0) return;
+
+    for (var i = 0; i < length; i++) {
+      values += (freqByteData[i]);
+    }
+    var average = values / length;
+    var volume = average / 100;
   };
 
   MicRecorder.prototype.startRecording = function(){
@@ -75,12 +82,33 @@ var MicRecorder = (function() {
 
     this.audioRecorder.stop();
     this.audioRecorder.getBuffers((buffers) => {
-      this.opt.onAudioRecorded(buffers[0]);
+      // console.log(buffers);
+      var audioBuffer = new AudioBuffer({
+        length: buffers[0].length,
+        numberOfChannels: buffers.length,
+        sampleRate: this.audioContext.sampleRate
+      });
+      for (var channel = 0; channel < buffers.length; channel++) {
+        audioBuffer.copyToChannel(buffers[channel], channel);
+      }
+      this.opt.onAudioRecorded(audioBuffer);
     });
   };
 
   MicRecorder.prototype.toggleRecord = function(){
     this.recording = !this.recording;
+
+    var constraints = {
+        "audio": {
+            "mandatory": {
+                "googEchoCancellation": "false",
+                "googAutoGainControl": "false",
+                "googNoiseSuppression": "false",
+                "googHighpassFilter": "false"
+            },
+            "optional": []
+        },
+    };
 
     if (this.recording) {
       if (this.userGavePermission) {
