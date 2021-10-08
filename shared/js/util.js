@@ -3,6 +3,25 @@
 (function() {
   window.Util = {};
 
+  Util.formatDuration = function(seconds, precision){
+    precision = precision || 0;
+    if (!seconds || seconds <= 0) return "0:00";
+    var d = new Date(null);
+    d.setSeconds(seconds);
+    var start = 11;
+    var len = 8;
+    if (seconds < 600) {
+      start = 15;
+      len = 4;
+    } else if (seconds < 3600) {
+      start = 14;
+      len = 5;
+    }
+    var timeStr = d.toISOString().substr(start, len);
+    if (precision > 0) timeStr += (seconds % 1.0).toFixed(precision).substr(1);
+    return timeStr;
+  };
+
   Util.queryParams = function(){
     if (location.search.length) {
       var search = location.search.substring(1);
@@ -56,6 +75,11 @@
     var s = num+"";
     while (s.length < size) s = "0" + s;
     return s;
+  };
+
+  // Adapted from librosa: https://github.com/librosa/librosa/blob/main/librosa/util/utils.py#L1048
+  MathUtil.peaks = function(x, pre_max, post_max, pre_avg, post_avg, delta, wait){
+
   };
 
   MathUtil.round = function(value, precision) {

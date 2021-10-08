@@ -2,7 +2,8 @@ var Analyzer = (function() {
 
   function Analyzer(config) {
     var defaults = {
-      bufferSize: 2048
+      bufferSize: 2048,
+      onAnalysisFinished: function(analyzer){}
     };
     this.opt = _.extend({}, defaults, config);
 
@@ -18,8 +19,10 @@ var Analyzer = (function() {
     bufferSize = this.opt.bufferSize;
     Meyda.bufferSize = bufferSize;
 
-    var numChunks = Math.floor(monoChannel.length / bufferSize)
-    var lengthPerChunk = monoChannel.length / audioBuffer.sampleRate / numChunks * 1000;  //in milliseconds
+    var numChunks = Math.floor(monoChannel.length / bufferSize);
+    var duration = monoChannel.length / audioBuffer.sampleRate; // in seconds
+    var lengthPerChunk = duration / numChunks * 1000;  //in milliseconds
+    console.log('Total duration: '+Util.formatDuration(duration));
     console.log(numChunks + ' chunks at ' + lengthPerChunk + ' ms per chunk.');
 
     var dataChunks = []
@@ -43,8 +46,12 @@ var Analyzer = (function() {
       spectralFlux.push(sf);
       maxSf = Math.max(maxSf, sf);
     }
-    console.log(maxSf);
-    console.log(spectralFlux);
+
+    this.spectrum = dataChunks;
+    this.spectralFlux = spectralFlux;
+    this.maxSf = maxSf;
+
+    this.opt.onAnalysisFinished(this);
   };
 
   return Analyzer;

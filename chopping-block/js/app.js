@@ -10,7 +10,13 @@ var App = (function() {
   }
 
   App.prototype.init = function(){
-    this.analyzer = new Analyzer();
+    this.visualizer = new Visualizer();
+
+    this.analyzer = new Analyzer({
+      onAnalysisFinished: (analyzer) => {
+        this.visualizer.visualize(analyzer);
+      }
+    });
 
     var loader = new Loader({
       onAudioLoaded: (audioBuffer) => {
