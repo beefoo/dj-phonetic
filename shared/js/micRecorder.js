@@ -18,7 +18,7 @@ var MicRecorder = (function() {
     this.render();
   };
 
-  MicRecorder.prototype.initAudioStream = function(stream){
+  MicRecorder.prototype.loadAudioStream = function(stream){
     var audioContext = new AudioContext();
     var inputPoint = audioContext.createGain();
 
@@ -120,7 +120,7 @@ var MicRecorder = (function() {
       navigator.mediaDevices.getUserMedia(constraints)
         .then((stream) => {
           this.userGavePermission = true;
-          this.initAudioStream(stream);
+          this.loadAudioStream(stream);
           this.startRecording();
         })
         .catch((err) => {
