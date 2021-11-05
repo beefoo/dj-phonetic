@@ -2,7 +2,9 @@ var Visualizer = (function() {
 
   function Visualizer(config) {
     var defaults = {
-      el: '#app'
+      el: '#visualizer',
+      mode: 'spectrogram',
+      colorPalette: 'inferno'
     };
     this.opt = _.extend({}, defaults, config);
 
@@ -16,21 +18,23 @@ var Visualizer = (function() {
   };
 
   Visualizer.prototype.loadCanvas = function(){
-    var app = new PIXI.Application({
-        width: 800,
-        height: 600,
-        backgroundColor: 0x000000,
-        resolution: window.devicePixelRatio || 1,
+    var canvas = this.$el[0];
+    canvas.width = 800;
+    canvas.height = 600;
+
+    var fs = fragmentShaders[this.opt.mode];
+    var shader = new Shader2D({
+      canvas: canvas,
+      fsSource: false
     });
-    document.body.appendChild(app.view);
+    shader.draw();
 
-    var container = new PIXI.Container();
 
-    app.stage.addChild(container);
+    var colorPalette = colorPalettes[this.opt.colorPalette];
   };
 
   Visualizer.prototype.loadListeners = function(){
-    
+
   };
 
   Visualizer.prototype.visualize = function(analyzer){

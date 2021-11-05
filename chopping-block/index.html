@@ -18,6 +18,7 @@
 
   <link rel="apple-touch-icon" href="../shared/img/icon.png">
 
+  <script defer src="../shared/js/vendor/gl-matrix-min.js"></script>
   <script defer src="../shared/js/vendor/jquery-3.6.0.min.js"></script>
   <script defer src="../shared/js/vendor/meyda-5.2.2.min.js"></script>
   <script defer src="../shared/js/vendor/recorder.js"></script>
@@ -26,8 +27,12 @@
   <script defer src="../shared/js/analyzer.js"></script>
   <script defer src="../shared/js/loader.js"></script>
   <script defer src="../shared/js/micRecorder.js"></script>
+  <script defer src="../shared/js/shader2d.js"></script>
   <script defer src="../shared/js/util.js"></script>
   <script defer src="../shared/js/visualizer.js"></script>
+
+  <script defer src="../shared/js/palettes/inferno.js"></script>
+  <script defer src="../shared/shaders/spectrogram.js"></script>
 
   <script defer src="js/app.js"></script>
 
@@ -39,6 +44,7 @@
     <input id="user-audio-file-select" class="audio-file-select" type="file" accept="audio/*" />
     <button class="audio-url-select" data-url="../shared/audio/audio_sample_la_guardia_loc_afccal000001.mp3">Load file from URL</button>
     <button class="record-toggle">Record</button>
+    <canvas id="visualizer"></canvas>
   </div>
 </body>
 
