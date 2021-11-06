@@ -25,10 +25,9 @@ var Visualizer = (function() {
     var fs = fragmentShaders[this.opt.mode];
     var shader = new Shader2D({
       canvas: canvas,
-      fsSource: false
+      fsSource: fs
     });
     shader.draw();
-
 
     var colorPalette = colorPalettes[this.opt.colorPalette];
   };

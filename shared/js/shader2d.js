@@ -21,24 +21,21 @@ var Shader2D = (function() {
     var gl = this.canvas.getContext("webgl");
 
     var vsSource = this.opt.vsSource || `
-      attribute vec4 aVertexPosition;
-      uniform mat4 uModelViewMatrix;
-      uniform mat4 uProjectionMatrix;
-      void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      }
+    attribute vec2 a_position;
+    uniform vec2 u_resolution;
+    void main() {
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
     `;
 
     var fsSource = this.opt.fsSource || `
-      void main() {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-      }
+    uniform vec2 u_resolution;
+    void main() {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
     `;
 
     var shaderProgram = this.loadProgram(gl, vsSource, fsSource);
-    this.aVertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
-    this.uProjectionMatrix = gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
-    this.uModelViewMatrix = gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
     this.buffers = this.loadBuffers(gl);
     this.shaderProgram = shaderProgram;
     this.gl = gl;
@@ -49,84 +46,41 @@ var Shader2D = (function() {
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
-    gl.enable(gl.DEPTH_TEST);           // Enable depth testing
-    gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
+    // gl.enable(gl.DEPTH_TEST);           // Enable depth testing
+    // gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
 
     // Clear the canvas before we start drawing on it.
-
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-
-    var fieldOfView = 45 * Math.PI / 180;   // in radians
-    var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    var zNear = 0.1;
-    var zFar = 100.0;
-    var projectionMatrix = glMatrix.mat4.create();
-
-    // note: glmatrix.js always has the first argument
-    // as the destination to receive the result.
-    glMatrix.mat4.perspective(projectionMatrix,
-                     fieldOfView,
-                     aspect,
-                     zNear,
-                     zFar);
-
-    // Set the drawing position to the "identity" point, which is
-    // the center of the scene.
-    var modelViewMatrix =  glMatrix.mat4.create();
-
-    // Now move the drawing position a bit to where we want to
-    // start drawing the square.
-
-     glMatrix.mat4.translate(modelViewMatrix,     // destination matrix
-                   modelViewMatrix,     // matrix to translate
-                   [-0.0, 0.0, -6.0]);  // amount to translate
+    var program = this.shaderProgram;
+    // Tell WebGL to use our program when drawing
+    gl.useProgram(program);
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     var buffers = this.buffers;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
     var vertexPosition = this.aVertexPosition;
     var numComponents = 2;
     var type = gl.FLOAT;
     var normalize = false;
     var stride = 0;
     var offset = 0;
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-    gl.vertexAttribPointer(
-        vertexPosition,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset);
+    var vertexPosition = gl.getAttribLocation(program, "a_position");
+    gl.vertexAttribPointer( vertexPosition, numComponents, type, normalize, stride, offset);
     gl.enableVertexAttribArray(vertexPosition);
 
-    // Tell WebGL to use our program when drawing
-    gl.useProgram(this.shaderProgram);
-
-    // Set the shader uniforms
-
-    gl.uniformMatrix4fv(
-        this.uProjectionMatrix,
-        false,
-        projectionMatrix);
-
-    gl.uniformMatrix4fv(
-        this.uModelViewMatrix,
-        false,
-        modelViewMatrix);
+    // set resolution
+    var canvas = this.canvas;
+    var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+    gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 
     var offset = 0;
-    var vertexCount = 4;
-    gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+    var vertexCount = 6;
+    gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
   };
 
+  // https://blog.mayflower.de/4584-Playing-around-with-pixel-shaders-in-WebGL.html
   Shader2D.prototype.loadBuffers = function(gl){
     // Create a buffer for the square's positions.
     var positionBuffer = gl.createBuffer();
@@ -137,11 +91,13 @@ var Shader2D = (function() {
 
     // Now create an array of positions for the square.
     var positions = [
-      -1.0,  1.0,
-       1.0,  1.0,
       -1.0, -1.0,
        1.0, -1.0,
-    ];
+      -1.0,  1.0,
+      -1.0,  1.0,
+       1.0, -1.0,
+       1.0,  1.0
+     ];
 
     // Now pass the list of positions into WebGL to build the
     // shape. We do this by creating a Float32Array from the
