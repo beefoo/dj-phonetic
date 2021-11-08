@@ -20,14 +20,7 @@ var Visualizer = (function() {
   Visualizer.prototype.loadCanvas = function(){
     var canvas = this.$el[0];
     canvas.width = 800;
-    canvas.height = 600;
-
-    var fs = fragmentShaders[this.opt.mode];
-    var shader = new Shader2D({
-      canvas: canvas,
-      fsSource: fs
-    });
-    shader.draw();
+    canvas.height = 400;
 
     var colorPalette = colorPalettes[this.opt.colorPalette];
   };
