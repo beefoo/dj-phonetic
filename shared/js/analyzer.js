@@ -51,6 +51,7 @@ var Analyzer = (function() {
       maxSf = Math.max(maxSf, sf);
     }
 
+    this.audioBuffer = audioBuffer;
     this.spectrum = spectrumChunks;
     this.spectralFlux = spectralFlux;
     this.spectralFluxMax = maxSf;
