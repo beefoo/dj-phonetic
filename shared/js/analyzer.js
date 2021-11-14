@@ -33,7 +33,7 @@ var Analyzer = (function() {
       var spectrumChunk = Meyda.extract('amplitudeSpectrum', chunk);
       spectrumChunks[i] = spectrumChunk;
       var rmsValue = Meyda.extract('rms', chunk);
-      rmsChunks[i] = rmsValue;
+      rmsChunks[i] = isNaN(rmsValue) ? 0 : rmsValue;
     }
 
     // calculate spectral flux
@@ -55,7 +55,7 @@ var Analyzer = (function() {
     this.spectralFlux = spectralFlux;
     this.spectralFluxMax = maxSf;
     this.rms = rmsChunks;
-    this.rmsMax = Math.max(rmsChunks);
+    this.rmsMax = _.max(rmsChunks);
 
     this.opt.onAnalysisFinished(this);
   };
