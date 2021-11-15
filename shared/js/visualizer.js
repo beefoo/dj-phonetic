@@ -47,9 +47,10 @@ var Visualizer = (function() {
     this.visualize(this.analyzer);
   };
 
-  Visualizer.prototype.renderRMS = function(analyzer){
-    var dataCount = analyzer.rms.length;
-    var valueMax = analyzer.rmsMax;
+  Visualizer.prototype.renderData = function(analyzer, dataKey){
+    var data = analyzer[dataKey];
+    var dataCount = data.length;
+    var valueMax = _.max(data);
     var canvasW = this.app.view.width
     var canvasH = this.app.view.height;
     var graphics = this.graphics;
@@ -63,7 +64,7 @@ var Visualizer = (function() {
       var x = i * dataWidth;
       var t = i / (dataSteps-1);
       var valueIndex = Math.round(t * (dataCount-1));
-      var value = analyzer.rms[valueIndex];
+      var value = data[valueIndex];
       var valueN = value / valueMax;
       var dataHeight = valueN * canvasH;
       var y = canvasH - dataHeight;
@@ -84,7 +85,7 @@ var Visualizer = (function() {
     var canvasH = this.app.view.height;
     var graphics = this.graphics;
     var colorPalette = this.colorPalette;
-    var colorCount = this.colorPalette.length;
+    var color = colorPalette[colorPalette.length-1];
 
     graphics.beginFill(0xdddddd);
     var step = Math.ceil( dataLen / canvasW );

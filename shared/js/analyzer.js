@@ -15,8 +15,17 @@ var Analyzer = (function() {
   };
 
   Analyzer.prototype.analyze = function(audioBuffer){
+
+    this.audioBuffer = audioBuffer;
+
+    this.calculateSpectralFlux(audioBuffer);
+
+    this.opt.onAnalysisFinished(this);
+  };
+
+  Analyzer.prototype.calculateSpectralFlux = function(audioBuffer){
     var monoChannel = audioBuffer.getChannelData(0);
-    bufferSize = this.opt.bufferSize;
+    var bufferSize = this.opt.bufferSize;
     Meyda.bufferSize = bufferSize;
 
     var numChunks = Math.floor(monoChannel.length / bufferSize);
@@ -26,14 +35,14 @@ var Analyzer = (function() {
     console.log(numChunks + ' chunks at ' + lengthPerChunk + ' ms per chunk.');
 
     var spectrumChunks = new Array(numChunks);
-    var rmsChunks = new Float32Array(numChunks);
+    // var rmsChunks = new Float32Array(numChunks);
     console.log('Analyzing audio chunks...');
     for(var i = 0; i < numChunks; i++) {
       var chunk = monoChannel.slice(i*bufferSize, (i+1)*bufferSize)
       var spectrumChunk = Meyda.extract('amplitudeSpectrum', chunk);
       spectrumChunks[i] = spectrumChunk;
-      var rmsValue = Meyda.extract('rms', chunk);
-      rmsChunks[i] = isNaN(rmsValue) ? 0 : rmsValue;
+      // var rmsValue = Meyda.extract('rms', chunk);
+      // rmsChunks[i] = isNaN(rmsValue) ? 0 : rmsValue;
     }
 
     // calculate spectral flux
@@ -51,14 +60,10 @@ var Analyzer = (function() {
       maxSf = Math.max(maxSf, sf);
     }
 
-    this.audioBuffer = audioBuffer;
+
     this.spectrum = spectrumChunks;
     this.spectralFlux = spectralFlux;
     this.spectralFluxMax = maxSf;
-    this.rms = rmsChunks;
-    this.rmsMax = _.max(rmsChunks);
-
-    this.opt.onAnalysisFinished(this);
   };
 
   return Analyzer;
