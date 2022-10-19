@@ -1,0 +1,4 @@
+{
+    "audioDirectoryIn": "./audio/",
+    "audioDirectoryOut": "./public/audio/"
+}

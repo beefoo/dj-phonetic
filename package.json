@@ -2,11 +2,18 @@
   "name": "dj-phonetic",
   "description": "Speech-to-music toolbox",
   "scripts": {
+    "align": "mfa align audio english_us_arpa english_us_arpa audio",
+    "ingest": "node ingest.js",
+    "ingest-clean": "node ingest.js -clean",
     "lint": "./node_modules/.bin/eslint",
-    "start": "node server.js"
+    "start": "node server.js",
+    "validate": "mfa validate audio english_us_arpa english_us_arpa"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "textgrid": "^2.2.0",
+    "underscore": "^1.13.6",
+    "yargs": "^17.6.0"
   },
   "devDependencies": {
     "eslint": "^8.25.0",
