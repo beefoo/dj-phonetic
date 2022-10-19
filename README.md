@@ -1,2 +1,3 @@
 # dj-phonetic
-Musicmaking tools from speech
+
+Speech-to-music toolbox

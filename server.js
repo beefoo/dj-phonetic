@@ -1,11 +1,9 @@
-// > node server.js 8888
-var port = 2222;
-if (process.argv.length > 2) port = parseInt(process.argv[2]);
-
 const express = require('express');
+
+let port = 2222;
 const app = express();
 
+if (process.argv.length > 2) port = parseInt(process.argv[2], 10);
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('./')); //Tells the app to serve static files from ./
-
-app.listen(port, () => console.log('Listening on port '+port));
+app.use(express.static('./public/'));
+app.listen(port, () => console.log(`Listening on port ${port}`));

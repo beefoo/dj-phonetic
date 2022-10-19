@@ -1,0 +1,29 @@
+html {
+  font: 18px sans-serif;
+  color: black;
+}
+
+a {
+  color: black;
+  font-weight: bold;
+}
+a:focus {
+  outline-style: solid;
+  outline-color: #a80000;
+  outline-width: 3px;
+}
+
+p,
+li {
+  line-height: 1.8;
+}
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
