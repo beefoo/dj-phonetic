@@ -2,7 +2,7 @@
   "name": "dj-phonetic",
   "description": "Speech-to-music toolbox",
   "scripts": {
-    "align": "mfa align audio english_us_arpa english_us_arpa audio",
+    "align": "mfa align audio english_us_arpa english_us_arpa audio/aligned",
     "ingest": "node ingest.js",
     "ingest-clean": "node ingest.js -clean",
     "lint": "./node_modules/.bin/eslint",

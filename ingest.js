@@ -14,32 +14,37 @@ if (argv.clean) {
   utils.emptyDirectory(fs, config.audioDirectoryOut);
 }
 
+const audioFiles = fs.readdirSync(config.audioDirectoryIn);
+const textgridFiles = fs.readdirSync(config.textgridDirectoryIn);
+const allFiles = audioFiles.concat(textgridFiles);
 const files = [];
 
 // retrieve files from audio directory
-fs.readdirSync(config.audioDirectoryIn).forEach((file) => {
+allFiles.forEach((file) => {
   const fileParts = path.parse(file);
   const id = fileParts.name;
   const type = fileParts.ext.slice(1).toLowerCase();
+  if (type === '') return;
   const filePath = config.audioDirectoryIn + file;
-  const fileIndex = files.findIndex((f) => f.id === id);
+  let fileIndex = files.findIndex((f) => f.id === id);
   if (fileIndex < 0) {
     const newFile = { id, valid: true };
-    newFile[type] = filePath;
     files.push(newFile);
-  } else {
-    files[fileIndex][type] = filePath;
+    fileIndex = files.length - 1;
   }
+  if (type === 'textgrid') files[fileIndex].textgrid = config.textgridDirectoryIn + file;
+  else if (config.validAudioFilesExt.find((ext) => ext === type)) files[fileIndex].audio = filePath;
+  else if (config.validTextFileExt.find((ext) => ext === type)) files[fileIndex].text = filePath;
 });
 
 // validate files
 function isValidFile(f) {
-  return _.has(f, 'textgrid') && _.has(f, 'txt') && _.has(f, 'wav');
+  return _.has(f, 'textgrid') && _.has(f, 'text') && _.has(f, 'audio');
 }
 const validFiles = files.filter((f) => isValidFile(f));
 const invalidFiles = files.filter((f) => !isValidFile(f));
 if (invalidFiles.length > 0) {
-  console.log(`Removed ${invalidFiles.length} items because they did not have all of the following: TextGrid, txt, wav:`);
+  console.log(`Removed ${invalidFiles.length} items because they did not have all of the following: TextGrid file, text file, audio file:`);
   console.log(_.pluck(invalidFiles, 'id').map((id) => ` - ${id}`));
 }
 
@@ -53,7 +58,7 @@ function parseInterval(interval) {
 }
 _.each(validFiles, (f, i) => {
   const textgridString = utils.readFile(fs, f.textgrid);
-  const textString = utils.readFile(fs, f.txt);
+  const textString = utils.readFile(fs, f.text);
   const tg = textgrid.TextGrid.textgridToJSON(textgridString);
 
   // read words

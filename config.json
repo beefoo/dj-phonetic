@@ -1,4 +1,7 @@
 {
     "audioDirectoryIn": "./audio/",
-    "audioDirectoryOut": "./public/audio/"
+    "audioDirectoryOut": "./public/audio/",
+    "textgridDirectoryIn": "./audio/aligned/",
+    "validAudioFilesExt": ["aiff", "flac", "mp3", "ogg", "wav"],
+    "validTextFileExt": ["text", "txt"]
 }
