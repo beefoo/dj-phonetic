@@ -11,6 +11,17 @@ module.exports = {
     console.log(`Emptied ${dirName}`);
   },
 
+  readCSV(fs, csv, filename, onFinished) {
+    const rows = [];
+    fs.createReadStream(filename)
+      .pipe(csv())
+      .on('data', (data) => rows.push(data))
+      .on('end', () => {
+        onFinished(rows);
+        console.log(`Read ${rows.length} rows from ${filename}`);
+      });
+  },
+
   readFile(fs, filename) {
     return fs.readFileSync(filename, {
       encoding: 'utf8',
