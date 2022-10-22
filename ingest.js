@@ -51,34 +51,46 @@ function parseRows(rows) {
 function parseInterval(interval) {
   const item = {};
   item.text = interval.text;
+  item.chars = interval.text.toLowerCase().split('');
   item.start = parseFloat(interval.xmin);
   item.end = parseFloat(interval.xmax);
   return item;
 }
-
+// add phones to to word
+function addPhones(word, phones) {
+  const updatedWord = _.clone(word);
+  updatedWord.phones = _.filter(phones, (p) => p.start >= word.start && p.end <= word.end);
+  return updatedWord;
+}
 function parseItems(items) {
   const parsedItems = [];
   _.each(items, (item, i) => {
     const textgridString = utils.readFile(fs, item.textgrid);
     const textString = utils.readFile(fs, item.text);
+    const charsString = textString.split('');
+    const charsStringLC = textString.toLowerCase().split('');
     const tg = textgrid.TextGrid.textgridToJSON(textgridString);
 
-    // read words
-    const words = tg.items.find((tgItem) => tgItem.name === 'words');
-    if (!words) {
-      console.log(`Missing words in ${item.textgrid}`);
-      return;
-    }
-    const processedWords = words.intervals.map((interval) => parseInterval(interval));
-
     // read phones
-    const phones = tg.items.find((tgItem) => tgItem.name === 'phones');
-    if (!phones) {
+    const tgPhones = tg.items.find((tgItem) => tgItem.name === 'phones');
+    if (!tgPhones) {
       console.log(`Missing phones in ${item.textgrid}`);
       return;
     }
-    const processedPhones = phones.intervals.map((interval) => parseInterval(interval));
-    console.log(processedPhones);
+    const phones = tgPhones.intervals.map((interval) => parseInterval(interval));
+
+    // read words
+    const tgWords = tg.items.find((tgItem) => tgItem.name === 'words');
+    if (!tgWords) {
+      console.log(`Missing words in ${item.textgrid}`);
+      return;
+    }
+    let words = tgWords.intervals.map((interval) => parseInterval(interval));
+    words = words.map((word) => addPhones(word, phones));
+    words.forEach((w) => {
+      console.log(w.text);
+      console.log(_.pluck(w.phones, 'text'));
+    });
   });
   return parsedItems;
 }
