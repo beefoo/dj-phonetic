@@ -59,7 +59,7 @@ function parseInterval(interval) {
 // add phones to to word
 function addPhones(word, phones) {
   const updatedWord = _.clone(word);
-  updatedWord.phones = _.filter(phones, (p) => p.start >= word.start && p.end <= word.end);
+  updatedWord.phones = phones.filter((p) => p.start >= word.start && p.end <= word.end);
   return updatedWord;
 }
 function parseItems(items) {
@@ -67,8 +67,6 @@ function parseItems(items) {
   _.each(items, (item, i) => {
     const textgridString = utils.readFile(fs, item.textgrid);
     const textString = utils.readFile(fs, item.text);
-    const charsString = textString.split('');
-    const charsStringLC = textString.toLowerCase().split('');
     const tg = textgrid.TextGrid.textgridToJSON(textgridString);
 
     // read phones
@@ -87,10 +85,53 @@ function parseItems(items) {
     }
     let words = tgWords.intervals.map((interval) => parseInterval(interval));
     words = words.map((word) => addPhones(word, phones));
-    words.forEach((w) => {
-      console.log(w.text);
-      console.log(_.pluck(w.phones, 'text'));
+    // remove blanks
+    words = words.filter((word) => word.text.trim().length > 0);
+    // add display text and non-word text from original text
+    let refText = textString;
+    words.forEach((w, j) => {
+      const foundIndex = refText.toLowerCase().indexOf(w.text);
+      if (foundIndex < 0) {
+        console.log(`Could not find word ${w.text} in original text`);
+        return;
+      }
+      // check for non-word string before found word
+      if (foundIndex > 0) {
+        let nonWordText = refText.slice(0, foundIndex);
+        if (nonWordText.trim().length > 0) {
+          const spaceAtStart = nonWordText.startsWith(' ');
+          const spaceAtEnd = nonWordText.endsWith(' ');
+          const prepend = nonWordText.length > 1 && spaceAtStart && !spaceAtEnd;
+          const appendAndPrepend = nonWordText.length > 2 && !spaceAtStart && !spaceAtEnd && nonWordText.includes(' ') && j > 0;
+          nonWordText = nonWordText.trim();
+          // e.g. He said: "Hello" (prepend _"_ to _Hello_ and append _:_ to _said_)
+          if (appendAndPrepend) {
+            const [firstPart, lastPart] = nonWordText.split(' ', 2);
+            words[j].prepend = lastPart;
+            words[j - 1].append = firstPart;
+          } else if (prepend || j === 0) {
+            words[j].prepend = nonWordText;
+          } else {
+            words[j - 1].append = nonWordText;
+          }
+        }
+        refText = refText.slice(foundIndex);
+      }
+      // check to see if display text is different from text
+      const displayText = refText.slice(0, w.text.length);
+      if (displayText !== w.text) {
+        words[j].displayText = displayText;
+      }
+      refText = refText.slice(w.text.length);
     });
+    // words.forEach((w) => {
+    //   const text = w.displayText ? w.displayText : w.text;
+    //   console.log(text);
+    //   if (w.prepend) console.log(`Prepend text: ${w.prepend}`);
+    //   if (w.append) console.log(`Append text: ${w.append}`);
+    //   console.log(_.pluck(w.phones, 'text'));
+    //   console.log('------------------');
+    // });
   });
   return parsedItems;
 }
