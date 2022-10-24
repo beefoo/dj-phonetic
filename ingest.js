@@ -1,8 +1,9 @@
 const _ = require('underscore');
 const csv = require('csv-parser');
 const fs = require('fs');
-const path = require('node:path');
+const meyda = require('meyda');
 const textgrid = require('textgrid');
+const wav = require('node-wav');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const config = require('./config.json');
@@ -43,7 +44,6 @@ function parseRows(rows) {
     item.textgrid = textgridFn;
     items.push(item);
   });
-
   return items;
 }
 
@@ -64,7 +64,7 @@ function addPhones(word, phones) {
 }
 function parseItems(items) {
   const parsedItems = [];
-  _.each(items, (item, i) => {
+  items.forEach((item, i) => {
     const textgridString = utils.readFile(fs, item.textgrid);
     const textString = utils.readFile(fs, item.text);
     const tg = textgrid.TextGrid.textgridToJSON(textgridString);
@@ -132,11 +132,52 @@ function parseItems(items) {
     //   console.log(_.pluck(w.phones, 'text'));
     //   console.log('------------------');
     // });
+    const parsedItem = item;
+    parsedItem.words = words;
+    parsedItems.push(parsedItem);
   });
   return parsedItems;
 }
 
+function analyzeAudio(items) {
+  const analyzedItems = [];
+  const chromaPitches = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+  items.forEach((item, i) => {
+    const audioBuffer = fs.readFileSync(item.audio);
+    const audioData = wav.decode(audioBuffer);
+    const { sampleRate, channelData } = audioData;
+    const monoChannelData = channelData[0];
+    meyda.sampleRate = sampleRate;
+    const duration = monoChannelData.length / sampleRate;
+    item.words.forEach((word, j) => {
+      word.phones.forEach((phone, k) => {
+        const { start, end } = phone;
+        const phoneDur = end - start;
+        const phoneSamples = phoneDur * sampleRate;
+        const nextPowerOfTwo = Math.ceil(Math.log(phoneSamples) / Math.log(2));
+        const bufferSize = 2 ** nextPowerOfTwo;
+        meyda.bufferSize = bufferSize;
+        let indexStart = Math.floor(start * sampleRate);
+        let indexEnd = indexStart + bufferSize;
+        if (indexEnd >= monoChannelData.length) {
+          indexEnd = monoChannelData.length - 1;
+          indexStart = indexEnd - bufferSize;
+        }
+        const signal = monoChannelData.slice(indexStart, indexEnd);
+        if (j === 0 && k === 0) {
+          const features = meyda.extract(['energy', 'spectralKurtosis', 'chroma'], signal);
+          console.log(features);
+        }
+      });
+    });
+  });
+  return analyzedItems;
+}
+
 utils.readCSV(fs, csv, config.metadataFile, (rows) => {
-  const items = parseRows(rows);
-  const processedItems = parseItems(items);
+  let items = parseRows(rows);
+  console.log('Parsing textgrid data...');
+  items = parseItems(items);
+  console.log('Analyzing audio...');
+  items = analyzeAudio(items);
 });
