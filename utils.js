@@ -11,6 +11,12 @@ module.exports = {
     console.log(`Emptied ${dirName}`);
   },
 
+  norm(value, a, b) {
+    const denom = (b - a);
+    if (denom > 0 || denom < 0) return (1.0 * value - a) / denom;
+    return 0;
+  },
+
   readCSV(fs, csv, filename, onFinished) {
     const rows = [];
     fs.createReadStream(filename)
@@ -33,5 +39,10 @@ module.exports = {
       if (err) throw err;
       console.log(`Wrote to ${filename}`);
     });
+  },
+
+  writeJSON(fs, filename, data) {
+    const jsonString = JSON.stringify(data);
+    this.writeFile(fs, filename, jsonString);
   },
 };

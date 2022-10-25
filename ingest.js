@@ -2,6 +2,7 @@ const _ = require('underscore');
 const csv = require('csv-parser');
 const fs = require('fs');
 const meyda = require('meyda');
+const { spawnSync } = require('child_process');
 const textgrid = require('textgrid');
 const wav = require('node-wav');
 const yargs = require('yargs/yargs');
@@ -51,7 +52,6 @@ function parseRows(rows) {
 function parseInterval(interval) {
   const item = {};
   item.text = interval.text;
-  item.chars = interval.text.toLowerCase().split('');
   item.start = parseFloat(interval.xmin);
   item.end = parseFloat(interval.xmax);
   return item;
@@ -143,19 +143,21 @@ function analyzeAudio(items) {
   const analyzedItems = [];
   const chromaPitches = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
   items.forEach((item, i) => {
+    const analyzedItem = _.clone(item);
     const audioBuffer = fs.readFileSync(item.audio);
     const audioData = wav.decode(audioBuffer);
     const { sampleRate, channelData } = audioData;
     const monoChannelData = channelData[0];
     meyda.sampleRate = sampleRate;
-    const duration = monoChannelData.length / sampleRate;
+    const loudnessData = [];
+    const tonalityData = [];
     item.words.forEach((word, j) => {
       word.phones.forEach((phone, k) => {
         const { start, end } = phone;
         const phoneDur = end - start;
         const phoneSamples = phoneDur * sampleRate;
-        const nextPowerOfTwo = Math.ceil(Math.log(phoneSamples) / Math.log(2));
-        const bufferSize = 2 ** nextPowerOfTwo;
+        const nearestPowerOfTwo = Math.round(Math.log(phoneSamples) / Math.log(2));
+        const bufferSize = 2 ** nearestPowerOfTwo;
         meyda.bufferSize = bufferSize;
         let indexStart = Math.floor(start * sampleRate);
         let indexEnd = indexStart + bufferSize;
@@ -164,14 +166,49 @@ function analyzeAudio(items) {
           indexStart = indexEnd - bufferSize;
         }
         const signal = monoChannelData.slice(indexStart, indexEnd);
-        if (j === 0 && k === 0) {
-          const features = meyda.extract(['energy', 'spectralKurtosis', 'chroma'], signal);
-          console.log(features);
-        }
+        const features = meyda.extract(['energy', 'spectralKurtosis', 'chroma'], signal);
+        analyzedItem.words[j].phones[k].loudness = features.energy;
+        analyzedItem.words[j].phones[k].tonality = features.spectralKurtosis;
+        loudnessData.push(features.energy);
+        tonalityData.push(features.spectralKurtosis);
+        const chroma = _.zip(chromaPitches, features.chroma);
+        const chromaEstimate = _.max(chroma, (c) => c[1]);
+        analyzedItem.words[j].phones[k].pitch = chromaEstimate[0];
       });
     });
+    // normalize data
+    const minLoudness = _.min(loudnessData);
+    const maxLoudness = _.max(loudnessData);
+    const minTonality = _.min(tonalityData);
+    const maxTonality = _.max(tonalityData);
+    analyzedItem.words.forEach((word, j) => {
+      word.phones.forEach((phone, k) => {
+        const nLoudness = utils.norm(phone.loudness, minLoudness, maxLoudness);
+        analyzedItem.words[j].phones[k].loudness = nLoudness;
+        const nTonality = utils.norm(phone.tonality, minTonality, maxTonality);
+        analyzedItem.words[j].phones[k].tonality = nTonality;
+      });
+    });
+    analyzedItems.push(analyzedItem);
   });
   return analyzedItems;
+}
+
+function writeDataFiles(items) {
+  items.forEach((item, i) => {
+    const filename = `${config.audioDirectoryOut}${item.id}.json`;
+    utils.writeJSON(fs, filename, _.omit(item, 'audio', 'text', 'textgrid'));
+  });
+}
+
+function convertAudioFiles(items) {
+  items.forEach((item, i) => {
+    const fnIn = item.audio;
+    const fnOut = `${config.audioDirectoryOut}${item.id}.mp3`;
+    if (fs.existsSync(fnOut)) return;
+    const args = ['-i', fnIn, '-b:a', '128k', fnOut];
+    spawnSync('ffmpeg', args);
+  });
 }
 
 utils.readCSV(fs, csv, config.metadataFile, (rows) => {
@@ -180,4 +217,8 @@ utils.readCSV(fs, csv, config.metadataFile, (rows) => {
   items = parseItems(items);
   console.log('Analyzing audio...');
   items = analyzeAudio(items);
+  writeDataFiles(items);
+  console.log('Converting audio files...');
+  convertAudioFiles(items);
+  console.log('Done.');
 });

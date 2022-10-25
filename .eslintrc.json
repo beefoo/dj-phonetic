@@ -12,6 +12,7 @@
     "rules": {
       "no-console": "off",
       "no-undef": "off",
-      "no-unused-vars": "off"
+      "no-unused-vars": "off",
+      "prefer-destructuring": ["error", {"object": true, "array": false}]
     }
 }
