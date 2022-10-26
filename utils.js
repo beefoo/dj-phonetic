@@ -11,6 +11,14 @@ module.exports = {
     console.log(`Emptied ${dirName}`);
   },
 
+  isVowel(text) {
+    let ntext = text;
+    ntext = ntext.replace(/[^a-z]/gi, '');
+    if (!ntext || ntext.length <= 0) return false;
+    const firstChar = ntext[0].toLowerCase();
+    return ['a', 'e', 'i', 'o', 'u'].indexOf(firstChar) >= 0;
+  },
+
   norm(value, a, b) {
     const denom = (b - a);
     if (denom > 0 || denom < 0) return (1.0 * value - a) / denom;

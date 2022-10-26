@@ -139,6 +139,89 @@ function parseItems(items) {
   return parsedItems;
 }
 
+function removePhones(oldPhones, count) {
+  let phones = oldPhones.slice(0);
+  phones.forEach((phone, i) => {
+    phones[i].index = i;
+  });
+  phones = _.sortBy(phones, (p) => p.end - p.start);
+  phones = phones.slice(count);
+  phones = _.sortBy(phones, 'index');
+  phones = phones.map((p) => _.omit(p, 'index'));
+  return phones;
+}
+function alignPhones(items) {
+  return items.map((item, i) => {
+    const alignedItem = _.clone(item);
+    alignedItem.words = item.words.map((word, j) => {
+      const alignedWord = _.clone(word);
+      const wText = word.displayText ? word.displayText : word.text;
+      const chars = wText.split('');
+      // merge non-alpha chars into the previous alpha letter
+      const nchars = [];
+      chars.forEach((c, k) => {
+        if (!c.match(/[a-z]/i)) {
+          const lastIndex = nchars.length - 1;
+          if (k > 0) nchars[lastIndex] = nchars[lastIndex].concat(c);
+        } else {
+          nchars.push(c);
+        }
+      });
+      // check if there are more phones than letters (shouldn't happen)
+      if (nchars.length < alignedWord.phones.length) {
+        console.log(`${wText} has more phones than letters:`);
+        console.log(_.pluck(alignedWord.phones, 'text'));
+        console.log('Make sure you are not using abbreviations or numerals');
+        // remove the shortest phones for now
+        const removeCount = alignedWord.phones.length - nchars.length;
+        alignedWord.phones = removePhones(alignedWord.phones, removeCount);
+      }
+      // add blanks
+      alignedWord.phones.forEach((phone, k) => {
+        alignedWord.phones[k].displayText = '';
+      });
+      // attempt to align phones to letters
+      let isFinished = false;
+      const phoneCount = alignedWord.phones.length;
+      const letterCount = nchars.length;
+      let phoneIndex = 0;
+      nchars.forEach((char, k) => {
+        if (isFinished) return;
+        // if # remaining phones match the # remaining letters, map them 1-to-1
+        const remainingPhones = phoneCount - phoneIndex;
+        const remainingLetters = letterCount - k;
+        if (remainingPhones === remainingLetters) {
+          _.times(remainingPhones, (m) => {
+            const currentText = alignedWord.phones[phoneIndex + m].displayText;
+            alignedWord.phones[phoneIndex + m].displayText = currentText.concat(nchars[k + m]);
+          });
+          isFinished = true;
+          return;
+        }
+        const phone = alignedWord.phones[phoneIndex];
+        const isFirstPhone = phoneIndex === 0;
+        const isLastPhone = phoneIndex >= phoneCount - 1;
+        const isLastLetter = k >= letterCount - 1;
+        const isPhoneVowel = utils.isVowel(phone.text);
+        const isLetterVowel = utils.isVowel(char);
+        const isMatch = isPhoneVowel === isLetterVowel;
+        // type of phone doesn't match the type of letter, add to previous
+        if (!isMatch && !isFirstPhone && !isLastLetter) {
+          const prevText = alignedWord.phones[phoneIndex - 1].displayText;
+          alignedWord.phones[phoneIndex - 1].displayText = prevText.concat(char);
+        // we have a match, add to current phone
+        } else {
+          const currentText = alignedWord.phones[phoneIndex].displayText;
+          alignedWord.phones[phoneIndex].displayText = currentText.concat(char);
+          if (!isLastPhone) phoneIndex += 1;
+        }
+      });
+      return alignedWord;
+    });
+    return alignedItem;
+  });
+}
+
 function analyzeAudio(items) {
   const analyzedItems = [];
   const chromaPitches = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
@@ -215,6 +298,7 @@ utils.readCSV(fs, csv, config.metadataFile, (rows) => {
   let items = parseRows(rows);
   console.log('Parsing textgrid data...');
   items = parseItems(items);
+  items = alignPhones(items);
   console.log('Analyzing audio...');
   items = analyzeAudio(items);
   writeDataFiles(items);
