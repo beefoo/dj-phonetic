@@ -208,7 +208,9 @@ function alignPhones(items) {
         const lastPhoneTextSet = lastPhoneText.length > 0;
         const isMatch = isPhoneVowel === isLetterVowel;
         // type of phone doesn't match the type of letter, add to previous
-        if (!isMatch && !isFirstPhone && !isLastLetter && !(isLastPhone && lastPhoneTextSet)) {
+        if (!isMatch && !isFirstPhone && !isLastLetter
+            && !(isLastPhone && lastPhoneTextSet) // always update last phone if already set
+        ) {
           const prevText = alignedWord.phones[phoneIndex - 1].displayText;
           alignedWord.phones[phoneIndex - 1].displayText = prevText.concat(char);
         // we have a match, add to current phone
@@ -216,6 +218,17 @@ function alignPhones(items) {
           const currentText = alignedWord.phones[phoneIndex].displayText;
           alignedWord.phones[phoneIndex].displayText = currentText.concat(char);
           if (!isLastPhone) phoneIndex += 1;
+        }
+      });
+      // acount for special case: the first "h" in "through" or "thrash"
+      alignedWord.phones.forEach((phone, k) => {
+        const text = phone.displayText;
+        if (k > 0 && text.length > 1 && text.startsWith('h')) {
+          const prevText = alignedWord.phones[k - 1].displayText;
+          if (prevText.length === 1 && !utils.isVowel(prevText)) {
+            alignedWord.phones[k - 1].displayText = prevText.concat('h');
+            alignedWord.phones[k].displayText = text.slice(1);
+          }
         }
       });
       return alignedWord;
