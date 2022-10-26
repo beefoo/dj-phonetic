@@ -204,9 +204,11 @@ function alignPhones(items) {
         const isLastLetter = k >= letterCount - 1;
         const isPhoneVowel = utils.isVowel(phone.text);
         const isLetterVowel = utils.isVowel(char);
+        const lastPhoneText = alignedWord.phones[phoneCount - 1].displayText;
+        const lastPhoneTextSet = lastPhoneText.length > 0;
         const isMatch = isPhoneVowel === isLetterVowel;
         // type of phone doesn't match the type of letter, add to previous
-        if (!isMatch && !isFirstPhone && !isLastLetter) {
+        if (!isMatch && !isFirstPhone && !isLastLetter && !(isLastPhone && lastPhoneTextSet)) {
           const prevText = alignedWord.phones[phoneIndex - 1].displayText;
           alignedWord.phones[phoneIndex - 1].displayText = prevText.concat(char);
         // we have a match, add to current phone
