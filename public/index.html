@@ -24,13 +24,25 @@
 
 <body>
 
-  <div id="app" class="app"></div>
+  <h1 class="visually-hidden">DJ Phonetic</h1>
+  <div id="app" class="app">
+    <nav class="nav options-nav">
+      <button class="button about"><img src="icon.svg" alt="DJ Phonetic logo comprised of an open mouth with a red vinyl disc as a tongue" title="About DJ Phonetic" /></button>
+    </nav>
+    <main class="main">
+      <div id="transcript" class="transcript">
+        <p>Loading...</p>
+      </div>
+    </main>
+  </div>
 
   <script src="js/vendor/jquery-3.6.1.min.js"></script>
   <script src="js/vendor/underscore-umd-1.13.6.min.js"></script>
 
   <script src="js/lib/App.js"></script>
+  <script src="js/lib/AudioPlayer.js"></script>
   <script src="js/lib/MathUtil.js"></script>
+  <script src="js/lib/Transcript.js"></script>
 
   <script src="js/app.js"></script>
 

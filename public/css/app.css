@@ -1,10 +1,11 @@
 html {
-  font: 18px sans-serif;
-  color: black;
+  font: 18px monospace;
+  color: white;
+  background: black;
 }
 
 a {
-  color: black;
+  color: white;
   font-weight: bold;
 }
 a:focus {
@@ -16,6 +17,106 @@ a:focus {
 p,
 li {
   line-height: 1.8;
+}
+
+.app {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding-left: 60px;
+  box-sizing: border-box;
+}
+
+.app > nav {
+  width: 60px;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 5px;
+  background: #373535;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+}
+.app > main {
+  padding: 10px;
+  box-sizing: border-box;
+  width: auto;
+}
+
+@media (orientation: portrait) {
+  .app {
+    padding-left: 0;
+    padding-bottom: 60px;
+  }
+  .app > nav {
+    height: 60px;
+    width: 100%;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+  }
+}
+
+.options-nav .button {
+  background: none;
+  border: none;
+  padding: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50px;
+}
+.options-nav img {
+  width: 50px;
+  height: auto;
+}
+
+.transcript {
+  font-size: 4.4rem;
+}
+.word {
+  display: inline-block;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  line-height: 1;
+}
+.word:last-child {
+  margin-right: 0;
+}
+.phone {
+  margin: 0;
+  padding: 0.2rem 0 1rem;
+  background: #201f1f;
+  border: 1px solid #514c4c;
+  border-left: none;
+  display: inline-block;
+  position: relative;
+  color: white;
+  cursor: pointer;
+}
+.phone:hover,
+.phone:focus {
+  color:#201f1f;
+  background: white;
+}
+.phone[data-phone="0"] {
+  border-left: 1px solid #514c4c;
+}
+.non-word {
+  display: inline-block;
+}
+.phone .phone-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
 }
 
 .visually-hidden {
