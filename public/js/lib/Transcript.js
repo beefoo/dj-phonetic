@@ -2,6 +2,7 @@ class Transcript {
   constructor(options = {}) {
     const defaults = {
       el: '#transcript',
+      onClickPhone: (phone) => { console.log(phone); },
       spacingMax: 24,
       spacingMin: 12,
     };
@@ -13,14 +14,29 @@ class Transcript {
     this.isLoading = false;
     this.loadedId = false;
     this.$el = $(this.options.el);
+    this.loadListeners();
   }
 
-  loadByUrl(url) {
+  loadFromURL(url) {
     this.loadPromise = $.Deferred();
-    if (url === this.loadedId || this.isLoading) return this.loadPromise.resolve(url).promise();
+    if (url === this.loadedId) return this.loadPromise.resolve(url).promise();
     this.isLoading = true;
     $.getJSON(url, (data) => this.onLoad(url, data));
     return this.loadPromise;
+  }
+
+  loadListeners() {
+    this.$el.on('click', '.phone', (e) => this.onClickPhone(e));
+  }
+
+  onClickPhone(event) {
+    if (this.isLoading || this.loadedId === false) return;
+
+    const $el = $(event.currentTarget);
+    const i = parseInt($el.attr('data-word'), 10);
+    const j = parseInt($el.attr('data-phone'), 10);
+    const phone = this.data.words[i].phones[j];
+    this.options.onClickPhone(phone);
   }
 
   onLoad(url, data) {
