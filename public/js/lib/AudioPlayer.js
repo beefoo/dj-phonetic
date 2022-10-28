@@ -1,6 +1,9 @@
 class AudioPlayer {
   constructor(options = {}) {
-    const defaults = {};
+    const defaults = {
+      fadeIn: 0.025,
+      fadeOut: 0.025,
+    };
     this.options = _.extend({}, defaults, options);
     this.init();
   }
@@ -30,10 +33,27 @@ class AudioPlayer {
 
   play(start, end) {
     if (this.isLoading || this.loadedId === false) return;
-    const dur = end - start;
-    const audioSource = this.ctx.createBufferSource();
+    const { fadeIn, fadeOut } = this.options;
+    const { ctx } = this;
+    const dur = end - start + fadeIn + fadeOut;
+    const offsetStart = Math.max(0, start - fadeIn);
+    const audioSource = ctx.createBufferSource();
+    const gainNode = ctx.createGain();
+    const now = ctx.currentTime;
+
+    // set audio buffer
     audioSource.buffer = this.audioBuffer;
-    audioSource.connect(this.ctx.destination);
-    audioSource.start(0, start, dur);
+
+    // fade in
+    gainNode.gain.setValueAtTime(Number.EPSILON, now);
+    gainNode.gain.exponentialRampToValueAtTime(1, now + fadeIn);
+    // fade out
+    gainNode.gain.setValueAtTime(1, now + dur - fadeOut);
+    gainNode.gain.exponentialRampToValueAtTime(Number.EPSILON, now + dur);
+
+    // connect and play
+    audioSource.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    audioSource.start(0, offsetStart, dur);
   }
 }
