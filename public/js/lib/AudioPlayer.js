@@ -3,6 +3,8 @@ class AudioPlayer {
     const defaults = {
       fadeIn: 0.025,
       fadeOut: 0.025,
+      reverb: 0.5,
+      reverbImpulse: 'js/vendor/tuna/ir_rev_short.wav',
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -10,8 +12,22 @@ class AudioPlayer {
 
   init() {
     this.ctx = new AudioContext();
+    this.effectNode = this.loadEffects();
+    this.destination = this.effectNode;
     this.loadedId = false;
     this.isLoading = false;
+  }
+
+  loadEffects() {
+    const { ctx } = this;
+    const { reverb, reverbImpulse } = this.options;
+    const tuna = new Tuna(ctx);
+    const effectNode = new tuna.Convolver({
+      impulse: reverbImpulse,
+      wetLevel: reverb,
+    });
+    effectNode.connect(ctx.destination);
+    return effectNode;
   }
 
   loadFromURL(url) {
@@ -53,7 +69,7 @@ class AudioPlayer {
 
     // connect and play
     audioSource.connect(gainNode);
-    gainNode.connect(ctx.destination);
+    gainNode.connect(this.destination);
     audioSource.start(0, offsetStart, dur);
   }
 }
