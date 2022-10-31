@@ -2,6 +2,10 @@
     "audioDirectoryIn": "./audio/",
     "audioDirectoryOut": "./public/audio/",
     "metadataFile": "metadata.csv",
+    "phoneticRules": [
+        {"phone": "ER", "text": "er"},
+        {"phone": "TH", "text": "th"}
+    ],
     "textDirectoryIn": "./audio/",
     "textgridDirectoryIn": "./audio/aligned/"
 }

@@ -220,16 +220,20 @@ function alignPhones(items) {
           if (!isLastPhone) phoneIndex += 1;
         }
       });
-      // acount for special case: the first "h" in "through" or "thrash"
+      // acount for special cases
       alignedWord.phones.forEach((phone, k) => {
         const text = phone.displayText;
-        if (k > 0 && text.length > 1 && text.startsWith('h')) {
-          const prevText = alignedWord.phones[k - 1].displayText;
-          if (prevText.length === 1 && !utils.isVowel(prevText)) {
-            alignedWord.phones[k - 1].displayText = prevText.concat('h');
-            alignedWord.phones[k].displayText = text.slice(1);
+        config.phoneticRules.forEach((rule) => {
+          const [firstLetter, secondLetter] = rule.text.split('');
+          if (k > 0 && text.length > 1 && text.startsWith(secondLetter)) {
+            const prevText = alignedWord.phones[k - 1].displayText;
+            const prevPhone = alignedWord.phones[k - 1].text;
+            if (prevText === firstLetter && prevPhone.startsWith(rule.phone)) {
+              alignedWord.phones[k - 1].displayText = prevText.concat(secondLetter);
+              alignedWord.phones[k].displayText = text.slice(1);
+            }
           }
-        }
+        });
       });
       return alignedWord;
     });
