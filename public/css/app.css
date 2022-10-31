@@ -104,6 +104,7 @@ li {
 .phone:focus {
   color: rgba(0, 0, 0, 0.8);
   background: linear-gradient(to top, #dad3d3, #e1dcdc);
+  outline: none;
 }
 .phone.first {
   border-left: 3px solid #000;
@@ -123,8 +124,8 @@ li {
   left: 0;
   width: 100%;
   text-align: center;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 .phone:hover .phone-text,
 .phone:focus .phone-text {

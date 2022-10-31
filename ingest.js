@@ -250,6 +250,21 @@ function alignPhones(items) {
   });
 }
 
+function mapPhones(items, mappings) {
+  const mappedItems = items.slice(0);
+  items.forEach((item, i) => {
+    item.words.forEach((word, j) => {
+      word.phones.forEach((phone, k) => {
+        const phoneText = phone.text.replace(/[^a-z]/gi, '');
+        if (_.has(mappings, phoneText)) {
+          mappedItems[i].words[j].phones[k].text = mappings[phoneText];
+        }
+      });
+    });
+  });
+  return mappedItems;
+}
+
 function analyzeAudio(items) {
   const analyzedItems = [];
   const chromaPitches = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
@@ -327,6 +342,7 @@ utils.readCSV(fs, csv, config.metadataFile, (rows) => {
   console.log('Parsing textgrid data...');
   items = parseItems(items);
   items = alignPhones(items);
+  items = mapPhones(items, config.arpabet);
   console.log('Analyzing audio...');
   items = analyzeAudio(items);
   writeDataFiles(items);
