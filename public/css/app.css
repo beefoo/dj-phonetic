@@ -124,6 +124,11 @@ li {
   width: 100%;
   text-align: center;
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+.phone:hover .phone-text,
+.phone:focus .phone-text {
+  color: rgba(0, 0, 0, 0.4);
 }
 
 .visually-hidden {
