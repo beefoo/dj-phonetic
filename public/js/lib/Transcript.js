@@ -75,7 +75,10 @@ class Transcript {
         html += `<div class="non-word">${w.prepend}</div>`;
       }
       w.phones.forEach((p, j) => {
-        html += `<button class="phone" data-word="${i}" data-phone="${j}">`;
+        let className = 'phone';
+        if (j === 0) className += ' first';
+        if (j === w.phones.length - 1) className += ' last';
+        html += `<button class="${className}" data-word="${i}" data-phone="${j}">`;
         html += `<span class="original-text">${p.displayText}</span>`;
         html += `<span class="phone-text">${p.text}</span>`;
         html += '</button>'; // .phone
