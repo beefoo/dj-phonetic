@@ -223,16 +223,25 @@ function alignPhones(items) {
       // acount for special cases
       alignedWord.phones.forEach((phone, k) => {
         const text = phone.displayText;
+        const phoneText = phone.text;
+        const isLastPhone = k === alignedWord.phones.length - 1;
         config.phoneticRules.forEach((rule) => {
-          const [firstLetter, secondLetter] = rule.text.split('');
-          if (k > 0 && text.length > 1 && text.startsWith(secondLetter)) {
-            const prevText = alignedWord.phones[k - 1].displayText;
-            const prevPhone = alignedWord.phones[k - 1].text;
-            if (prevText === firstLetter && prevPhone.startsWith(rule.phone)) {
-              alignedWord.phones[k - 1].displayText = prevText.concat(secondLetter);
-              alignedWord.phones[k].displayText = text.slice(1);
+          if (isLastPhone) return;
+          if (!phoneText.startsWith(rule.phone)) return;
+          const ltext = text.toLowerCase();
+          if (rule.validText.indexOf(ltext) >= 0) return;
+          const nextText = alignedWord.phones[k + 1].displayText;
+          const combinedText = text.concat(nextText);
+          const lcombinedText = combinedText.toLowerCase();
+          let isMatch = false;
+          rule.validText.forEach((validText) => {
+            if (isMatch) return;
+            if (lcombinedText.length > validText.length && lcombinedText.startsWith(validText)) {
+              isMatch = true;
+              alignedWord.phones[k].displayText = combinedText.slice(0, validText.length);
+              alignedWord.phones[k + 1].displayText = combinedText.slice(validText.length);
             }
-          }
+          });
         });
       });
       return alignedWord;

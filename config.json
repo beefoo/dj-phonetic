@@ -3,8 +3,8 @@
     "audioDirectoryOut": "./public/audio/",
     "metadataFile": "metadata.csv",
     "phoneticRules": [
-        {"phone": "ER", "text": "er"},
-        {"phone": "TH", "text": "th"}
+        {"phone": "ER", "validText": ["er"]},
+        {"phone": "TH", "validText": ["th"]}
     ],
     "textDirectoryIn": "./audio/",
     "textgridDirectoryIn": "./audio/aligned/"
