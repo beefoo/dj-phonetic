@@ -2,7 +2,7 @@ class Transcript {
   constructor(options = {}) {
     const defaults = {
       el: '#transcript',
-      onClickPhone: (phone) => { console.log(phone); },
+      onEnterClip: (clip) => { console.log(clip); },
       spacingMax: 24,
       spacingMin: 12,
     };
@@ -13,8 +13,24 @@ class Transcript {
   init() {
     this.isLoading = false;
     this.loadedId = false;
+    this.isStarted = false;
     this.$el = $(this.options.el);
     this.loadListeners();
+  }
+
+  getClipFromEvent(event) {
+    const $el = $(event.currentTarget);
+    if (!$el.is('[data-word]')) return false;
+
+    let clip = false;
+    const i = parseInt($el.attr('data-word'), 10);
+    if ($el.is('[data-phone]')) {
+      const j = parseInt($el.attr('data-phone'), 10);
+      clip = this.data.words[i].phones[j];
+    } else {
+      clip = this.data.words[i];
+    }
+    return clip;
   }
 
   loadFromURL(url) {
@@ -26,17 +42,8 @@ class Transcript {
   }
 
   loadListeners() {
-    this.$el.on('click', '.phone', (e) => this.onClickPhone(e));
-  }
-
-  onClickPhone(event) {
-    if (this.isLoading || this.loadedId === false) return;
-
-    const $el = $(event.currentTarget);
-    const i = parseInt($el.attr('data-word'), 10);
-    const j = parseInt($el.attr('data-phone'), 10);
-    const phone = this.data.words[i].phones[j];
-    this.options.onClickPhone(phone);
+    this.$el.on('pointerdown', '.clip', (e) => this.onPointerDownClip(e));
+    this.$el.on('pointerenter', '.clip', (e) => this.onPointerEnterClip(e));
   }
 
   onLoad(url, data) {
@@ -45,6 +52,24 @@ class Transcript {
     this.loadedId = url;
     this.render();
     this.loadPromise.resolve(url);
+  }
+
+  onPointerDownClip(event) {
+    if (this.isLoading || this.loadedId === false) return;
+
+    const clip = this.getClipFromEvent(event);
+    if (!clip) return;
+
+    this.isStarted = true;
+  }
+
+  onPointerEnterClip(event) {
+    if (this.isLoading || this.loadedId === false || this.isStarted === false) return;
+
+    const clip = this.getClipFromEvent(event);
+    if (!clip) return;
+
+    this.options.onEnterClip(clip);
   }
 
   static parseData(data) {
@@ -75,7 +100,7 @@ class Transcript {
         html += `<div class="non-word">${w.prepend}</div>`;
       }
       w.phones.forEach((p, j) => {
-        let className = 'phone';
+        let className = 'clip phone';
         if (j === 0) className += ' first';
         if (j === w.phones.length - 1) className += ' last';
         html += `<button class="${className}" data-word="${i}" data-phone="${j}">`;

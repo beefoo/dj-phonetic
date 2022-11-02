@@ -77,6 +77,10 @@ li {
 
 .transcript {
   font-size: 4.4rem;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .word {
   display: inline-block;

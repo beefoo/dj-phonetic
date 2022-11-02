@@ -8,8 +8,8 @@ class App {
   init() {
     this.audioPlayer = new AudioPlayer();
     this.transcript = new Transcript({
-      onClickPhone: (phone) => {
-        this.audioPlayer.play(phone.start, phone.end);
+      onEnterClip: (clip) => {
+        this.audioPlayer.play(clip.start, clip.end);
       },
     });
     const transcriptPromise = this.transcript.loadFromURL('audio/afccal000001_speech_by_fiorello_h_la_guardia_excerpt_06-54.json');
