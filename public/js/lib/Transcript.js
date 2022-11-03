@@ -13,13 +13,11 @@ class Transcript {
   init() {
     this.isLoading = false;
     this.loadedId = false;
-    this.isStarted = false;
     this.$el = $(this.options.el);
-    this.loadListeners();
   }
 
-  getClipFromEvent(event) {
-    const $el = $(event.currentTarget);
+  getClipFromElement($el) {
+    if (this.isLoading || this.loadedId === false) return false;
     if (!$el.is('[data-word]')) return false;
 
     let clip = false;
@@ -33,6 +31,11 @@ class Transcript {
     return clip;
   }
 
+  getClipFromEvent(event) {
+    const $el = $(event.currentTarget);
+    return this.getClipFromElement($el);
+  }
+
   loadFromURL(url) {
     this.loadPromise = $.Deferred();
     if (url === this.loadedId) return this.loadPromise.resolve(url).promise();
@@ -41,35 +44,12 @@ class Transcript {
     return this.loadPromise;
   }
 
-  loadListeners() {
-    this.$el.on('pointerdown', '.clip', (e) => this.onPointerDownClip(e));
-    this.$el.on('pointerenter', '.clip', (e) => this.onPointerEnterClip(e));
-  }
-
   onLoad(url, data) {
     this.data = this.constructor.parseData(data);
     this.isLoading = false;
     this.loadedId = url;
     this.render();
     this.loadPromise.resolve(url);
-  }
-
-  onPointerDownClip(event) {
-    if (this.isLoading || this.loadedId === false) return;
-
-    const clip = this.getClipFromEvent(event);
-    if (!clip) return;
-
-    this.isStarted = true;
-  }
-
-  onPointerEnterClip(event) {
-    if (this.isLoading || this.loadedId === false || this.isStarted === false) return;
-
-    const clip = this.getClipFromEvent(event);
-    if (!clip) return;
-
-    this.options.onEnterClip(clip);
   }
 
   static parseData(data) {
@@ -103,7 +83,7 @@ class Transcript {
         let className = 'clip phone';
         if (j === 0) className += ' first';
         if (j === w.phones.length - 1) className += ' last';
-        html += `<button class="${className}" data-word="${i}" data-phone="${j}">`;
+        html += `<button id="p${i}-${j}" class="${className}" data-word="${i}" data-phone="${j}">`;
         html += `<span class="original-text">${p.displayText}</span>`;
         html += `<span class="phone-text">${p.text}</span>`;
         html += '</button>'; // .phone

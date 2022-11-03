@@ -92,7 +92,7 @@ li {
 .word:last-child {
   margin-right: 0;
 }
-.phone {
+.clip {
   margin: 0;
   padding: 0 0 24px;
   background: linear-gradient(to top, #292828, #424040);
@@ -104,8 +104,9 @@ li {
   color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
 }
-.phone:hover,
-.phone:focus {
+.clip:hover,
+.clip:focus,
+.clip.active {
   color: rgba(0, 0, 0, 0.8);
   background: linear-gradient(to top, #dad3d3, #e1dcdc);
   outline: none;
@@ -131,8 +132,9 @@ li {
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.6);
 }
-.phone:hover .phone-text,
-.phone:focus .phone-text {
+.clip:hover .phone-text,
+.clip:focus .phone-text,
+.clip.active .phone-text {
   color: rgba(0, 0, 0, 0.4);
 }
 
