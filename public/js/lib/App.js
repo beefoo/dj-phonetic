@@ -17,6 +17,13 @@ class App {
     $el.removeClass('active');
   }
 
+  onKeyboardClick(event) {
+    const { pointerType } = event;
+    // only account for keyboard click
+    if (pointerType !== '') return;
+    this.playClipFromElement($(event.currentTarget));
+  }
+
   onReady() {
     this.pointerManager = new PointerManager({
       childSelector: '.clip',
@@ -25,6 +32,7 @@ class App {
       onPointerExit: (event, $el) => this.constructor.onPointerExit($el),
       target: '#transcript',
     });
+    $('.clip').on('click', (e) => this.onKeyboardClick(e));
   }
 
   playClipFromElement($el) {
