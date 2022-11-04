@@ -75,10 +75,10 @@ class Transcript {
     let html = '';
     html += '<div class="text">';
     d.words.forEach((w, i) => {
-      html += `<div class="word" data-index="${i}">`;
       if (w.prepend) {
-        html += `<div class="non-word">${w.prepend}</div>`;
+        html += `<div class="non-word prepend">${w.prepend}</div>`;
       }
+      html += `<div class="word-wrapper" data-index="${i}">`;
       w.phones.forEach((p, j) => {
         let className = 'clip phone';
         if (j === 0) className += ' first';
@@ -88,10 +88,13 @@ class Transcript {
         html += `<span class="phone-text">${p.text}</span>`;
         html += '</button>'; // .phone
       });
+      html += `<button id="w${i}" class="clip word" data-word="${i}">`;
+      html += `<span class="visually-hidden">${w.text}</span>`;
+      html += '</button>'; // .word
+      html += '</div>'; // .word-wrapper
       if (w.append) {
-        html += `<div class="non-word">${w.append}</div>`;
+        html += `<div class="non-word append">${w.append}</div>`;
       }
-      html += '</div>'; // .word
     });
     html += '</div>'; // .text
     this.$el.html(html);
