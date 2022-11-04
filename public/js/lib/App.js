@@ -21,7 +21,7 @@ class App {
     const { pointerType } = event;
     // only account for keyboard click
     if (pointerType !== '') return;
-    this.playClipFromElement($(event.currentTarget));
+    this.playClipFromElement($(event.currentTarget), false);
   }
 
   onReady() {
@@ -35,11 +35,11 @@ class App {
     $('.clip').on('click', (e) => this.onKeyboardClick(e));
   }
 
-  playClipFromElement($el) {
+  playClipFromElement($el, active = true) {
     const clip = this.transcript.getClipFromElement($el);
     if (!clip) return;
 
-    $el.addClass('active');
+    if (active) $el.addClass('active');
     this.audioPlayer.play(clip.start, clip.end);
   }
 }
