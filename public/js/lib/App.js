@@ -40,6 +40,8 @@ class App {
     if (!clip) return;
 
     if (active) $el.addClass('active');
+    $el.removeClass('playing');
+    setTimeout(() => $el.addClass('playing'), 1);
     this.audioPlayer.play(clip.start, clip.end);
   }
 }

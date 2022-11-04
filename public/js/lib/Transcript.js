@@ -85,6 +85,7 @@ class Transcript {
         if (j === w.phones.length - 1) className += ' last';
         html += `<button id="p${i}-${j}" class="${className}" data-word="${i}" data-phone="${j}">`;
         html += `<span class="original-text">${p.displayText}</span>`;
+        html += `<span class="ghost-text">${p.displayText}</span>`;
         html += `<span class="phone-text">${p.text}</span>`;
         html += '</button>'; // .phone
       });

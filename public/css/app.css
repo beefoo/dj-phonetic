@@ -1,3 +1,19 @@
+@keyframes highlight {
+  from {
+    transform: scale3d(1, 1, 1);
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 1;
+  }
+
+  to {
+    transform: scale3d(5, 5, 5);
+    opacity: 0;
+  }
+}
+
 html {
   font: 18px monospace;
   color: white;
@@ -131,6 +147,17 @@ li {
 .non-word {
   display: inline-block;
 }
+.ghost-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.clip.playing .ghost-text {
+  animation: highlight 0.3s ease-in-out;
+  animation-fill-mode: none;
+}
 .phone .phone-text {
   position: absolute;
   bottom: 6px;
@@ -144,6 +171,11 @@ li {
 .clip:focus .phone-text,
 .clip.active .phone-text {
   color: rgba(0, 0, 0, 0.4);
+}
+.clip.playing:hover .ghost-text,
+.clip.playing:focus .ghost-text,
+.clip.playing.active .ghost-text {
+  color: rgba(255, 255, 255, 0.8);
 }
 .word {
   position: absolute;
