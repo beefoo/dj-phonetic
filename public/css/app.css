@@ -63,6 +63,7 @@ li {
   padding: 10px;
   box-sizing: border-box;
   width: auto;
+  overflow: hidden;
 }
 
 @media (orientation: portrait) {

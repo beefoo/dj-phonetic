@@ -57,11 +57,15 @@ class Transcript {
     pdata.words = pdata.words.map((word, i) => {
       const pword = word;
       pword.index = i;
+      pword.id = `w${i}`;
+      pword.type = 'word';
       pword.text = pword.displayText ? pword.displayText : pword.text;
       pword.durBefore = 0;
       if (i > 0) pword.durBefore = word.start - pdata.words[i - 1].end;
-      pword.phones = word.phones.map((phone) => {
+      pword.phones = word.phones.map((phone, j) => {
         const pphone = phone;
+        pphone.id = `p${i}-${j}`;
+        pphone.type = 'phone';
         pphone.dur = phone.end - phone.start;
         return pphone;
       });
@@ -83,13 +87,13 @@ class Transcript {
         let className = 'clip phone';
         if (j === 0) className += ' first';
         if (j === w.phones.length - 1) className += ' last';
-        html += `<button id="p${i}-${j}" class="${className}" data-word="${i}" data-phone="${j}">`;
+        html += `<button id="${p.id}" class="${className}" data-word="${i}" data-phone="${j}">`;
         html += `<span class="original-text">${p.displayText}</span>`;
         html += `<span class="ghost-text">${p.displayText}</span>`;
         html += `<span class="phone-text">${p.text}</span>`;
         html += '</button>'; // .phone
       });
-      html += `<button id="w${i}" class="clip word" data-word="${i}">`;
+      html += `<button id="${w.id}" class="clip word" data-word="${i}">`;
       html += `<span class="visually-hidden">${w.text}</span>`;
       html += '</button>'; // .word
       html += '</div>'; // .word-wrapper

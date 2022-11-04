@@ -16,6 +16,11 @@ class AudioPlayer {
     this.destination = this.effectNode;
     this.loadedId = false;
     this.isLoading = false;
+    this.queue = [];
+  }
+
+  isReady() {
+    return !this.isLoading && this.loadedId !== false;
   }
 
   loadEffects() {
@@ -47,8 +52,8 @@ class AudioPlayer {
     return loadPromise;
   }
 
-  play(start, end) {
-    if (this.isLoading || this.loadedId === false) return;
+  play(start, end, when = 0) {
+    if (!this.isReady()) return;
     const { fadeIn, fadeOut } = this.options;
     const { ctx } = this;
     const dur = end - start + fadeIn + fadeOut;
@@ -61,15 +66,41 @@ class AudioPlayer {
     audioSource.buffer = this.audioBuffer;
 
     // fade in
-    gainNode.gain.setValueAtTime(Number.EPSILON, now);
-    gainNode.gain.exponentialRampToValueAtTime(1, now + fadeIn);
+    gainNode.gain.setValueAtTime(Number.EPSILON, now + when);
+    gainNode.gain.exponentialRampToValueAtTime(1, now + when + fadeIn);
     // fade out
-    gainNode.gain.setValueAtTime(1, now + dur - fadeOut);
-    gainNode.gain.exponentialRampToValueAtTime(Number.EPSILON, now + dur);
+    gainNode.gain.setValueAtTime(1, now + when + dur - fadeOut);
+    gainNode.gain.exponentialRampToValueAtTime(Number.EPSILON, now + when + dur);
 
     // connect and play
     audioSource.connect(gainNode);
     gainNode.connect(this.destination);
-    audioSource.start(0, offsetStart, dur);
+    audioSource.start(when, offsetStart, dur);
+  }
+
+  schedule(id, when, task) {
+    if (when <= 0) task();
+
+    const now = this.ctx.currentTime;
+    this.queue.push({
+      id,
+      task,
+      when: when + now,
+    });
+  }
+
+  update() {
+    if (this.queue.length <= 0 || !this.isReady()) return;
+    const idsToRemove = [];
+    const now = this.ctx.currentTime;
+    this.queue.forEach((item) => {
+      if (item.when <= now) {
+        item.task();
+        idsToRemove.push(item.id);
+      }
+    });
+    if (idsToRemove.length > 0) {
+      this.queue = _.reject(this.queue, (item) => idsToRemove.includes(item.id));
+    }
   }
 }

@@ -33,6 +33,7 @@ class App {
       target: '#transcript',
     });
     $('.clip').on('click', (e) => this.onKeyboardClick(e));
+    this.update();
   }
 
   playClipFromElement($el, active = true) {
@@ -40,8 +41,30 @@ class App {
     if (!clip) return;
 
     if (active) $el.addClass('active');
-    $el.removeClass('playing');
-    setTimeout(() => $el.addClass('playing'), 1);
+    // highlight the phone
+    if (clip.type === 'phone') {
+      $el.removeClass('playing');
+      setTimeout(() => $el.addClass('playing'), 1);
+    // if word, highlight each phone of the word
+    } else if (clip.type === 'word') {
+      const now = Date.now();
+      const firstPhone = clip.phones[0];
+      clip.phones.forEach((phone, i) => {
+        const id = `${phone.id}-${now}`;
+        const when = phone.start - firstPhone.start;
+        const $phoneEl = $(`#${phone.id}`);
+        this.audioPlayer.schedule(id, when, () => {
+          $phoneEl.removeClass('playing');
+          setTimeout(() => $phoneEl.addClass('playing'), 1);
+        });
+      });
+    }
     this.audioPlayer.play(clip.start, clip.end);
+  }
+
+  update() {
+    window.requestAnimationFrame(() => this.update());
+
+    this.audioPlayer.update();
   }
 }
