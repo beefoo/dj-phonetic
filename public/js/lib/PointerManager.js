@@ -2,9 +2,9 @@ class PointerManager {
   constructor(options = {}) {
     const defaults = {
       childSelector: false,
-      onPointerDown: (event, $el) => {},
-      onPointerEnter: (event, $el) => {},
-      onPointerExit: (event, $el) => {},
+      onPointerDown: (pointer, $el) => {},
+      onPointerEnter: (pointer, $el) => {},
+      onPointerExit: (pointer, $el) => {},
       target: '#touchable',
     };
     this.options = _.extend({}, defaults, options);
@@ -21,7 +21,7 @@ class PointerManager {
   checkForPointerExit(pointer, event) {
     if (pointer.currentTargetId === false) return;
     const $oldChild = $(`#${pointer.currentTargetId}`);
-    this.options.onPointerExit(event, $oldChild);
+    this.options.onPointerExit(pointer, $oldChild);
     pointer.setCurrentTargetId(false);
   }
 
@@ -41,6 +41,7 @@ class PointerManager {
     } else if (!mustExist) {
       const options = {
         id: pointerId,
+        event,
       };
       pointer = new Pointer(options);
       this.pointers[pointerId] = pointer;
@@ -82,10 +83,8 @@ class PointerManager {
       const $child = this.getChildFromEvent(event);
       if ($child) {
         pointer.setCurrentTargetId($child.attr('id'));
-        this.options.onPointerDown(event, $child);
+        this.options.onPointerDown(pointer, $child);
       }
-    } else {
-      this.options.onPointerDown(event);
     }
   }
 
@@ -101,7 +100,7 @@ class PointerManager {
       if (childId !== pointer.currentTargetId) {
         this.checkForPointerExit(pointer, event);
         pointer.setCurrentTargetId(childId);
-        this.options.onPointerEnter(event, $child);
+        this.options.onPointerEnter(pointer, $child);
       }
     } else {
       this.checkForPointerExit(pointer, event);

@@ -27,20 +27,21 @@ class App {
   onReady() {
     this.pointerManager = new PointerManager({
       childSelector: '.clip',
-      onPointerDown: (event, $el) => this.playClipFromElement($el),
-      onPointerEnter: (event, $el) => this.playClipFromElement($el),
-      onPointerExit: (event, $el) => this.constructor.onPointerExit($el),
+      onPointerDown: (pointer, $el) => this.playClipFromElement(pointer, $el),
+      onPointerEnter: (pointer, $el) => this.playClipFromElement(pointer, $el),
+      onPointerExit: (pointer, $el) => this.constructor.onPointerExit($el),
       target: '#transcript',
     });
     $('.clip').on('click', (e) => this.onKeyboardClick(e));
     this.update();
   }
 
-  playClipFromElement($el, active = true) {
+  playClipFromElement(pointer, $el, active = true) {
     const clip = this.transcript.getClipFromElement($el);
     if (!clip) return;
 
     if (active) $el.addClass('active');
+    if (pointer.isPrimary) $el[0].focus();
     // highlight the phone
     if (clip.type === 'phone') {
       $el.removeClass('playing');

@@ -2,6 +2,7 @@ class Pointer {
   constructor(options = {}) {
     const defaults = {
       id: '0',
+      event: false,
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -9,6 +10,10 @@ class Pointer {
 
   init() {
     this.id = this.options.id;
+    this.isPrimary = false;
+    if (this.options.event && this.options.event.originalEvent) {
+      this.isPrimary = this.options.event.originalEvent.isPrimary;
+    }
     this.reset();
   }
 
