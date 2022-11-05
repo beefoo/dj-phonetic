@@ -13,15 +13,11 @@ class App {
     $.when(transcriptPromise, audioPromise).done(() => this.onReady());
   }
 
-  static onPointerExit($el) {
-    $el.removeClass('active');
-  }
-
   onKeyboardClick(event) {
     const { pointerType } = event;
     // only account for keyboard click
     if (pointerType !== '') return;
-    this.playClipFromElement($(event.currentTarget), false);
+    this.playClipFromElement($(event.currentTarget));
   }
 
   onReady() {
@@ -29,18 +25,16 @@ class App {
       childSelector: '.clip',
       onPointerDown: (pointer, $el) => this.playClipFromElement(pointer, $el),
       onPointerEnter: (pointer, $el) => this.playClipFromElement(pointer, $el),
-      onPointerExit: (pointer, $el) => this.constructor.onPointerExit($el),
       target: '#transcript',
     });
     $('.clip').on('click', (e) => this.onKeyboardClick(e));
     this.update();
   }
 
-  playClipFromElement(pointer, $el, active = true) {
+  playClipFromElement(pointer, $el) {
     const clip = this.transcript.getClipFromElement($el);
     if (!clip) return;
 
-    if (active) $el.addClass('active');
     if (pointer.isPrimary) $el[0].focus();
     // highlight the phone
     if (clip.type === 'phone') {

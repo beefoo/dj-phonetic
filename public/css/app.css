@@ -116,9 +116,11 @@ li {
   color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
 }
-.clip:hover,
+.clip:hover {
+  color: white;
+}
 .clip:focus,
-.clip.active {
+.clip:focus:hover {
   color: rgba(0, 0, 0, 0.8);
   background: linear-gradient(to top, #dad3d3, #e1dcdc);
   outline: none;
@@ -153,14 +155,12 @@ li {
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.6);
 }
-.clip:hover .phone-text,
-.clip:focus .phone-text,
-.clip.active .phone-text {
+.clip:focus:hover .phone-text,
+.clip:focus .phone-text {
   color: rgba(0, 0, 0, 0.4);
 }
-.clip.playing:hover .ghost-text,
-.clip.playing:focus .ghost-text,
-.clip.playing.active .ghost-text {
+.clip.playing:focus:hover .ghost-text,
+.clip.playing:focus .ghost-text {
   color: rgba(255, 255, 255, 0.8);
 }
 .word {
