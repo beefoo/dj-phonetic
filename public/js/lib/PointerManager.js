@@ -75,7 +75,7 @@ class PointerManager {
   onPointerDown(event) {
     if (!this.firstTouch) this.firstTouch = true;
     this.$target.addClass('active');
-    // this.target.setPointerCapture(event.pointerId);
+    this.target.setPointerCapture(event.pointerId);
     const pointer = this.getPointer(event);
     pointer.onStart(event);
     if (this.options.childSelector) {
