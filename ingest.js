@@ -23,6 +23,7 @@ function parseRows(rows) {
     const audioFn = `${config.audioDirectoryIn}${row.audio}`;
     const textFn = `${config.textDirectoryIn}${row.id}.txt`;
     const textgridFn = `${config.textgridDirectoryIn}${row.id}.TextGrid`;
+    const textgridEditedFn = `${config.textgridEditedDirectoryIn}${row.id}.TextGrid`;
 
     if (!fs.existsSync(audioFn)) {
       console.log(`Could not find audio file ${audioFn}`);
@@ -34,15 +35,15 @@ function parseRows(rows) {
       return;
     }
 
-    if (!fs.existsSync(textgridFn)) {
-      console.log(`Could not find textgrid file ${textgridFn}`);
+    if (!fs.existsSync(textgridFn) && !fs.existsSync(textgridEditedFn)) {
+      console.log(`Could not find textgrid file ${textgridFn} or ${textgridEditedFn}`);
       return;
     }
 
     const item = _.clone(row);
     item.audio = audioFn;
     item.text = textFn;
-    item.textgrid = textgridFn;
+    item.textgrid = fs.existsSync(textgridEditedFn) ? textgridEditedFn : textgridFn;
     items.push(item);
   });
   return items;

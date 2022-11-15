@@ -8,6 +8,7 @@
     ],
     "textDirectoryIn": "./audio/",
     "textgridDirectoryIn": "./audio/aligned/",
+    "textgridEditedDirectoryIn": "./audio/edited/",
     "arpabet": {
         "AA": "ɑ~ɒ",
         "AE": "æ",
