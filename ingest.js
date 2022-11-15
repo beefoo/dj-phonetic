@@ -88,6 +88,13 @@ function parseItems(items) {
     words = words.map((word) => addPhones(word, phones));
     // remove blanks
     words = words.filter((word) => word.text.trim().length > 0);
+    // add non-verbals
+    const { nonverbals } = config;
+    words = words.map((word) => {
+      const updatedWord = _.clone(word);
+      if (nonverbals.includes(word.text.toLowerCase())) updatedWord.isNonVerbal = true;
+      return updatedWord;
+    });
     // add display text and non-word text from original text
     let refText = textString;
     words.forEach((w, j) => {
@@ -310,9 +317,11 @@ function analyzeAudio(items) {
     const maxTonality = _.max(tonalityData);
     analyzedItem.words.forEach((word, j) => {
       word.phones.forEach((phone, k) => {
-        const nLoudness = utils.norm(phone.loudness, minLoudness, maxLoudness);
+        let nLoudness = utils.norm(phone.loudness, minLoudness, maxLoudness);
+        nLoudness = utils.roundToPrecision(nLoudness, config.dataPrecision);
         analyzedItem.words[j].phones[k].loudness = nLoudness;
-        const nTonality = utils.norm(phone.tonality, minTonality, maxTonality);
+        let nTonality = utils.norm(phone.tonality, minTonality, maxTonality);
+        nTonality = utils.roundToPrecision(nTonality, config.dataPrecision);
         analyzedItem.words[j].phones[k].tonality = nTonality;
       });
     });

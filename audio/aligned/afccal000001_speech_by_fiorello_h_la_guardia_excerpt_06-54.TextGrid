@@ -338,10 +338,10 @@ item []:
             text = "" 
         intervals [82]:
             xmin = 22.99 
-            xmax = 23.54 
+            xmax = 23.51 
             text = "change" 
         intervals [83]:
-            xmin = 23.54 
+            xmin = 23.51 
             xmax = 23.59 
             text = "" 
         intervals [84]:
@@ -1264,10 +1264,10 @@ item []:
             text = "N" 
         intervals [226]:
             xmin = 23.43 
-            xmax = 23.54 
+            xmax = 23.51 
             text = "JH" 
         intervals [227]:
-            xmin = 23.54 
+            xmin = 23.51 
             xmax = 23.59 
             text = "" 
         intervals [228]:

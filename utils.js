@@ -42,6 +42,10 @@ module.exports = {
     });
   },
 
+  roundToPrecision(value, precision) {
+    return parseFloat(value.toFixed(precision));
+  },
+
   writeFile(fs, filename, content) {
     fs.writeFile(filename, content, (err) => {
       if (err) throw err;

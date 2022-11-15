@@ -1,7 +1,16 @@
 {
     "audioDirectoryIn": "./audio/",
     "audioDirectoryOut": "./public/audio/",
+    "dataPrecision": 4,
     "metadataFile": "metadata.csv",
+    "nonverbals": [
+        "eh",
+        "er",
+        "hm",
+        "mm",
+        "uh",
+        "um"
+    ],
     "phoneticRules": [
         {"phone": "ER", "validText": ["er"]},
         {"phone": "TH", "validText": ["th"]}
