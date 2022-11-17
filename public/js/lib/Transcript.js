@@ -88,8 +88,9 @@ class Transcript {
         if (j === 0) className += ' first';
         if (j === w.phones.length - 1) className += ' last';
         html += `<button id="${p.id}" class="${className}" data-word="${i}" data-phone="${j}">`;
-        html += `<span class="original-text">${p.displayText}</span>`;
-        html += `<span class="ghost-text">${p.displayText}</span>`;
+        const displayText = p.displayText.replace(/(\W+)/gi, '<small>$&</small>');
+        html += `<span class="original-text">${displayText}</span>`;
+        html += `<span class="ghost-text">${displayText}</span>`;
         html += `<span class="phone-text">${p.text}</span>`;
         html += '</button>'; // .phone
       });

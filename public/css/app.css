@@ -205,6 +205,10 @@ li {
 .clip:focus::before {
   border-color: rgba(0, 0, 0, 0.4);
 }
+.text small {
+  font-size: 0.5em;
+  vertical-align: middle;
+}
 
 .visually-hidden {
   clip: rect(0 0 0 0);
