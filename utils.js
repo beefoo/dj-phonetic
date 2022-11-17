@@ -1,4 +1,8 @@
 module.exports = {
+  ease(n) {
+    return (Math.sin((n + 1.5) * Math.PI) + 1.0) / 2.0;
+  },
+
   emptyDirectory(fs, dirName) {
     fs.readdirSync(dirName, (readErr, files) => {
       if (readErr) throw readErr;
@@ -17,6 +21,10 @@ module.exports = {
     if (!ntext || ntext.length <= 0) return false;
     const firstChar = ntext[0].toLowerCase();
     return ['a', 'e', 'i', 'o', 'u'].indexOf(firstChar) >= 0;
+  },
+
+  lerp(a, b, percent) {
+    return (1.0 * b - a) * percent + a;
   },
 
   norm(value, a, b) {

@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const colormap = require('colormap');
 const csv = require('csv-parser');
 const fs = require('fs');
 const meyda = require('meyda');
@@ -307,22 +308,34 @@ function analyzeAudio(items) {
         tonalityData.push(features.spectralKurtosis);
         const chroma = _.zip(chromaPitches, features.chroma);
         const chromaEstimate = _.max(chroma, (c) => c[1]);
-        analyzedItem.words[j].phones[k].pitch = chromaEstimate[0];
+        const pitch = Number.isNaN(chromaEstimate[1]) ? 'NA' : chromaEstimate[0];
+        analyzedItem.words[j].phones[k].pitch = pitch;
       });
     });
-    // normalize data
+    // normalize data and add color
     const minLoudness = _.min(loudnessData);
     const maxLoudness = _.max(loudnessData);
     const minTonality = _.min(tonalityData);
     const maxTonality = _.max(tonalityData);
+    const nshades = 128;
+    const colors = colormap({
+      colormap: config.colormap,
+      format: 'hex',
+      nshades,
+    });
     analyzedItem.words.forEach((word, j) => {
       word.phones.forEach((phone, k) => {
         let nLoudness = utils.norm(phone.loudness, minLoudness, maxLoudness);
+        nLoudness **= 0.5;
         nLoudness = utils.roundToPrecision(nLoudness, config.dataPrecision);
         analyzedItem.words[j].phones[k].loudness = nLoudness;
         let nTonality = utils.norm(phone.tonality, minTonality, maxTonality);
+        nTonality **= 0.5;
         nTonality = utils.roundToPrecision(nTonality, config.dataPrecision);
         analyzedItem.words[j].phones[k].tonality = nTonality;
+        // add color
+        const colorIndex = Math.round((1.0 - nTonality) * (nshades - 1));
+        analyzedItem.words[j].phones[k].color = colors[colorIndex];
       });
     });
     analyzedItems.push(analyzedItem);

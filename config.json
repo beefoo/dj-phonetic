@@ -1,6 +1,21 @@
 {
     "audioDirectoryIn": "./audio/",
     "audioDirectoryOut": "./public/audio/",
+    "chromesthesia": {
+        "C": "#ff0000",
+        "C♯": "#9100ff",
+        "D": "#ffff00",
+        "D♯": "#b8448c",
+        "E": "#c4f2ff",
+        "F": "#ac0031",
+        "F♯": "#808cfd",
+        "G": "#ff8000",
+        "G♯": "#bc76fc",
+        "A": "#2fcd30",
+        "A♯": "#aa677d",
+        "B": "#8fcaff",
+        "NA": "#666666"
+    },
     "dataPrecision": 4,
     "metadataFile": "metadata.csv",
     "nonverbals": [

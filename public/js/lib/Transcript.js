@@ -71,6 +71,19 @@ class Transcript {
       });
       return pword;
     });
+    // add normalized durations
+    const durs = _.pluck(_.flatten(_.pluck(pdata.words, 'phones')), 'dur');
+    const minDur = _.min(durs);
+    const maxDur = _.max(durs);
+    pdata.words = pdata.words.map((word, i) => {
+      const pword = word;
+      pword.phones = word.phones.map((phone, j) => {
+        const pphone = phone;
+        pphone.ndur = MathUtil.norm(phone.dur, minDur, maxDur) ** 0.5;
+        return pphone;
+      });
+      return pword;
+    });
     return pdata;
   }
 
@@ -85,9 +98,13 @@ class Transcript {
       html += `<div class="word-wrapper" data-index="${i}">`;
       w.phones.forEach((p, j) => {
         let className = 'clip phone';
+        let vizCss = '';
+        vizCss += `background: ${p.color}; `;
+        // vizCss += `opacity: ${p.loudness}; `;
         if (j === 0) className += ' first';
         if (j === w.phones.length - 1) className += ' last';
         html += `<button id="${p.id}" class="${className}" data-word="${i}" data-phone="${j}">`;
+        html += `<div class="viz" style="${vizCss}"></div>`;
         const displayText = p.displayText.replace(/(\W+)/gi, '<small>$&</small>');
         html += `<span class="original-text">${displayText}</span>`;
         html += `<span class="ghost-text">${displayText}</span>`;
