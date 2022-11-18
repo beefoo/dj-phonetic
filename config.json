@@ -16,6 +16,7 @@
         "B": "#8fcaff",
         "NA": "#666666"
     },
+    "colormap": "plasma",
     "dataPrecision": 4,
     "metadataFile": "metadata.csv",
     "nonverbals": [
