@@ -5,6 +5,7 @@ class PointerManager {
       onPointerDown: (pointer, $el) => {},
       onPointerEnter: (pointer, $el) => {},
       onPointerExit: (pointer, $el) => {},
+      onSwipe: (vector, pointer, $el) => {},
       target: '#touchable',
     };
     this.options = _.extend({}, defaults, options);
@@ -42,6 +43,7 @@ class PointerManager {
       const options = {
         id: pointerId,
         event,
+        onSwipe: this.options.onSwipe,
       };
       pointer = new Pointer(options);
       this.pointers[pointerId] = pointer;
@@ -94,6 +96,7 @@ class PointerManager {
     const pointer = this.getPointer(event, true);
     if (!pointer) return;
 
+    pointer.onMove(event);
     const $child = this.getChildFromEvent(event);
     if ($child) {
       const childId = $child.attr('id');

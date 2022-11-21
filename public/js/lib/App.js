@@ -25,10 +25,20 @@ class App {
       childSelector: '.clip',
       onPointerDown: (pointer, $el) => this.playClipFromElement(pointer, $el),
       onPointerEnter: (pointer, $el) => this.playClipFromElement(pointer, $el),
+      onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
     $('.clip').on('click', (e) => this.onKeyboardClick(e));
     this.update();
+  }
+
+  onSwipe(vector, pointer, $el) {
+    if (vector.right === false || vector.right <= 0) return;
+    if (vector.up || vector.down) return;
+    const nVelocity = vector.right;
+    const clip = this.transcript.getClipFromElement($el);
+    if (!clip || clip.type === 'word') return;
+    const startingPhone = clip;
   }
 
   playClipFromElement(pointer, $el) {
