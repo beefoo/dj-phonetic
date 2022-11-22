@@ -1,6 +1,9 @@
 class App {
   constructor(options = {}) {
-    const defaults = {};
+    const defaults = {
+      phraseDurationMin: 200,
+      phraseDurationMax: 2000,
+    };
     this.options = _.extend({}, defaults, options);
     this.init();
   }
@@ -39,6 +42,10 @@ class App {
     const clip = this.transcript.getClipFromElement($el);
     if (!clip || clip.type === 'word') return;
     const startingPhone = clip;
+    const { phraseDurationMin, phraseDurationMax } = this.options;
+    const duration = MathUtil.lerp(phraseDurationMin, phraseDurationMax, nVelocity);
+    const phones = this.transcript.getPhraseByDuration(startingPhone, duration / 1000.0);
+    this.playClips(phones);
   }
 
   playClipFromElement(pointer, $el) {
@@ -48,23 +55,28 @@ class App {
     if (pointer.isPrimary) $el[0].focus();
     // highlight the phone
     if (clip.type === 'phone') {
-      $el.removeClass('playing');
-      setTimeout(() => $el.addClass('playing'), 1);
+      this.playClips([clip]);
     // if word, highlight each phone of the word
     } else if (clip.type === 'word') {
-      const now = Date.now();
-      const firstPhone = clip.phones[0];
-      clip.phones.forEach((phone, i) => {
-        const id = `${phone.id}-${now}`;
-        const when = phone.start - firstPhone.start;
-        const $phoneEl = $(`#${phone.id}`);
-        this.audioPlayer.schedule(id, when, () => {
-          $phoneEl.removeClass('playing');
-          setTimeout(() => $phoneEl.addClass('playing'), 1);
-        });
-      });
+      this.playClips(clip.phones);
     }
-    this.audioPlayer.play(clip.start, clip.end);
+  }
+
+  playClips(clips) {
+    if (clips.length <= 0) return;
+    const now = Date.now();
+    const firstClip = clips[0];
+    const lastClip = _.last(clips);
+    clips.forEach((clip, i) => {
+      const id = `${clip.id}-${now}`;
+      const when = clip.start - firstClip.start;
+      const $el = $(`#${clip.id}`);
+      this.audioPlayer.schedule(id, when, () => {
+        $el.removeClass('playing');
+        setTimeout(() => $el.addClass('playing'), 1);
+      });
+    });
+    this.audioPlayer.play(firstClip.start, lastClip.end);
   }
 
   update() {
