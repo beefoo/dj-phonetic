@@ -1,5 +1,4 @@
 const _ = require('underscore');
-const colormap = require('colormap');
 const csv = require('csv-parser');
 const fs = require('fs');
 const meyda = require('meyda');
@@ -9,6 +8,7 @@ const wav = require('node-wav');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const config = require('./config.json');
+const classifier = require('./classifier');
 const utils = require('./utils');
 
 const { argv } = yargs(hideBin(process.argv));
@@ -276,7 +276,13 @@ function mapPhones(items, mappings) {
 
 function analyzeAudio(items) {
   const analyzedItems = [];
-  const chromaPitches = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
+  const featureList = [
+    'energy', // indicator to the loudness of the signal
+    'spectralCentroid', // “brightness” of a sound, e.g. a bass guitar (low spectral centroid) and a trumpet (high spectral centroid)
+    'spectralKurtosis', // indicate “pitchiness / tonality” of a sound, where 0.0 is not tonal, and 1.0 is very tonal
+    'spectralSpread', // differentiate between noisy (high spectral spread) and pitched sounds (low spectral spread)
+    'perceptualSharpness', // perceived sharpness, where 0.0 is not sharp (e.g. bass-drum) and 1.0 very sharp (e.g. snare-drum).
+  ];
   items.forEach((item, i) => {
     const analyzedItem = _.clone(item);
     const audioBuffer = fs.readFileSync(item.audio);
@@ -284,58 +290,35 @@ function analyzeAudio(items) {
     const { sampleRate, channelData } = audioData;
     const monoChannelData = channelData[0];
     meyda.sampleRate = sampleRate;
-    const loudnessData = [];
-    const tonalityData = [];
+    const featureData = [];
     item.words.forEach((word, j) => {
       word.phones.forEach((phone, k) => {
         const { start, end } = phone;
-        const phoneDur = end - start;
-        const phoneSamples = phoneDur * sampleRate;
-        const nearestPowerOfTwo = Math.round(Math.log(phoneSamples) / Math.log(2));
-        const bufferSize = 2 ** nearestPowerOfTwo;
-        meyda.bufferSize = bufferSize;
-        let indexStart = Math.floor(start * sampleRate);
-        let indexEnd = indexStart + bufferSize;
-        if (indexEnd >= monoChannelData.length) {
-          indexEnd = monoChannelData.length - 1;
-          indexStart = indexEnd - bufferSize;
-        }
-        const signal = monoChannelData.slice(indexStart, indexEnd);
-        const features = meyda.extract(['energy', 'spectralKurtosis', 'chroma'], signal);
-        analyzedItem.words[j].phones[k].loudness = features.energy;
-        analyzedItem.words[j].phones[k].tonality = features.spectralKurtosis;
-        loudnessData.push(features.energy);
-        tonalityData.push(features.spectralKurtosis);
-        const chroma = _.zip(chromaPitches, features.chroma);
-        const chromaEstimate = _.max(chroma, (c) => c[1]);
-        const pitch = Number.isNaN(chromaEstimate[1]) ? 'NA' : chromaEstimate[0];
-        analyzedItem.words[j].phones[k].pitch = pitch;
+        // eslint-disable-next-line max-len
+        const features = classifier.extractFeatures(meyda, monoChannelData, sampleRate, start, end, featureList);
+        analyzedItem.words[j].phones[k].features = features;
+        featureData.push(features);
       });
     });
-    // normalize data and add color
-    const minLoudness = _.min(loudnessData);
-    const maxLoudness = _.max(loudnessData);
-    const minTonality = _.min(tonalityData);
-    const maxTonality = _.max(tonalityData);
-    const nshades = 128;
-    const colors = colormap({
-      colormap: config.colormap,
-      format: 'hex',
-      nshades,
+    // get min/max of features
+    const featureRanges = {};
+    featureList.forEach((feature) => {
+      let featureValues = _.pluck(featureData, feature);
+      featureValues = featureValues.filter((value) => !Number.isNaN(value));
+      featureRanges[feature] = {};
+      featureRanges[feature].min = _.min(featureValues);
+      featureRanges[feature].max = _.max(featureValues);
     });
+    // normalize values
     analyzedItem.words.forEach((word, j) => {
       word.phones.forEach((phone, k) => {
-        let nLoudness = utils.norm(phone.loudness, minLoudness, maxLoudness);
-        nLoudness **= 0.5;
-        nLoudness = utils.roundToPrecision(nLoudness, config.dataPrecision);
-        analyzedItem.words[j].phones[k].loudness = nLoudness;
-        let nTonality = utils.norm(phone.tonality, minTonality, maxTonality);
-        nTonality **= 0.5;
-        nTonality = utils.roundToPrecision(nTonality, config.dataPrecision);
-        analyzedItem.words[j].phones[k].tonality = nTonality;
-        // add color
-        const colorIndex = Math.round((1.0 - nTonality) * (nshades - 1));
-        analyzedItem.words[j].phones[k].color = colors[colorIndex];
+        featureList.forEach((feature) => {
+          const { min, max } = featureRanges[feature];
+          let nvalue = utils.norm(phone.features[feature], min, max);
+          nvalue **= 0.5;
+          nvalue = utils.roundToPrecision(nvalue, config.dataPrecision);
+          analyzedItem.words[j].phones[k].features[feature] = nvalue;
+        });
       });
     });
     analyzedItems.push(analyzedItem);

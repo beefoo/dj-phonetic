@@ -178,13 +178,9 @@ class Transcript {
       html += `<div class="word-wrapper" data-index="${i}">`;
       w.phones.forEach((p, j) => {
         let className = 'clip phone';
-        let vizCss = '';
-        vizCss += `background: ${p.color}; `;
-        // vizCss += `opacity: ${p.loudness}; `;
         if (j === 0) className += ' first';
         if (j === w.phones.length - 1) className += ' last';
         html += `<button id="${p.id}" class="${className}" data-word="${i}" data-phone="${j}">`;
-        html += `<div class="viz" style="${vizCss}"></div>`;
         const displayText = p.displayText.replace(/(\W+)/gi, '<small>$&</small>');
         html += `<span class="original-text">${displayText}</span>`;
         html += `<span class="ghost-text">${displayText}</span>`;
