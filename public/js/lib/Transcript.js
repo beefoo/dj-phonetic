@@ -36,6 +36,11 @@ class Transcript {
     return this.getClipFromElement($el);
   }
 
+  getFeatures() {
+    if (!this.data || !this.data.words.length) return [];
+    return _.keys(this.data.words[0].phones[0].features);
+  }
+
   getPhraseByDuration(startingClip, duration, endSentenceWithinWords = 1) {
     const isWord = startingClip.type === 'word';
     let i = isWord ? startingClip.index : startingClip.wordIndex;
@@ -160,6 +165,7 @@ class Transcript {
       pword.phones = word.phones.map((phone, j) => {
         const pphone = phone;
         pphone.ndur = MathUtil.norm(phone.dur, minDur, maxDur) ** 0.5;
+        pphone.features.duration = MathUtil.round(pphone.ndur, 4);
         return pphone;
       });
       return pword;

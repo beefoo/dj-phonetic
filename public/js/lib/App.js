@@ -3,6 +3,7 @@ class App {
     const defaults = {
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
+      dataviz: true,
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -31,6 +32,11 @@ class App {
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
+    if (this.options.dataviz) {
+      this.dataviz = new DataViz({
+        features: this.transcript.getFeatures(),
+      });
+    }
     $('.clip').on('click', (e) => this.onKeyboardClick(e));
     this.update();
   }
@@ -52,7 +58,12 @@ class App {
     const clip = this.transcript.getClipFromElement($el);
     if (!clip) return;
 
-    if (pointer.isPrimary) $el[0].focus();
+    if (pointer.isPrimary) {
+      $el[0].focus();
+      if (this.dataviz && _.has(clip, 'features')) {
+        this.dataviz.onChange(clip.features);
+      }
+    }
     // highlight the phone
     if (clip.type === 'phone') {
       this.playClips([clip]);
