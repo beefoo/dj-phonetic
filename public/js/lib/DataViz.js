@@ -3,6 +3,7 @@ class DataViz {
     const defaults = {
       features: [],
       parent: '#app',
+      template: '#dataviz-template',
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -14,33 +15,28 @@ class DataViz {
   }
 
   loadUI() {
-    const { features } = this.options;
-    let html = '';
-    html += '<div class="dataviz">';
-    features.forEach((feature) => {
-      html += '<div class="feature">';
-      html += `  <div id="feature-${feature}" class="value"></div>`;
-      html += `  <div class="label">${feature}</div>`;
-      html += '</div>';
-    });
-    html += '</div>';
+    const features = this.options.features.map((name) => ({ name }));
+    const html = StringUtil.loadTemplateFromElement(this.options.template, Mustache, { features });
     const $el = $(html);
     this.$parent.append($el);
     this.features = features.map((feature) => {
       const f = {};
-      f.name = feature;
-      f.$el = $(`#feature-${feature}`);
+      f.name = feature.name;
+      f.$el = $(`#feature-${feature.name}`);
       return f;
     });
   }
 
   onChange(features) {
     this.features.forEach((feature) => {
+      const { $el } = feature;
+      const $bar = $el.find('.bar');
+      const $label = $el.find('.value');
       const value = features[feature.name];
       const green = Math.round(value * 255);
-      feature.$el.css('height', `${(value * 100)}%`);
-      feature.$el.css('background-color', `rgb(255, ${green}, 0)`);
-      feature.$el.html(`<span>${value}</span>`);
+      $bar.css('width', `${(value * 100)}%`);
+      $bar.css('background-color', `rgba(255, ${green}, 0, 0.4)`);
+      $label.text(value);
     });
   }
 }

@@ -36,7 +36,27 @@
     </main>
   </div>
 
+  <div id="dataviz-template" class="template">
+    <div class="dataviz">
+    {{#features}}
+      <div id="feature-{{name}}" class="feature">
+        <div class="bar"></div>
+        <select data-feature="{{name}}" class="sort control">
+          <option value="">-</option>
+          <option value="asc">↑</option>
+          <option value="desc">↓</option>
+        </select>
+        <input type="number" min="0" max="1" step="0.05" value="0" data-feature="{{name}}" class="filter-min control" />
+        <input type="number" min="0" max="1" step="0.05" value="1" data-feature="{{name}}" class="filter-max control" />
+        <div class="value"></div>
+        <div class="label">{{name}}</div>
+      </div>
+    {{/features}}
+    </div>
+  </div>
+
   <script src="js/vendor/jquery-3.6.1.min.js"></script>
+  <script src="js/vendor/mustache.min.js"></script>
   <script src="js/vendor/tuna-min.js"></script>
   <script src="js/vendor/underscore-umd-1.13.6.min.js"></script>
 
@@ -46,6 +66,7 @@
   <script src="js/lib/MathUtil.js"></script>
   <script src="js/lib/Pointer.js"></script>
   <script src="js/lib/PointerManager.js"></script>
+  <script src="js/lib/StringUtil.js"></script>
   <script src="js/lib/Transcript.js"></script>
 
   <script src="js/main.js"></script>

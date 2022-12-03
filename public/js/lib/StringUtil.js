@@ -1,4 +1,13 @@
 class StringUtil {
+  static loadTemplateFromElement(id, renderer, data) {
+    const templateString = document.getElementById(id.replace('#', '')).innerHTML;
+    return StringUtil.loadTemplateFromString(templateString, renderer, data);
+  }
+
+  static loadTemplateFromString(templateString, renderer, data) {
+    return renderer.render(templateString, data);
+  }
+
   static queryParams() {
     const searchString = window.location.search;
     if (searchString.length <= 0) return {};
