@@ -36,6 +36,31 @@
     </main>
   </div>
 
+  <div id="transcript-template" class="template">
+    <div class="text">
+    {{#words}}
+      {{#hasPrepend}}
+        <div class="non-word prepend">{{prepend}}</div>
+      {{/hasPrepend}}
+      <div class="word-wrapper" data-index="{{index}}">
+        {{#phones}}
+          <button id="{{id}}" class="clip phone{{className}}" data-word="{{wordIndex}}" data-phone="{{index}}">
+          <span class="original-text">{{{displayText}}}</span>
+          <span class="ghost-text">{{{displayText}}}</span>
+          <span class="phone-text">{{text}}</span>
+          </button>
+        {{/phones}}
+        <button id="{{id}}" class="clip word" data-word="{{index}}">
+        <span class="visually-hidden">{{text}}</span>
+        </button>
+      </div>
+      {{#hasAppend}}
+        <div class="non-word append">{{append}}</div>
+      {{/hasAppend}}
+    {{/words}}
+    </div>
+  </div>
+
   <div id="dataviz-template" class="template">
     <div class="dataviz">
     {{#features}}

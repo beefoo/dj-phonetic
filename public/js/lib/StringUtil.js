@@ -5,7 +5,9 @@ class StringUtil {
   }
 
   static loadTemplateFromString(templateString, renderer, data) {
-    return renderer.render(templateString, data);
+    let rendered = renderer.render(templateString, data);
+    rendered = rendered.replace(/>\s+</g, '><');
+    return rendered;
   }
 
   static queryParams() {

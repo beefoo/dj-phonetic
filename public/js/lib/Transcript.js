@@ -5,6 +5,7 @@ class Transcript {
       onEnterClip: (clip) => { console.log(clip); },
       spacingMax: 24,
       spacingMin: 12,
+      template: '#transcript-template',
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -14,6 +15,7 @@ class Transcript {
     this.isLoading = false;
     this.loadedId = false;
     this.$el = $(this.options.el);
+    this.templateString = $(this.options.template).html();
   }
 
   getClipFromElement($el) {
@@ -111,6 +113,8 @@ class Transcript {
       pword.text = pword.displayText ? pword.displayText : pword.text;
       pword.durBefore = 0;
       pword.isLast = i >= (pdata.words.length - 1);
+      pword.hasPrepend = _.has(word, 'prepend');
+      pword.hasAppend = _.has(word, 'append');
       if (i > 0) pword.durBefore = word.start - pdata.words[i - 1].end;
       pword.phones = word.phones.map((phone, j) => {
         const pphone = phone;
@@ -120,6 +124,11 @@ class Transcript {
         pphone.type = 'phone';
         pphone.dur = phone.end - phone.start;
         pphone.isLast = j >= (word.phones.length - 1);
+        pphone.displayText = phone.displayText.replace(/(\W+)/gi, '<small>$&</small>');
+        let className = '';
+        if (j === 0) className += ' first';
+        if (j === word.phones.length - 1) className += ' last';
+        pphone.className = className;
         return pphone;
       });
       return pword;
@@ -175,33 +184,7 @@ class Transcript {
 
   render() {
     const d = this.data;
-    let html = '';
-    html += '<div class="text">';
-    d.words.forEach((w, i) => {
-      if (w.prepend) {
-        html += `<div class="non-word prepend">${w.prepend}</div>`;
-      }
-      html += `<div class="word-wrapper" data-index="${i}">`;
-      w.phones.forEach((p, j) => {
-        let className = 'clip phone';
-        if (j === 0) className += ' first';
-        if (j === w.phones.length - 1) className += ' last';
-        html += `<button id="${p.id}" class="${className}" data-word="${i}" data-phone="${j}">`;
-        const displayText = p.displayText.replace(/(\W+)/gi, '<small>$&</small>');
-        html += `<span class="original-text">${displayText}</span>`;
-        html += `<span class="ghost-text">${displayText}</span>`;
-        html += `<span class="phone-text">${p.text}</span>`;
-        html += '</button>'; // .phone
-      });
-      html += `<button id="${w.id}" class="clip word" data-word="${i}">`;
-      html += `<span class="visually-hidden">${w.text}</span>`;
-      html += '</button>'; // .word
-      html += '</div>'; // .word-wrapper
-      if (w.append) {
-        html += `<div class="non-word append">${w.append}</div>`;
-      }
-    });
-    html += '</div>'; // .text
+    const html = StringUtil.loadTemplateFromString(this.templateString, Mustache, d);
     this.$el.html(html);
   }
 }
