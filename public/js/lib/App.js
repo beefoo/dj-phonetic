@@ -21,7 +21,8 @@ class App {
     const { pointerType } = event;
     // only account for keyboard click
     if (pointerType !== '') return;
-    this.playClipFromElement($(event.currentTarget));
+    const fakePointer = { isPrimary: true };
+    this.playClipFromElement(fakePointer, $(event.currentTarget));
   }
 
   onReady() {
@@ -35,9 +36,15 @@ class App {
     if (this.options.dataviz) {
       this.dataviz = new DataViz({
         features: this.transcript.getFeatures(),
+        onSort: (feature, direction) => {
+          this.transcript.sort(feature, direction);
+        },
+        onSortOff: () => {
+          this.transcript.sortOff();
+        },
       });
     }
-    $('.clip').on('click', (e) => this.onKeyboardClick(e));
+    $('#transcript').on('click', '.clip', (e) => this.onKeyboardClick(e));
     this.update();
   }
 

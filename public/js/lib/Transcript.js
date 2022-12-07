@@ -14,6 +14,7 @@ class Transcript {
   init() {
     this.isLoading = false;
     this.loadedId = false;
+    this.sortValue = false;
     this.$el = $(this.options.el);
     this.templateString = $(this.options.template).html();
   }
@@ -99,7 +100,7 @@ class Transcript {
     this.data = this.constructor.parseData(data);
     this.isLoading = false;
     this.loadedId = url;
-    this.render();
+    this.render(this.data);
     this.loadPromise.resolve(url);
   }
 
@@ -182,9 +183,33 @@ class Transcript {
     return pdata;
   }
 
-  render() {
-    const d = this.data;
-    const html = StringUtil.loadTemplateFromString(this.templateString, Mustache, d);
+  render(data) {
+    const html = StringUtil.loadTemplateFromString(this.templateString, Mustache, data);
     this.$el.html(html);
+  }
+
+  sort(feature, direction) {
+    const phones = _.flatten(_.pluck(this.data.words, 'phones'));
+    const multiplier = direction === 'asc' ? 1 : -1;
+    const sortedPhones = _.sortBy(phones, (phone) => multiplier * phone.features[feature]);
+    const wordHolder = {
+      hasPrepend: false,
+      hasAppend: false,
+      text: false,
+      index: 0,
+      phones: sortedPhones,
+    };
+    const sortedData = {
+      words: [wordHolder],
+    };
+    this.$el.addClass('sorted');
+    this.sortValue = [feature, direction];
+    this.render(sortedData);
+  }
+
+  sortOff() {
+    this.$el.removeClass('sorted');
+    this.sortValue = false;
+    this.render(this.data);
   }
 }

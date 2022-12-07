@@ -2,6 +2,8 @@ class DataViz {
   constructor(options = {}) {
     const defaults = {
       features: [],
+      onSort: (feature, direction) => {},
+      onSortOff: () => {},
       parent: '#app',
       template: '#dataviz-template',
     };
@@ -12,6 +14,14 @@ class DataViz {
   init() {
     this.$parent = $(this.options.parent);
     this.loadUI();
+    this.loadListeners();
+  }
+
+  loadListeners() {
+    $('.sort').on('change', (e) => {
+      const $el = $(e.currentTarget);
+      this.setSort($el.attr('data-feature'), $el.val());
+    });
   }
 
   loadUI() {
@@ -38,5 +48,15 @@ class DataViz {
       $bar.css('background-color', `rgba(255, ${green}, 0, 0.4)`);
       $label.text(value);
     });
+  }
+
+  setSort(feature, direction) {
+    const isActive = direction !== '';
+    if (isActive) {
+      $(`.sort[data-feature!="${feature}"]`).val('');
+      this.options.onSort(feature, direction);
+    } else {
+      this.options.onSortOff();
+    }
   }
 }

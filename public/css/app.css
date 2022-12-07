@@ -95,6 +95,9 @@ li {
   line-height: 1;
   position: relative;
 }
+.sorted .word-wrapper {
+  white-space: normal;
+}
 .word-wrapper:last-child,
 .non-word:last-child {
   margin-right: 0;
@@ -255,6 +258,7 @@ li {
   width: 0;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
 .dataviz .value,
 .dataviz .control {
@@ -267,7 +271,8 @@ li {
   border: none;
 }
 .dataviz .control {
-  max-width: 40px;
+  max-width: 52px;
+  z-index: 100;
 }
 .dataviz .value {
   top: 0;

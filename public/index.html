@@ -50,9 +50,11 @@
           <span class="phone-text">{{text}}</span>
           </button>
         {{/phones}}
+        {{#text}}
         <button id="{{id}}" class="clip word" data-word="{{index}}">
         <span class="visually-hidden">{{text}}</span>
         </button>
+        {{/text}}
       </div>
       {{#hasAppend}}
         <div class="non-word append">{{append}}</div>
@@ -71,8 +73,8 @@
           <option value="asc">↑</option>
           <option value="desc">↓</option>
         </select>
-        <input type="number" min="0" max="1" step="0.05" value="0" data-feature="{{name}}" class="filter-min control" />
-        <input type="number" min="0" max="1" step="0.05" value="1" data-feature="{{name}}" class="filter-max control" />
+        <input type="number" min="0" max="1" step="0.01" value="0" data-feature="{{name}}" class="filter-min control" />
+        <input type="number" min="0" max="1" step="0.01" value="1" data-feature="{{name}}" class="filter-max control" />
         <div class="value"></div>
         <div class="label">{{name}}</div>
       </div>
