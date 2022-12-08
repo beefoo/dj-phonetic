@@ -36,13 +36,12 @@ class DataViz {
   }
 
   loadUI() {
-    const features = this.options.features.map((name) => ({ name }));
+    const { features } = this.options;
     const html = StringUtil.loadTemplateFromElement(this.options.template, Mustache, { features });
     const $el = $(html);
     this.$parent.append($el);
     this.features = features.map((feature) => {
-      const f = {};
-      f.name = feature.name;
+      const f = _.clone(feature);
       f.$el = $(`#feature-${feature.name}`);
       return f;
     });

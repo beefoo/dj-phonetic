@@ -94,8 +94,8 @@ class Transcript {
   }
 
   getFeatures() {
-    if (!this.data || !this.data.words.length) return [];
-    return _.keys(this.data.words[0].phones[0].features);
+    if (!this.data) return [];
+    return this.data.features;
   }
 
   getPhraseByDuration(startingClip, duration, endSentenceWithinWords = 1) {

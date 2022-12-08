@@ -1,6 +1,13 @@
 {
     "audioDirectoryIn": "./audio/",
     "audioDirectoryOut": "./public/audio/",
+    "audioFeatures": [
+        {"name": "energy", "description": "indicator to the loudness of the signal"},
+        {"name": "spectralCentroid", "description": "“brightness” of a sound, e.g. a bass guitar (low spectral centroid) and a trumpet (high spectral centroid)"},
+        {"name": "spectralKurtosis", "description": "indicate “pitchiness / tonality” of a sound, where 0.0 is not tonal, and 1.0 is very tonal"},
+        {"name": "spectralSpread", "description": "differentiate between noisy (high spectral spread) and pitched sounds (low spectral spread)"},
+        {"name": "perceptualSharpness", "description": "perceived sharpness, where 0.0 is not sharp (e.g. bass-drum) and 1.0 very sharp (e.g. snare-drum)."}
+    ],
     "chromesthesia": {
         "C": "#ff0000",
         "C♯": "#9100ff",

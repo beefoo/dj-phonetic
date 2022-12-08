@@ -276,15 +276,11 @@ function mapPhones(items, mappings) {
 
 function analyzeAudio(items) {
   const analyzedItems = [];
-  const featureList = [
-    'energy', // indicator to the loudness of the signal
-    'spectralCentroid', // “brightness” of a sound, e.g. a bass guitar (low spectral centroid) and a trumpet (high spectral centroid)
-    'spectralKurtosis', // indicate “pitchiness / tonality” of a sound, where 0.0 is not tonal, and 1.0 is very tonal
-    'spectralSpread', // differentiate between noisy (high spectral spread) and pitched sounds (low spectral spread)
-    'perceptualSharpness', // perceived sharpness, where 0.0 is not sharp (e.g. bass-drum) and 1.0 very sharp (e.g. snare-drum).
-  ];
+  const { audioFeatures } = config;
+  const featureList = _.pluck(audioFeatures, 'name');
   items.forEach((item, i) => {
     const analyzedItem = _.clone(item);
+    analyzedItem.features = audioFeatures.slice(0);
     const audioBuffer = fs.readFileSync(item.audio);
     const audioData = wav.decode(audioBuffer);
     const { sampleRate, channelData } = audioData;
