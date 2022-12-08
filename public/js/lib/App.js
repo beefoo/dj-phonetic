@@ -36,6 +36,12 @@ class App {
     if (this.options.dataviz) {
       this.dataviz = new DataViz({
         features: this.transcript.getFeatures(),
+        onFilterMax: (feature, value) => {
+          this.transcript.filterMax(feature, value);
+        },
+        onFilterMin: (feature, value) => {
+          this.transcript.filterMin(feature, value);
+        },
         onSort: (feature, direction) => {
           this.transcript.sort(feature, direction);
         },

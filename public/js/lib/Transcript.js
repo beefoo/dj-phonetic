@@ -15,8 +15,62 @@ class Transcript {
     this.isLoading = false;
     this.loadedId = false;
     this.sortValue = false;
+    this.filters = {};
     this.$el = $(this.options.el);
     this.templateString = $(this.options.template).html();
+  }
+
+  filterAndSort() {
+    const modifiedData = {};
+    // apply sort
+    if (this.sortValue !== false) {
+      const [sortFeature, sortDirection] = this.sortValue;
+      const phones = _.flatten(_.pluck(this.data.words, 'phones'));
+      const multiplier = sortDirection === 'asc' ? 1 : -1;
+      const sortedPhones = _.sortBy(phones, (phone) => multiplier * phone.features[sortFeature]);
+      const wordHolder = {
+        hasPrepend: false,
+        hasAppend: false,
+        text: false,
+        index: 0,
+        phones: sortedPhones,
+      };
+      modifiedData.words = [wordHolder];
+    } else {
+      modifiedData.words = this.data.words.slice(0);
+    }
+    // apply filters
+    const { filters } = this;
+    if (!_.isEmpty(filters)) {
+      modifiedData.words = modifiedData.words.map((word) => {
+        const w = _.clone(word);
+        w.phones = word.phones.filter((phone) => {
+          let valid = true;
+          _.each(filters, (range, feature) => {
+            const [minValue, maxValue] = range;
+            if (phone.features[feature] < minValue
+              || phone.features[feature] > maxValue) valid = false;
+          });
+          return valid;
+        });
+        return w;
+      });
+    }
+    return modifiedData;
+  }
+
+  filterMax(feature, value) {
+    if (!_.has(this.filters, feature)) this.filters[feature] = [0, 1];
+    this.filters[feature][1] = value;
+    const modifiedData = this.filterAndSort();
+    this.render(modifiedData);
+  }
+
+  filterMin(feature, value) {
+    if (!_.has(this.filters, feature)) this.filters[feature] = [0, 1];
+    this.filters[feature][0] = value;
+    const modifiedData = this.filterAndSort();
+    this.render(modifiedData);
   }
 
   getClipFromElement($el) {
@@ -189,27 +243,16 @@ class Transcript {
   }
 
   sort(feature, direction) {
-    const phones = _.flatten(_.pluck(this.data.words, 'phones'));
-    const multiplier = direction === 'asc' ? 1 : -1;
-    const sortedPhones = _.sortBy(phones, (phone) => multiplier * phone.features[feature]);
-    const wordHolder = {
-      hasPrepend: false,
-      hasAppend: false,
-      text: false,
-      index: 0,
-      phones: sortedPhones,
-    };
-    const sortedData = {
-      words: [wordHolder],
-    };
     this.$el.addClass('sorted');
     this.sortValue = [feature, direction];
-    this.render(sortedData);
+    const modifiedData = this.filterAndSort();
+    this.render(modifiedData);
   }
 
   sortOff() {
     this.$el.removeClass('sorted');
     this.sortValue = false;
-    this.render(this.data);
+    const modifiedData = this.filterAndSort();
+    this.render(modifiedData);
   }
 }

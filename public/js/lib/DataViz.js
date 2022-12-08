@@ -2,6 +2,8 @@ class DataViz {
   constructor(options = {}) {
     const defaults = {
       features: [],
+      onFilterMax: (feature, value) => {},
+      onFilterMin: (feature, value) => {},
       onSort: (feature, direction) => {},
       onSortOff: () => {},
       parent: '#app',
@@ -22,6 +24,15 @@ class DataViz {
       const $el = $(e.currentTarget);
       this.setSort($el.attr('data-feature'), $el.val());
     });
+    const onFilter = (e, minOrMax) => {
+      const $el = $(e.currentTarget);
+      const featureName = $el.attr('data-feature');
+      const value = parseFloat($el.val());
+      if (minOrMax === 'min') this.setFilterMin(featureName, value);
+      else this.setFilterMax(featureName, value);
+    };
+    $('.filter-min').on('input', _.debounce((e) => onFilter(e, 'min'), 250));
+    $('.filter-max').on('input', _.debounce((e) => onFilter(e, 'max'), 250));
   }
 
   loadUI() {
@@ -48,6 +59,14 @@ class DataViz {
       $bar.css('background-color', `rgba(255, ${green}, 0, 0.4)`);
       $label.text(value);
     });
+  }
+
+  setFilterMin(feature, value) {
+    this.options.onFilterMin(feature, value);
+  }
+
+  setFilterMax(feature, value) {
+    this.options.onFilterMax(feature, value);
   }
 
   setSort(feature, direction) {
