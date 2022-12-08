@@ -3,9 +3,10 @@ class App {
     const defaults = {
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
-      dataviz: true,
+      dataviz: false,
     };
-    this.options = _.extend({}, defaults, options);
+    const q = StringUtil.queryParams();
+    this.options = _.extend({}, defaults, options, q);
     this.init();
   }
 
@@ -33,7 +34,7 @@ class App {
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
-    if (this.options.dataviz) {
+    if (this.options.dataviz !== false) {
       this.dataviz = new DataViz({
         features: this.transcript.getFeatures(),
         onFilterMax: (feature, value) => {

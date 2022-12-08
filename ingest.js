@@ -291,7 +291,8 @@ function analyzeAudio(items) {
       word.phones.forEach((phone, k) => {
         const { start, end } = phone;
         // eslint-disable-next-line max-len
-        const features = classifier.extractFeatures(meyda, monoChannelData, sampleRate, start, end, featureList);
+        const features = classifier.extractFeatures(meyda, monoChannelData, sampleRate, start, end, _.without(featureList, 'duration'));
+        features.duration = end - start;
         analyzedItem.words[j].phones[k].features = features;
         featureData.push(features);
       });

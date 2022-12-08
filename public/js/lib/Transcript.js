@@ -177,7 +177,7 @@ class Transcript {
         pphone.index = j;
         pphone.wordIndex = i;
         pphone.type = 'phone';
-        pphone.dur = phone.end - phone.start;
+        pphone.dur = phone.features.duration;
         pphone.isLast = j >= (word.phones.length - 1);
         pphone.displayText = phone.displayText.replace(/(\W+)/gi, '<small>$&</small>');
         let className = '';
@@ -218,21 +218,6 @@ class Transcript {
         pdata.words[word.index].sentenceLength = sentenceLength;
         pdata.words[word.index].wordIndex = j;
       });
-    });
-
-    // add normalized durations
-    const durs = _.pluck(_.flatten(_.pluck(pdata.words, 'phones')), 'dur');
-    const minDur = _.min(durs);
-    const maxDur = _.max(durs);
-    pdata.words = pdata.words.map((word, i) => {
-      const pword = word;
-      pword.phones = word.phones.map((phone, j) => {
-        const pphone = phone;
-        pphone.ndur = MathUtil.norm(phone.dur, minDur, maxDur) ** 0.5;
-        pphone.features.duration = MathUtil.round(pphone.ndur, 4);
-        return pphone;
-      });
-      return pword;
     });
     return pdata;
   }
