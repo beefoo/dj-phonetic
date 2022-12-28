@@ -9,23 +9,56 @@
         {"name": "spectralSpread", "description": "Differentiate between noisy (high spectral spread) and pitched sounds (low spectral spread)"},
         {"name": "perceptualSharpness", "description": "Perceived sharpness, where 0.0 is not sharp (e.g. bass-drum) and 1.0 very sharp (e.g. snare-drum)."}
     ],
-    "chromesthesia": {
-        "C": "#ff0000",
-        "C♯": "#9100ff",
-        "D": "#ffff00",
-        "D♯": "#b8448c",
-        "E": "#c4f2ff",
-        "F": "#ac0031",
-        "F♯": "#808cfd",
-        "G": "#ff8000",
-        "G♯": "#bc76fc",
-        "A": "#2fcd30",
-        "A♯": "#aa677d",
-        "B": "#8fcaff",
-        "NA": "#666666"
-    },
-    "colormap": "plasma",
     "dataPrecision": 4,
+    "drums": [
+        {
+            "name": "snare",
+            "props": [
+                {"phone": "K"},
+                {"phone": "CH"},
+                {"phone": "SH"},
+                {"feature": "perceptualSharpness", "weight": 0.25},
+                {"feature": "duration", "inverse": true, "weight": 0.125}
+            ]
+        },
+        {
+            "name": "kick",
+            "props": [
+                {"phone": "B"},
+                {"phone": "G"},
+                {"phone": "DH"},
+                {"phone": "P"},
+                {"feature": "spectralCentroid", "inverse": true, "weight": 0.25},
+                {"feature": "perceptualSharpness", "inverse": true, "weight": 0.25}
+            ]
+        },
+        {
+            "name": "hat",
+            "props": [
+                {"phone": "T"},
+                {"phone": "H"},
+                {"phone": "HH"},
+                {"feature": "duration", "inverse": true, "weight": 0.25}
+            ]
+        },
+        {
+            "name": "open",
+            "props": [
+                {"phone": "S"},
+                {"phone": "Z"},
+                {"phone": "F"},
+                {"feature": "duration", "inverse": true, "weight": 0.25}
+            ]
+        },
+        {
+            "name": "voice",
+            "props": [
+                {"vowel": true},
+                {"feature": "spectralKurtosis"},
+                {"feature": "duration", "inverse": true, "weight": 0.25}
+            ]
+        }
+    ],
     "metadataFile": "metadata.csv",
     "nonverbals": [
         "eh",
