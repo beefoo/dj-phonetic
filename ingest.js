@@ -326,7 +326,15 @@ function analyzeAudio(items) {
 function writeDataFiles(items) {
   items.forEach((item, i) => {
     const filename = `${config.audioDirectoryOut}${item.id}.json`;
-    utils.writeJSON(fs, filename, _.omit(item, 'audio', 'text', 'textgrid'));
+    const filenameWithFeatures = `${config.audioDirectoryOut}${item.id}-with-features.json`;
+    const itemOut = _.omit(item, 'audio', 'text', 'textgrid');
+    utils.writeJSON(fs, filenameWithFeatures, itemOut);
+    itemOut.words = itemOut.words.map((word) => {
+      const updatedWord = _.clone(word);
+      updatedWord.phones = word.phones.map((phone) => _.omit(phone, 'features'));
+      return updatedWord;
+    });
+    utils.writeJSON(fs, filename, itemOut);
   });
 }
 

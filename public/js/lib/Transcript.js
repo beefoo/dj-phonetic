@@ -177,7 +177,7 @@ class Transcript {
         pphone.index = j;
         pphone.wordIndex = i;
         pphone.type = 'phone';
-        pphone.dur = phone.features.duration;
+        pphone.dur = phone.end - phone.start;
         pphone.isLast = j >= (word.phones.length - 1);
         pphone.displayText = phone.displayText.replace(/(\W+)/gi, '<small>$&</small>');
         let className = '';
