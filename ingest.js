@@ -324,6 +324,8 @@ function analyzeAudio(items) {
 }
 
 function classifyDrums(items) {
+  const drumNames = _.pluck(config.drums, 'name');
+  const drumData = _.object(_.map(drumNames, (name) => [name, []]));
   const updatedItems = items.map((item) => {
     const updatedItem = _.clone(item);
     updatedItem.words = item.words.map((word) => {
@@ -333,7 +335,7 @@ function classifyDrums(items) {
         const { features, text } = phone;
         const phoneKey = _.findKey(config.arpabet, (value) => value === text);
         const isVowel = utils.isVowel(phoneKey);
-        updatedPhone.drumClassifications = {};
+        updatedPhone.drumScores = {};
         config.drums.forEach((drum) => {
           let score = 0;
           drum.props.forEach((prop) => {
@@ -351,13 +353,36 @@ function classifyDrums(items) {
               else if (prop.filter === true) score = 0;
             }
           });
-          updatedPhone.drumClassifications[drum.name] = score;
+          updatedPhone.drumScores[drum.name] = score;
+          drumData[drum.name].push(score);
         });
         return updatedPhone;
       });
       return updatedWord;
     });
     return updatedItem;
+  });
+  // get min/max of features
+  const drumRanges = {};
+  _.each(drumData, (values, drumName) => {
+    drumRanges[drumName] = {
+      min: _.min(values),
+      max: _.max(values),
+    };
+  });
+  // normalize values
+  updatedItems.forEach((item, i) => {
+    item.words.forEach((word, j) => {
+      word.phones.forEach((phone, k) => {
+        _.each(drumRanges, (range, drumName) => {
+          const { min, max } = range;
+          const value = phone.drumScores[drumName];
+          let nvalue = utils.norm(value, min, max);
+          nvalue = utils.roundToPrecision(nvalue, config.dataPrecision);
+          updatedItems[i].words[j].phones[k].drumScores[drumName] = nvalue;
+        });
+      });
+    });
   });
   return updatedItems;
 }
