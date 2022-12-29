@@ -323,6 +323,45 @@ function analyzeAudio(items) {
   return analyzedItems;
 }
 
+function classifyDrums(items) {
+  const updatedItems = items.map((item) => {
+    const updatedItem = _.clone(item);
+    updatedItem.words = item.words.map((word) => {
+      const updatedWord = _.clone(word);
+      updatedWord.phones = word.phones.map((phone) => {
+        const updatedPhone = _.clone(phone);
+        const { features, text } = phone;
+        const phoneKey = _.findKey(config.arpabet, (value) => value === text);
+        const isVowel = utils.isVowel(phoneKey);
+        updatedPhone.drumClassifications = {};
+        config.drums.forEach((drum) => {
+          let score = 0;
+          drum.props.forEach((prop) => {
+            const weight = _.has(prop, 'weight') ? prop.weight : 1.0;
+            if (_.has(prop, 'phone') && prop.phone === phoneKey) score += weight;
+            if (_.has(prop, 'feature')) {
+              let featureValue = features[prop.feature];
+              if (prop.inverse === true) featureValue = 1.0 - featureValue;
+              featureValue *= weight;
+              score += featureValue;
+            }
+            if (_.has(prop, 'vowel')) {
+              if ((prop.vowel === true && isVowel)
+                || (prop.vowel === false && !isVowel)) score += weight;
+              else if (prop.filter === true) score = 0;
+            }
+          });
+          updatedPhone.drumClassifications[drum.name] = score;
+        });
+        return updatedPhone;
+      });
+      return updatedWord;
+    });
+    return updatedItem;
+  });
+  return updatedItems;
+}
+
 function writeDataFiles(items) {
   items.forEach((item, i) => {
     const filename = `${config.audioDirectoryOut}${item.id}.json`;
@@ -356,6 +395,7 @@ utils.readCSV(fs, csv, config.metadataFile, (rows) => {
   items = mapPhones(items, config.arpabet);
   console.log('Analyzing audio...');
   items = analyzeAudio(items);
+  items = classifyDrums(items);
   writeDataFiles(items);
   console.log('Converting audio files...');
   convertAudioFiles(items);

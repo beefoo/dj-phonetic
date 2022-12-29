@@ -18,7 +18,8 @@
                 {"phone": "CH"},
                 {"phone": "SH"},
                 {"feature": "perceptualSharpness", "weight": 0.25},
-                {"feature": "duration", "inverse": true, "weight": 0.125}
+                {"feature": "duration", "inverse": true, "weight": 0.125},
+                {"vowel": false, "filter": true}
             ]
         },
         {
@@ -29,7 +30,8 @@
                 {"phone": "DH"},
                 {"phone": "P"},
                 {"feature": "spectralCentroid", "inverse": true, "weight": 0.25},
-                {"feature": "perceptualSharpness", "inverse": true, "weight": 0.25}
+                {"feature": "perceptualSharpness", "inverse": true, "weight": 0.25},
+                {"vowel": false, "filter": true}
             ]
         },
         {
@@ -38,7 +40,8 @@
                 {"phone": "T"},
                 {"phone": "H"},
                 {"phone": "HH"},
-                {"feature": "duration", "inverse": true, "weight": 0.25}
+                {"feature": "duration", "inverse": true, "weight": 0.25},
+                {"vowel": false, "filter": true}
             ]
         },
         {
@@ -47,13 +50,14 @@
                 {"phone": "S"},
                 {"phone": "Z"},
                 {"phone": "F"},
-                {"feature": "duration", "inverse": true, "weight": 0.25}
+                {"feature": "duration", "inverse": true, "weight": 0.25},
+                {"vowel": false, "filter": true}
             ]
         },
         {
             "name": "voice",
             "props": [
-                {"vowel": true},
+                {"vowel": true, "filter": true},
                 {"feature": "spectralKurtosis"},
                 {"feature": "duration", "inverse": true, "weight": 0.25}
             ]

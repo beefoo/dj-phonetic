@@ -16,6 +16,7 @@ module.exports = {
   },
 
   isVowel(text) {
+    if (typeof text !== 'string') return false;
     let ntext = text;
     ntext = ntext.replace(/[^a-z]/gi, '');
     if (!ntext || ntext.length <= 0) return false;
