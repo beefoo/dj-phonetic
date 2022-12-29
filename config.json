@@ -29,6 +29,8 @@
                 {"phone": "G"},
                 {"phone": "DH"},
                 {"phone": "P"},
+                {"phone": "D", "weight": 0.75},
+                {"phone": "M", "weight": 0.5},
                 {"feature": "spectralCentroid", "inverse": true, "weight": 0.25},
                 {"feature": "perceptualSharpness", "inverse": true, "weight": 0.25},
                 {"vowel": false, "filter": true}
