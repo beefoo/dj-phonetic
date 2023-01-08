@@ -36,6 +36,7 @@ class App {
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
+    this.sequencer = new Sequencer();
     if (this.options.dataviz !== false) {
       this.dataviz = new DataViz({
         features: this.transcript.getFeatures(),
