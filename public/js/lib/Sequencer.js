@@ -18,15 +18,15 @@ class Sequencer {
   }
 
   init() {
-    this.tempo = this.constructor.bpmToTempo(this.options.bpm);
-    console.log(this.tempo);
+    this.pattern = false;
+    this.updateBPM(this.options.bpm);
     this.loadFromMidi('mid/drums.mid');
   }
 
   loadFromMidi(midiFilename) {
     const midiPromise = Midi.fromUrl(midiFilename);
     midiPromise.then((midi) => {
-      console.log(midi);
+      // console.log(midi);
       this.onLoadMidi(midi);
     });
   }
@@ -48,11 +48,15 @@ class Sequencer {
     });
     const groupedTracks = _.groupBy(updatedTracks, 'group');
     const patterns = _.map(groupedTracks, (group, groupName) => {
-      const trackGroup = {
+      const { endOfTrackTicks } = _.max(group, 'endOfTrackTicks');
+      const pattern = {
         name: groupName,
         tracks: group,
+        ticks: endOfTrackTicks,
+        duration: this.constructor.tick2second(endOfTrackTicks),
+        tempo: false,
       };
-      return trackGroup;
+      return this.updatePatternTempo(pattern, this.tempo);
     });
     this.patterns = _.sortBy(patterns, (pattern) => _.min(pattern.tracks, (track) => track.index));
     this.selectRandomPattern();
@@ -61,15 +65,6 @@ class Sequencer {
   selectRandomPattern() {
     this.pattern = this.patterns[1];
     console.log(this.pattern);
-    const [highhat, kick, snare] = this.pattern.tracks;
-    const { notes } = highhat;
-    const { ticksPerBeat } = this.options;
-    const { tempo } = this;
-    notes.forEach((note) => {
-      const { ticks, durationTicks } = note;
-      const time = this.constructor.tick2second(ticks, ticksPerBeat, tempo);
-      const duration = this.constructor.tick2second(durationTicks, ticksPerBeat, tempo);
-    });
   }
 
   // start() {
@@ -83,4 +78,29 @@ class Sequencer {
   // stop() {
 
   // }
+
+  updateBPM(bpm) {
+    this.tempo = this.constructor.bpmToTempo(bpm);
+    if (this.pattern === false) return;
+    this.pattern = this.updatePatternTempo(this.pattern, this.tempo);
+  }
+
+  updatePatternTempo(pattern, tempo) {
+    if (pattern.tempo === tempo) return pattern;
+    const { ticksPerBeat } = this.options;
+    const updatedPattern = _.clone(pattern);
+    updatedPattern.tracks = pattern.tracks.map((track) => {
+      const updatedTrack = _.clone(track);
+      updatedTrack.notes = track.notes.map((note) => {
+        const updatedNote = _.clone(note);
+        const { ticks, durationTicks } = note;
+        updatedNote.time = this.constructor.tick2second(ticks, ticksPerBeat, tempo);
+        updatedNote.duration = this.constructor.tick2second(durationTicks, ticksPerBeat, tempo);
+        return updatedNote;
+      });
+      return updatedTrack;
+    });
+    updatedPattern.tempo = tempo;
+    return updatedPattern;
+  }
 }
