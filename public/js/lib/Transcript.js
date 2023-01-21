@@ -93,6 +93,10 @@ class Transcript {
     return this.getClipFromElement($el);
   }
 
+  getClips() {
+    return _.flatten(_.pluck(this.data.words, 'phones'));
+  }
+
   getFeatures() {
     if (!this.data) return [];
     return this.data.features;
@@ -152,6 +156,7 @@ class Transcript {
 
   onLoad(url, data) {
     this.data = this.constructor.parseData(data);
+    // console.log(this.data);
     this.isLoading = false;
     this.loadedId = url;
     this.render(this.data);

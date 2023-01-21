@@ -323,11 +323,12 @@ function analyzeAudio(items) {
   return analyzedItems;
 }
 
-function classifyDrums(items) {
-  const drumNames = _.pluck(config.drums, 'name');
-  const drumData = _.object(_.map(drumNames, (name) => [name, []]));
+function classifyInstruments(items) {
+  const instrumentNames = _.pluck(config.instruments, 'name');
+  const instrumentData = _.object(_.map(instrumentNames, (name) => [name, []]));
   const updatedItems = items.map((item) => {
     const updatedItem = _.clone(item);
+    updatedItem.instruments = config.instruments.slice(0);
     updatedItem.words = item.words.map((word) => {
       const updatedWord = _.clone(word);
       updatedWord.phones = word.phones.map((phone) => {
@@ -335,10 +336,10 @@ function classifyDrums(items) {
         const { features, text } = phone;
         const phoneKey = _.findKey(config.arpabet, (value) => value === text);
         const isVowel = utils.isVowel(phoneKey);
-        updatedPhone.drumScores = {};
-        config.drums.forEach((drum) => {
+        updatedPhone.instrumentScores = {};
+        config.instruments.forEach((instrument) => {
           let score = 0;
-          drum.props.forEach((prop) => {
+          instrument.props.forEach((prop) => {
             const weight = _.has(prop, 'weight') ? prop.weight : 1.0;
             if (_.has(prop, 'phone') && prop.phone === phoneKey) score += weight;
             if (_.has(prop, 'feature')) {
@@ -353,8 +354,8 @@ function classifyDrums(items) {
               else if (prop.filter === true) score = 0;
             }
           });
-          updatedPhone.drumScores[drum.name] = score;
-          drumData[drum.name].push(score);
+          updatedPhone.instrumentScores[instrument.name] = score;
+          instrumentData[instrument.name].push(score);
         });
         return updatedPhone;
       });
@@ -363,9 +364,9 @@ function classifyDrums(items) {
     return updatedItem;
   });
   // get min/max of features
-  const drumRanges = {};
-  _.each(drumData, (values, drumName) => {
-    drumRanges[drumName] = {
+  const instrumentRanges = {};
+  _.each(instrumentData, (values, instrumentName) => {
+    instrumentRanges[instrumentName] = {
       min: _.min(values),
       max: _.max(values),
     };
@@ -374,12 +375,12 @@ function classifyDrums(items) {
   updatedItems.forEach((item, i) => {
     item.words.forEach((word, j) => {
       word.phones.forEach((phone, k) => {
-        _.each(drumRanges, (range, drumName) => {
+        _.each(instrumentRanges, (range, instrumentName) => {
           const { min, max } = range;
-          const value = phone.drumScores[drumName];
+          const value = phone.instrumentScores[instrumentName];
           let nvalue = utils.norm(value, min, max);
           nvalue = utils.roundToPrecision(nvalue, config.dataPrecision);
-          updatedItems[i].words[j].phones[k].drumScores[drumName] = nvalue;
+          updatedItems[i].words[j].phones[k].instrumentScores[instrumentName] = nvalue;
         });
       });
     });
@@ -420,7 +421,7 @@ utils.readCSV(fs, csv, config.metadataFile, (rows) => {
   items = mapPhones(items, config.arpabet);
   console.log('Analyzing audio...');
   items = analyzeAudio(items);
-  items = classifyDrums(items);
+  items = classifyInstruments(items);
   writeDataFiles(items);
   console.log('Converting audio files...');
   convertAudioFiles(items);

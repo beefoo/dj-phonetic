@@ -10,7 +10,7 @@
         {"name": "perceptualSharpness", "description": "Perceived sharpness, where 0.0 is not sharp (e.g. bass-drum) and 1.0 very sharp (e.g. snare-drum)."}
     ],
     "dataPrecision": 4,
-    "drums": [
+    "instruments": [
         {
             "name": "snare",
             "props": [

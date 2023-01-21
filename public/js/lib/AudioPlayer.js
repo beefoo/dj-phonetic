@@ -52,7 +52,7 @@ class AudioPlayer {
     return loadPromise;
   }
 
-  play(start, end, when = 0) {
+  play(start, end, when = 0, volume = 1) {
     if (!this.isReady()) return;
     const { fadeIn, fadeOut } = this.options;
     const { ctx } = this;
@@ -67,9 +67,9 @@ class AudioPlayer {
 
     // fade in
     gainNode.gain.setValueAtTime(Number.EPSILON, now + when);
-    gainNode.gain.exponentialRampToValueAtTime(1, now + when + fadeIn);
+    gainNode.gain.exponentialRampToValueAtTime(volume, now + when + fadeIn);
     // fade out
-    gainNode.gain.setValueAtTime(1, now + when + dur - fadeOut);
+    gainNode.gain.setValueAtTime(volume, now + when + dur - fadeOut);
     gainNode.gain.exponentialRampToValueAtTime(Number.EPSILON, now + when + dur);
 
     // connect and play

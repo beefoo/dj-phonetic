@@ -3,6 +3,7 @@ class Sequencer {
     const defaults = {
       bpm: 120,
       latency: 0.5,
+      onStep: (props) => {},
       ticksPerBeat: 480,
     };
     this.options = _.extend({}, defaults, options);
@@ -82,6 +83,7 @@ class Sequencer {
       });
       const lastNote = notes.shift();
       groupTracks[lastNote.trackIndex].notes[lastNote.index].isLast = true;
+      // construct pattern object
       const pattern = {
         name: groupName,
         tracks: groupTracks,
@@ -128,7 +130,12 @@ class Sequencer {
           const when = note.time > patternTime
             ? note.time - patternTime
             : note.time + (pattern.duration - patternTime);
-          // this.audioPlayer.play(start, end, when);
+          this.options.onStep({
+            duration: note.duration,
+            instrument: track.instrument,
+            velocity: note.velocity,
+            when,
+          });
           // if last, increase loopCount
           if (note.isLast) {
             this.pattern.loopCount += 1;
@@ -154,12 +161,18 @@ class Sequencer {
     const updatedPattern = _.clone(pattern);
     updatedPattern.tracks = pattern.tracks.map((track) => {
       const updatedTrack = _.clone(track);
-      updatedTrack.notes = track.notes.map((note) => {
-        const updatedNote = _.clone(note);
+      track.notes.forEach((note, j) => {
         const { ticks, durationTicks } = note;
-        updatedNote.time = this.constructor.tick2second(ticks, ticksPerBeat, tempo);
-        updatedNote.duration = this.constructor.tick2second(durationTicks, ticksPerBeat, tempo);
-        return updatedNote;
+        const time = this.constructor.tick2second(ticks, ticksPerBeat, tempo);
+        const duration = this.constructor.tick2second(durationTicks, ticksPerBeat, tempo);
+        updatedTrack.notes[j].time = time;
+        updatedTrack.notes[j].duration = duration;
+        if (j > 0) {
+          const prev = updatedTrack.notes[j - 1];
+          if ((time - prev.time) < prev.duration) {
+            updatedTrack.notes[j - 1].duration = Math.max(time - prev.time, 0.001);
+          }
+        }
       });
       return updatedTrack;
     });

@@ -13,6 +13,7 @@ class App {
   init() {
     this.audioPlayer = new AudioPlayer();
     this.transcript = new Transcript();
+    this.instruments = {};
     let transcriptFn = 'audio/afccal000001_speech_by_fiorello_h_la_guardia_excerpt_06-54.json';
     if (this.options.dataviz !== false) transcriptFn = transcriptFn.replace('.json', '-with-features.json');
     const transcriptPromise = this.transcript.loadFromURL(transcriptFn);
@@ -36,8 +37,10 @@ class App {
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
+    this.setInstrumentsAutomatically();
     this.sequencer = new Sequencer({
       audioPlayer: this.audioPlayer,
+      onStep: (props) => this.onStep(props),
     });
     if (this.options.dataviz !== false) {
       this.dataviz = new DataViz({
@@ -58,6 +61,19 @@ class App {
     }
     $('#transcript').on('click', '.clip', (e) => this.onKeyboardClick(e));
     this.update();
+  }
+
+  onStep(props) {
+    const {
+      duration,
+      instrument,
+      velocity,
+      when,
+    } = props;
+    if (!_.has(this.instruments, instrument)) return;
+    const clip = _.clone(this.instruments[instrument]);
+    if (duration < (clip.end - clip.start)) clip.end = clip.start + clip.duration;
+    this.playClips([clip], when, velocity);
   }
 
   onSwipe(vector, pointer, $el) {
@@ -92,21 +108,32 @@ class App {
     }
   }
 
-  playClips(clips) {
+  playClips(clips, when = 0, volume = 1) {
     if (clips.length <= 0) return;
     const now = Date.now();
     const firstClip = clips[0];
     const lastClip = _.last(clips);
     clips.forEach((clip, i) => {
       const id = `${clip.id}-${now}`;
-      const when = clip.start - firstClip.start;
+      const scheduleWhen = clip.start - firstClip.start;
       const $el = $(`#${clip.id}`);
-      this.audioPlayer.schedule(id, when, () => {
+      this.audioPlayer.schedule(id, scheduleWhen, () => {
         $el.removeClass('playing');
         setTimeout(() => $el.addClass('playing'), 1);
       });
     });
-    this.audioPlayer.play(firstClip.start, lastClip.end);
+    this.audioPlayer.play(firstClip.start, lastClip.end, when, volume);
+  }
+
+  setInstrumentsAutomatically() {
+    const { instruments } = this.transcript.data;
+    const clips = this.transcript.getClips();
+    const bestInstruments = {};
+    instruments.forEach((instrument) => {
+      const bestClip = _.max(clips, (clip) => clip.instrumentScores[instrument.name]);
+      bestInstruments[instrument.name] = bestClip;
+    });
+    this.instruments = bestInstruments;
   }
 
   update() {
