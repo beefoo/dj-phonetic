@@ -2,6 +2,7 @@ class Sequencer {
   constructor(options = {}) {
     const defaults = {
       bpm: 120,
+      latency: 0.5,
       ticksPerBeat: 480,
     };
     this.options = _.extend({}, defaults, options);
@@ -17,7 +18,13 @@ class Sequencer {
     return tick * scale;
   }
 
+  static time2IntervalTime(time, startTime, intervalDuration) {
+    const elapsed = time - startTime;
+    return elapsed % intervalDuration;
+  }
+
   init() {
+    this.audioPlayer = this.options.audioPlayer;
     this.pattern = false;
     this.updateBPM(this.options.bpm);
     this.loadFromMidi('mid/drums.mid');
@@ -32,6 +39,8 @@ class Sequencer {
   }
 
   onLoadMidi(midi) {
+    const { ticksPerBeat } = this.options;
+    const { tempo } = this;
     // group the tracks based on their names
     const updatedTracks = midi.tracks.map((track, i) => {
       const updatedTrack = _.clone(track);
@@ -46,14 +55,38 @@ class Sequencer {
       }
       return updatedTrack;
     });
+    // group the tracks
     const groupedTracks = _.groupBy(updatedTracks, 'group');
     const patterns = _.map(groupedTracks, (group, groupName) => {
-      const { endOfTrackTicks } = _.max(group, 'endOfTrackTicks');
+      const groupTracks = group.map((track, i) => {
+        const updatedTrack = _.clone(track);
+        updatedTrack.groupIndex = i;
+        updatedTrack.notes = track.notes.map((note, j) => {
+          const updatedNote = _.clone(note);
+          updatedNote.index = j;
+          updatedNote.trackIndex = i;
+          updatedNote.isLast = false;
+          return updatedNote;
+        });
+        return updatedTrack;
+      });
+      const { endOfTrackTicks } = _.max(groupTracks, 'endOfTrackTicks');
+      // determine the last note in track groups
+      const notes = _.flatten(_.pluck(groupTracks, 'notes'));
+      notes.sort((a, b) => {
+        if (a.ticks > b.ticks) return -1;
+        if (a.ticks < b.ticks) return 1;
+        if (a.trackIndex > b.trackIndex) return -1;
+        if (a.trackIndex < b.trackIndex) return 1;
+        return 0;
+      });
+      const lastNote = notes.shift();
+      groupTracks[lastNote.trackIndex].notes[lastNote.index].isLast = true;
       const pattern = {
         name: groupName,
-        tracks: group,
+        tracks: groupTracks,
         ticks: endOfTrackTicks,
-        duration: this.constructor.tick2second(endOfTrackTicks),
+        duration: this.constructor.tick2second(endOfTrackTicks, ticksPerBeat, tempo),
         tempo: false,
       };
       return this.updatePatternTempo(pattern, this.tempo);
@@ -64,20 +97,50 @@ class Sequencer {
 
   selectRandomPattern() {
     this.pattern = this.patterns[1];
+    this.pattern.loopCount = 0;
     console.log(this.pattern);
   }
 
-  // start() {
+  start() {
+    this.startTime = this.audioPlayer.ctx.currentTime;
+  }
 
-  // }
+  step() {
+    if (!this.pattern || !this.audioPlayer || !this.startTime) return;
 
-  // step() {
+    const { pattern } = this;
+    const now = this.audioPlayer.ctx.currentTime;
+    const { latency } = this.options;
+    const later = now + latency;
+    const patternTime = this.constructor.time2IntervalTime(now, this.startTime, pattern.duration);
+    const patternTimeTrigger = this.constructor.time2IntervalTime(
+      later,
+      this.startTime,
+      pattern.duration,
+    );
+    const { loopCount } = pattern;
 
-  // }
+    this.pattern.tracks.forEach((track, i) => {
+      track.notes.forEach((note, j) => {
+        if (note.time <= patternTimeTrigger && note.loopCount <= loopCount) {
+          this.pattern.tracks[i].notes[j].loopCount = loopCount + 1;
+          // queue audio to play in the future (+latency seconds)
+          const when = note.time > patternTime
+            ? note.time - patternTime
+            : note.time + (pattern.duration - patternTime);
+          // this.audioPlayer.play(start, end, when);
+          // if last, increase loopCount
+          if (note.isLast) {
+            this.pattern.loopCount += 1;
+          }
+        }
+      });
+    });
+  }
 
-  // stop() {
-
-  // }
+  stop() {
+    this.startTime = false;
+  }
 
   updateBPM(bpm) {
     this.tempo = this.constructor.bpmToTempo(bpm);
