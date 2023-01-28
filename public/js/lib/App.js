@@ -37,6 +37,11 @@ class App {
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
+    this.controlsManager = new PointerManager({
+      childSelector: '.control',
+      onPointerExit: (pointer, $el) => this.triggerControlFromElement(pointer, $el),
+      target: '#controls',
+    });
     this.setInstrumentsAutomatically();
     this.sequencer = new Sequencer({
       audioPlayer: this.audioPlayer,
@@ -136,9 +141,18 @@ class App {
     this.instruments = bestInstruments;
   }
 
+  triggerControlFromElement(pointer, $el) {
+    if ($el.hasClass('toggle-play')) {
+      $el.toggleClass('active');
+      if ($el.hasClass('active')) this.sequencer.start();
+      else this.sequencer.stop();
+    }
+  }
+
   update() {
     window.requestAnimationFrame(() => this.update());
 
     this.audioPlayer.update();
+    this.sequencer.step();
   }
 }

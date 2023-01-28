@@ -26,8 +26,12 @@
 
   <h1 class="visually-hidden">DJ Phonetic</h1>
   <div id="app" class="app">
-    <nav class="nav options-nav">
-      <button class="button about"><img src="icon.svg" alt="DJ Phonetic logo comprised of an open mouth with a red vinyl disc as a tongue" title="About DJ Phonetic" /></button>
+    <nav id="controls" class="nav controls-nav">
+      <!-- <button class="button about"><img src="icon.svg" alt="DJ Phonetic logo comprised of an open mouth with a red vinyl disc as a tongue" title="About DJ Phonetic" /></button> -->
+      <button id="toggle-play" class="control toggle-play">
+        <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-off" height="48" width="48"><path d="M18.3 36.4q-.75.5-1.525.05Q16 36 16 35.1V12.6q0-.9.775-1.35.775-.45 1.525.05L36 22.6q.7.45.7 1.25T36 25.1Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-on" height="48" width="48"><path d="M29.25 38q-1.25 0-2.125-.875T26.25 35V13q0-1.25.875-2.125T29.25 10H35q1.25 0 2.125.875T38 13v22q0 1.25-.875 2.125T35 38ZM13 38q-1.25 0-2.125-.875T10 35V13q0-1.25.875-2.125T13 10h5.75q1.25 0 2.125.875T21.75 13v22q0 1.25-.875 2.125T18.75 38Z"/></svg>
+      </button>
     </nav>
     <main class="main">
       <div id="transcript" class="transcript">

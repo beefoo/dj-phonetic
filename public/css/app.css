@@ -78,6 +78,18 @@ li {
   border-radius: 12px;
   border: 2px solid #aaa;
 }
+.controls-nav .control .active-on {
+  display: none;
+}
+.controls-nav .control .active-off {
+  display: block;
+}
+.controls-nav .control.active .active-on {
+  display: block;
+}
+.controls-nav .control.active .active-off {
+  display: none;
+}
 
 .transcript {
   font-size: 3.6rem;
