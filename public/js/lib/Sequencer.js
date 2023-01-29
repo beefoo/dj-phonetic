@@ -27,6 +27,7 @@ class Sequencer {
   init() {
     this.audioPlayer = this.options.audioPlayer;
     this.pattern = false;
+    this.startTime = false;
     this.updateBPM(this.options.bpm);
     this.loadFromMidi('mid/drums.mid');
   }
@@ -67,6 +68,7 @@ class Sequencer {
           updatedNote.index = j;
           updatedNote.trackIndex = i;
           updatedNote.isLast = false;
+          updatedNote.loopCount = 0;
           return updatedNote;
         });
         return updatedTrack;
@@ -108,7 +110,7 @@ class Sequencer {
   }
 
   step() {
-    if (!this.pattern || !this.audioPlayer || !this.startTime) return;
+    if (!this.pattern || !this.audioPlayer || this.startTime === false) return;
 
     const { pattern } = this;
     const now = this.audioPlayer.ctx.currentTime;

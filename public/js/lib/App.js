@@ -69,6 +69,7 @@ class App {
   }
 
   onStep(props) {
+    // console.log(props);
     const {
       duration,
       instrument,
@@ -77,7 +78,7 @@ class App {
     } = props;
     if (!_.has(this.instruments, instrument)) return;
     const clip = _.clone(this.instruments[instrument]);
-    if (duration < (clip.end - clip.start)) clip.end = clip.start + clip.duration;
+    if (duration < (clip.end - clip.start)) clip.end = clip.start + duration;
     this.playClips([clip], when, velocity);
   }
 
