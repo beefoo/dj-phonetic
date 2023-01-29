@@ -4,7 +4,6 @@ class Sequencer {
       bpm: 120,
       latency: 0.5,
       onStep: (props) => {},
-      ticksPerBeat: 480,
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -41,7 +40,8 @@ class Sequencer {
   }
 
   onLoadMidi(midi) {
-    const { ticksPerBeat } = this.options;
+    const ticksPerBeat = midi.header.ppq;
+    this.ticksPerBeat = ticksPerBeat;
     const { tempo } = this;
     // group the tracks based on their names
     const updatedTracks = midi.tracks.map((track, i) => {
@@ -159,7 +159,7 @@ class Sequencer {
 
   updatePatternTempo(pattern, tempo) {
     if (pattern.tempo === tempo) return pattern;
-    const { ticksPerBeat } = this.options;
+    const { ticksPerBeat } = this;
     const updatedPattern = _.clone(pattern);
     updatedPattern.tracks = pattern.tracks.map((track) => {
       const updatedTrack = _.clone(track);
