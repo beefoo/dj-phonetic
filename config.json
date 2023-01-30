@@ -37,7 +37,7 @@
             ]
         },
         {
-            "name": "hat",
+            "name": "hihat",
             "props": [
                 {"phone": "T"},
                 {"phone": "H"},

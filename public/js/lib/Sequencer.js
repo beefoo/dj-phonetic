@@ -101,7 +101,6 @@ class Sequencer {
 
   selectRandomPattern() {
     this.pattern = this.patterns[1];
-    this.pattern.loopCount = 0;
     console.log(this.pattern);
   }
 
@@ -122,7 +121,7 @@ class Sequencer {
       this.startTime,
       pattern.duration,
     );
-    const { loopCount } = pattern;
+    const loopCount = Math.floor((later - this.startTime) / pattern.duration);
 
     this.pattern.tracks.forEach((track, i) => {
       track.notes.forEach((note, j) => {
@@ -138,10 +137,6 @@ class Sequencer {
             velocity: note.velocity,
             when,
           });
-          // if last, increase loopCount
-          if (note.isLast) {
-            this.pattern.loopCount += 1;
-          }
         }
       });
     });
@@ -149,6 +144,13 @@ class Sequencer {
 
   stop() {
     this.startTime = false;
+
+    // reset loop count
+    this.pattern.tracks.forEach((track, i) => {
+      track.notes.forEach((note, j) => {
+        this.pattern.tracks[i].notes[j].loopCount = 0;
+      });
+    });
   }
 
   updateBPM(bpm) {
