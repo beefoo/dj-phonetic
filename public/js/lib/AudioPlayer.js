@@ -66,11 +66,11 @@ class AudioPlayer {
     audioSource.buffer = this.audioBuffer;
 
     // fade in
-    gainNode.gain.setValueAtTime(Number.EPSILON, now + when);
-    gainNode.gain.exponentialRampToValueAtTime(volume, now + when + fadeIn);
+    gainNode.gain.setValueAtTime(Number.EPSILON, now);
+    gainNode.gain.exponentialRampToValueAtTime(volume, now + fadeIn);
     // fade out
-    gainNode.gain.setValueAtTime(volume, now + when + dur - fadeOut);
-    gainNode.gain.exponentialRampToValueAtTime(Number.EPSILON, now + when + dur);
+    gainNode.gain.setValueAtTime(volume, now + dur - fadeOut);
+    gainNode.gain.exponentialRampToValueAtTime(Number.EPSILON, now + dur);
 
     // connect and play
     audioSource.connect(gainNode);

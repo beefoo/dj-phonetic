@@ -67,24 +67,12 @@ class Sequencer {
           const updatedNote = _.clone(note);
           updatedNote.index = j;
           updatedNote.trackIndex = i;
-          updatedNote.isLast = false;
           updatedNote.loopCount = 0;
           return updatedNote;
         });
         return updatedTrack;
       });
-      const { endOfTrackTicks } = _.max(groupTracks, 'endOfTrackTicks');
-      // determine the last note in track groups
-      const notes = _.flatten(_.pluck(groupTracks, 'notes'));
-      notes.sort((a, b) => {
-        if (a.ticks > b.ticks) return -1;
-        if (a.ticks < b.ticks) return 1;
-        if (a.trackIndex > b.trackIndex) return -1;
-        if (a.trackIndex < b.trackIndex) return 1;
-        return 0;
-      });
-      const lastNote = notes.shift();
-      groupTracks[lastNote.trackIndex].notes[lastNote.index].isLast = true;
+      const { endOfTrackTicks } = _.min(groupTracks, 'endOfTrackTicks');
       // construct pattern object
       const pattern = {
         name: groupName,
