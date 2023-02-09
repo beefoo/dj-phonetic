@@ -42,61 +42,75 @@ li {
   top: 0;
   left: 0;
   box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
 }
 
-.app > nav {
-  height: 70px;
-  width: auto;
-  position: fixed;
-  left: 0;
-  bottom: 0;
+.app > .controls {
+  flex-basis: 200px;
+  flex-grow: 0;
+  flex-shrink: 0;
   padding: 10px;
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: stretch;
   z-index: 200;
 }
-.app > main {
-  padding: 10px 10px 80px;
+.app > .main {
+  flex-grow: 1;
+  padding: 10px;
   box-sizing: border-box;
-  width: auto;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.options-nav .button {
-  background: none;
-  border: none;
-  padding: 0;
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 50px;
+@media screen and (orientation: portrait) {
+  .app {
+    flex-direction: column-reverse;
+  }
+  .app > .controls {
+    flex-direction: row;
+  }
 }
-.options-nav img {
-  width: 50px;
-  height: auto;
-  box-shadow: 0 -2px 8px 8px rgba(0, 0, 0, 0.4);
-  border-radius: 12px;
-  border: 2px solid #aaa;
+
+
+.controls > .control-group {
+  flex-grow: 1;
 }
-.controls-nav .control .active-on {
+.control .active-on {
   display: none;
 }
-.controls-nav .control .active-off {
+.control .active-off {
   display: block;
 }
-.controls-nav .control.active .active-on {
+.control.active .active-on {
   display: block;
 }
-.controls-nav .control.active .active-off {
+.control.active .active-off {
   display: none;
+}
+
+.main h1 {
+  font-size: 1.4rem;
+}
+.main h1 .icon,
+.main h1 .text {
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
 }
 
 .transcript {
+  flex-grow: 1;
   font-size: 3.6rem;
   touch-action: pan-y;
   user-select: none;
   -webkit-user-drag: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  overflow: auto;
 }
 .word-wrapper,
 .non-word {
