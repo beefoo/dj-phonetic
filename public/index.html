@@ -26,52 +26,109 @@
   <div id="app" class="app">
     <nav id="controls" class="nav controls">
       <div class="control-group">
-        <div class="top">
-          <label for="select-pattern">Drum pattern</label>
+        <div class="top select-group">
+          <label for="select-pattern" class="visually-hidden">Drum pattern</label>
           <select id="select-pattern" class="select-pattern control">
-            <option value="0">Pattern A</option>
+            <option value="0">Drum Pattern A</option>
           </select>
         </div>
         <div class="button-group bottom">
-          <button class="control"><span class="visually-hidden">Previous pattern</span></button>
-          <button class="control"><span class="visually-hidden">Random pattern</span></button>
-          <button class="control"><span class="visually-hidden">Next pattern</span></button>
+          <button class="control">
+            <span class="visually-hidden">Previous pattern</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-left" viewBox="0 0 24 24" width="48" height="48"><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Random pattern</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-shuffle" viewBox="0 0 24 24" width="48" height="48"><path d="M18 17.883V16l5 3-5 3v-2.09a9 9 0 0 1-6.997-5.365L11 14.54l-.003.006A9 9 0 0 1 2.725 20H2v-2h.725a7 7 0 0 0 6.434-4.243L9.912 12l-.753-1.757A7 7 0 0 0 2.725 6H2V4h.725a9 9 0 0 1 8.272 5.455L11 9.46l.003-.006A9 9 0 0 1 18 4.09V2l5 3-5 3V6.117a7 7 0 0 0-5.159 4.126L12.088 12l.753 1.757A7 7 0 0 0 18 17.883z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Next pattern</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-right" viewBox="0 0 24 24" width="48" height="48"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
+          </button>
         </div>
       </div>
       <div class="control-group">
         <button class="top control">Kick</button>
         <div class="button-group bottom">
-          <button class="control"><span class="visually-hidden">Mute</span></button>
-          <button class="control"><span class="visually-hidden">Solo</span></button>
-          <button class="control"><span class="visually-hidden">Previous kick drum</span></button>
-          <button class="control"><span class="visually-hidden">Next kick drum</span></button>
+          <button class="control">
+            <span class="visually-hidden">Mute</span>
+            <span aria-role="presentation" class="text-icon">M</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Solo</span>
+            <span aria-role="presentation" class="text-icon">S</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Previous kick drum</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-left" viewBox="0 0 24 24" width="48" height="48"><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Next kick drum</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-right" viewBox="0 0 24 24" width="48" height="48"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
+          </button>
         </div>
       </div>
       <div class="control-group">
         <button class="top control">Snare</button>
         <div class="button-group bottom">
-          <button class="control"><span class="visually-hidden">Mute</span></button>
-          <button class="control"><span class="visually-hidden">Solo</span></button>
-          <button class="control"><span class="visually-hidden">Previous snare drum</span></button>
-          <button class="control"><span class="visually-hidden">Next snare drum</span></button>
+          <button class="control">
+            <span class="visually-hidden">Mute</span>
+            <span aria-role="presentation" class="text-icon">M</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Solo</span>
+            <span aria-role="presentation" class="text-icon">S</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Previous snare drum</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-left" viewBox="0 0 24 24" width="48" height="48"><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Next snare drum</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-right" viewBox="0 0 24 24" width="48" height="48"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
+          </button>
         </div>
       </div>
       <div class="control-group">
         <button class="top control">Hihat</button>
         <div class="button-group bottom">
-          <button class="control"><span class="visually-hidden">Mute</span></button>
-          <button class="control"><span class="visually-hidden">Solo</span></button>
-          <button class="control"><span class="visually-hidden">Previous hihat drum</span></button>
-          <button class="control"><span class="visually-hidden">Next hihat drum</span></button>
+          <button class="control">
+            <span class="visually-hidden">Mute</span>
+            <span aria-role="presentation" class="text-icon">M</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Solo</span>
+            <span aria-role="presentation" class="text-icon">S</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Previous hihat drum</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-left" viewBox="0 0 24 24" width="48" height="48"><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Next hihat drum</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-right" viewBox="0 0 24 24" width="48" height="48"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
+          </button>
         </div>
       </div>
       <div class="control-group">
         <button class="top control">Vocal</button>
         <div class="button-group bottom">
-          <button class="control"><span class="visually-hidden">Mute</span></button>
-          <button class="control"><span class="visually-hidden">Solo</span></button>
-          <button class="control"><span class="visually-hidden">Previous vocal</span></button>
-          <button class="control"><span class="visually-hidden">Next vocal</span></button>
+          <button class="control">
+            <span class="visually-hidden">Mute</span>
+            <span aria-role="presentation" class="text-icon">M</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Solo</span>
+            <span aria-role="presentation" class="text-icon">S</span>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Previous vocal</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-left" viewBox="0 0 24 24" width="48" height="48"><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Next vocal</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-right" viewBox="0 0 24 24" width="48" height="48"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
+          </button>
         </div>
       </div>
       <div class="control-group">
@@ -80,16 +137,22 @@
           <input id="input-speed" class="input-speed control" type="number" min="60" max="240" value="120" step="1" />
         </div>
         <div class="button-group bottom">
-          <button class="control"><span class="visually-hidden">Decrease speed</span></button>
-          <button class="control"><span class="visually-hidden">Increase speed</span></button>
+          <button class="control">
+            <span class="visually-hidden">Decrease speed</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-left" viewBox="0 0 24 24" width="48" height="48"><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
+          </button>
+          <button class="control">
+            <span class="visually-hidden">Increase speed</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-right" viewBox="0 0 24 24" width="48" height="48"><path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/></svg>
+          </button>
         </div>
       </div>
       <div class="control-group">
-        <button id="toggle-play" class="control toggle-play">
-          <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-off" height="48" width="48"><path d="M18.3 36.4q-.75.5-1.525.05Q16 36 16 35.1V12.6q0-.9.775-1.35.775-.45 1.525.05L36 22.6q.7.45.7 1.25T36 25.1Z"/></svg>
-          <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-on" height="48" width="48"><path d="M29.25 38q-1.25 0-2.125-.875T26.25 35V13q0-1.25.875-2.125T29.25 10H35q1.25 0 2.125.875T38 13v22q0 1.25-.875 2.125T35 38ZM13 38q-1.25 0-2.125-.875T10 35V13q0-1.25.875-2.125T13 10h5.75q1.25 0 2.125.875T21.75 13v22q0 1.25-.875 2.125T18.75 38Z"/></svg>
+        <button id="toggle-play" class="control toggle-play top">
+          <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-off icon icon-play" viewBox="0 0 24 24" width="48" height="48"><path d="M19.376 12.416L8.777 19.482A.5.5 0 0 1 8 19.066V4.934a.5.5 0 0 1 .777-.416l10.599 7.066a.5.5 0 0 1 0 .832z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-on icon icon-pause" viewBox="0 0 24 24" width="48" height="48"><path d="M6 5h2v14H6V5zm10 0h2v14h-2V5z"/></svg>
         </button>
-        <label for="input-autoplay">
+        <label for="input-autoplay" class="bottom checkbox-button">
           <input type="checkbox" id="input-autoplay" class="input-autoplay control" value="1" checked />
           Autoplay
         </label>
