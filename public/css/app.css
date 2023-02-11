@@ -66,16 +66,6 @@ li {
   flex-direction: column;
 }
 
-@media screen and (orientation: portrait) {
-  .app {
-    flex-direction: column-reverse;
-  }
-  .app > .controls {
-    flex-direction: row;
-  }
-}
-
-
 .controls > .control-group {
   flex-grow: 1;
   display: flex;
@@ -88,19 +78,56 @@ li {
 .control-group > .bottom {
   flex-grow: 0;
   flex-shrink: 0;
-  flex-basis: 50%;
+  flex-basis: 66%;
+}
+.control-group > .top {
+  flex-basis: 34%;
+}
+.controls > .control-group-play {
+  flex-grow: 3;
+}
+.control-group-play > .top {
+  flex-basis: 25%;
+}
+.control-group-play > .bottom {
+  flex-basis: 75%;
 }
 .button-group,
-.select-group {
+.select-group,
+.input-group {
   display: flex;
   align-items: stretch;
 }
 .button-group button {
   flex-grow: 1;
 }
+.button-group-4 button {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 25%;
+}
 .select-group select {
   width: 100%;
   text-indent: 3px;
+}
+.input-group {
+  position: relative;
+}
+.input-group label {
+  position: absolute;
+  z-index: 2;
+  height: 100%;
+  left: 55%;
+  top: 0px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.input-group input {
+  width: 100%;
+  z-index: 1;
+  position: relative;
+  text-indent: 50px;
 }
 .control .active-on {
   display: none;
@@ -118,6 +145,10 @@ li {
   width: 36px;
   height: 36px;
 }
+.control-group-play .icon {
+  width: 60px;
+  height: 60px;
+}
 .controls .text-icon {
   height: 36px;
   line-height: 36px;
@@ -131,6 +162,9 @@ li {
   border: 2px solid #000;
   color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .controls .top .control,
 .controls .top.control {
@@ -142,6 +176,15 @@ li {
 }
 .controls .control .icon path {
   fill: rgba(255, 255, 255, 0.8);
+}
+.control .checkbox-label {
+  margin-left: 12px;
+}
+.controls .control:hover {
+  color: white;
+}
+.controls .control:hover .icon path {
+  fill: white;
 }
 
 .main h1 {

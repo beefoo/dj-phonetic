@@ -49,7 +49,7 @@
       </div>
       <div class="control-group">
         <button class="top control">Kick</button>
-        <div class="button-group bottom">
+        <div class="button-group bottom button-group-4">
           <button class="control">
             <span class="visually-hidden">Mute</span>
             <span aria-role="presentation" class="text-icon">M</span>
@@ -70,7 +70,7 @@
       </div>
       <div class="control-group">
         <button class="top control">Snare</button>
-        <div class="button-group bottom">
+        <div class="button-group bottom button-group-4">
           <button class="control">
             <span class="visually-hidden">Mute</span>
             <span aria-role="presentation" class="text-icon">M</span>
@@ -91,7 +91,7 @@
       </div>
       <div class="control-group">
         <button class="top control">Hihat</button>
-        <div class="button-group bottom">
+        <div class="button-group bottom button-group-4">
           <button class="control">
             <span class="visually-hidden">Mute</span>
             <span aria-role="presentation" class="text-icon">M</span>
@@ -112,7 +112,7 @@
       </div>
       <div class="control-group">
         <button class="top control">Vocal</button>
-        <div class="button-group bottom">
+        <div class="button-group bottom button-group-4">
           <button class="control">
             <span class="visually-hidden">Mute</span>
             <span aria-role="presentation" class="text-icon">M</span>
@@ -132,8 +132,8 @@
         </div>
       </div>
       <div class="control-group">
-        <div class="top">
-          <label for="input-speed">Playback speed</label>
+        <div class="top input-group">
+          <label for="input-speed">BPM</label>
           <input id="input-speed" class="input-speed control" type="number" min="60" max="240" value="120" step="1" />
         </div>
         <div class="button-group bottom">
@@ -147,15 +147,16 @@
           </button>
         </div>
       </div>
-      <div class="control-group">
-        <button id="toggle-play" class="control toggle-play top">
+      <div class="control-group control-group-play">
+        <label for="input-autoplay" class="top checkbox-button control">
+          <input type="checkbox" id="input-autoplay" class="input-autoplay" value="1" checked />
+          <span class="checkbox-label">Autoplay</span>
+        </label>
+        <button id="toggle-play" class="control toggle-play bottom">
           <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-off icon icon-play" viewBox="0 0 24 24" width="48" height="48"><path d="M19.376 12.416L8.777 19.482A.5.5 0 0 1 8 19.066V4.934a.5.5 0 0 1 .777-.416l10.599 7.066a.5.5 0 0 1 0 .832z"/></svg>
           <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-on icon icon-pause" viewBox="0 0 24 24" width="48" height="48"><path d="M6 5h2v14H6V5zm10 0h2v14h-2V5z"/></svg>
         </button>
-        <label for="input-autoplay" class="bottom checkbox-button">
-          <input type="checkbox" id="input-autoplay" class="input-autoplay control" value="1" checked />
-          Autoplay
-        </label>
+        
       </div>
     </nav>
     <main class="main">
