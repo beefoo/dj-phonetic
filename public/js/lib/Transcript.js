@@ -175,6 +175,7 @@ class Transcript {
       pword.isLast = i >= (pdata.words.length - 1);
       pword.hasPrepend = _.has(word, 'prepend');
       pword.hasAppend = _.has(word, 'append');
+      pword.appendClassname = pword.hasAppend && /[.!?:;,]$/.test(word.append) ? ' space-after' : '';
       if (i > 0) pword.durBefore = word.start - pdata.words[i - 1].end;
       pword.phones = word.phones.map((phone, j) => {
         const pphone = phone;
@@ -184,7 +185,7 @@ class Transcript {
         pphone.type = 'phone';
         pphone.dur = phone.end - phone.start;
         pphone.isLast = j >= (word.phones.length - 1);
-        pphone.displayText = phone.displayText.replace(/(\W+)/gi, '<small>$&</small>');
+        // pphone.displayText = phone.displayText.replace(/(\W+)/gi, '<small>$&</small>');
         let className = '';
         if (j === 0) className += ' first';
         if (j === word.phones.length - 1) className += ' last';
