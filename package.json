@@ -1,6 +1,6 @@
 {
-  "name": "dj-phonetic",
-  "description": "Speech-to-music toolbox",
+  "name": "speakerbox",
+  "description": "Beatbox with historical speeches",
   "scripts": {
     "align": "mfa align --include_original_text audio english_us_arpa english_us_arpa audio/aligned",
     "align-clean": "mfa align --include_original_text --clean audio english_us_arpa english_us_arpa audio/aligned",

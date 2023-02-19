@@ -1,3 +1,3 @@
-# dj-phonetic
+# Speakerbox
 
-Speech-to-music toolbox
+Beatbox with historical speeches
