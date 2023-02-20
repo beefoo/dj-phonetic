@@ -160,14 +160,19 @@
       </div>
     </nav>
     <main class="main">
-      <h1><img src="icon.svg" alt="Speakerbox logo comprised of an open mouth with a red vinyl disc as a tongue" class="icon" /> <span class="text title">Speakerbox</span> <small class="text tagline">"Beatbox with historical speeches"</small></h1>
+      <h1>
+        <!-- <img src="icon.svg" alt="Speakerbox logo comprised of an open mouth with a red vinyl disc as a tongue" class="icon" /> -->
+        <span class="text title">Speakerbox</span> <small class="text tagline">"Beatbox with historical speeches"</small>
+      </h1>
       <div id="transcript-selector" class="transcript-selector">
-        <label for="transcript-select">Select a transcript:</label>
-        <select id="transcript-select" class="transcript-select">
-          <option value="0">Speech by Fiorello H. La Guardia, New York</option>
-        </select>
-        <div id="metadata" class="metadata">
-          <a href="#" target="_blank">Source: Library of Congress</a>
+        <div class="wrapper">
+          <label for="transcript-select">Select a transcript:</label>
+          <select id="transcript-select" class="transcript-select">
+            <option value="0">Speech by Fiorello H. La Guardia, New York</option>
+          </select>
+          <div id="metadata" class="metadata">
+            <a href="#" target="_blank">Source: Library of Congress</a>
+          </div>
         </div>
       </div>
       <div id="transcript" class="transcript">
