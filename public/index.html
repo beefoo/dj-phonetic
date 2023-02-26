@@ -173,7 +173,7 @@
       {{#hasPrepend}}
         <div class="non-word prepend">{{prepend}}</div>
       {{/hasPrepend}}
-      <div class="word-wrapper" data-index="{{index}}">
+      <div class="word-wrapper{{className}}" data-index="{{index}}">
         {{#phones}}
           <button id="{{id}}" class="clip phone{{className}}" data-word="{{wordIndex}}" data-phone="{{index}}">
           <span class="original-text">{{{displayText}}}</span>

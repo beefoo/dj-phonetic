@@ -307,6 +307,12 @@ li {
   line-height: 1;
   position: relative;
 }
+.word-wrapper.is-non-verbal::before {
+  content: '[';
+}
+.word-wrapper.is-non-verbal::after {
+  content: ']';
+}
 .sorted .word-wrapper {
   white-space: normal;
 }

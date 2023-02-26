@@ -175,6 +175,7 @@ class Transcript {
       pword.isLast = i >= (pdata.words.length - 1);
       pword.hasPrepend = _.has(word, 'prepend');
       pword.hasAppend = _.has(word, 'append');
+      pword.className = _.has(word, 'isNonVerbal') && word.isNonVerbal ? ' is-non-verbal' : '';
       pword.appendClassname = pword.hasAppend && /[.!?:;,]$/.test(word.append) ? ' space-after' : '';
       if (i > 0) pword.durBefore = word.start - pdata.words[i - 1].end;
       pword.phones = word.phones.map((phone, j) => {
