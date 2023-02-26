@@ -299,8 +299,7 @@ li {
   box-sizing: border-box;
   box-shadow: inset 0 1px 2px rgb(0, 0, 0);
 }
-.word-wrapper,
-.non-word {
+.word-wrapper {
   display: inline-block;
   margin-right: 0.5rem;
   white-space: nowrap;
@@ -316,21 +315,8 @@ li {
 .sorted .word-wrapper {
   white-space: normal;
 }
-.non-word {
+.word-wrapper:last-child {
   margin-right: 0;
-}
-.non-word.space-after {
-  margin-right: 0.5rem;
-}
-.word-wrapper:last-child,
-.non-word:last-child {
-  margin-right: 0;
-}
-.non-word.prepend .word-wrapper {
-  margin-left: -0.5rem;
-}
-.word-wrapper + .non-word.append {
-  margin-left: -0.5rem;
 }
 .clip {
   margin: 0;
@@ -344,6 +330,7 @@ li {
 }
 .clip:hover {
   color: white;
+  text-decoration: underline;
 }
 .clip:focus,
 .clip:focus:hover {
