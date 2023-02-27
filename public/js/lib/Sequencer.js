@@ -84,12 +84,23 @@ class Sequencer {
       return this.updatePatternTempo(pattern, this.tempo);
     });
     this.patterns = _.sortBy(patterns, (pattern) => _.min(pattern.tracks, (track) => track.index));
+    this.patterns = this.patterns.map((pattern, index) => {
+      const updatedPattern = _.clone(pattern);
+      updatedPattern.index = index;
+      return updatedPattern;
+    });
     this.selectRandomPattern();
   }
 
   selectRandomPattern() {
-    this.pattern = this.patterns[1];
+    if (this.patterns === undefined || this.patterns.length <= 0) return;
+    this.pattern = _.sample(this.patterns);
     console.log(this.pattern);
+  }
+
+  restart() {
+    this.stop();
+    this.start();
   }
 
   start() {
@@ -128,6 +139,14 @@ class Sequencer {
         }
       });
     });
+  }
+
+  stepPattern(amount) {
+    if (this.patterns === undefined || this.patterns.length <= 0 || !this.pattern) return;
+    const { index } = this.pattern;
+    const newIndex = MathUtil.wrap(index + amount, 0, this.patterns.length);
+    this.pattern = this.patterns[newIndex];
+    console.log(this.pattern);
   }
 
   stop() {

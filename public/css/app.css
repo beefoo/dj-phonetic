@@ -307,9 +307,11 @@ li {
   position: relative;
 }
 .word-wrapper.is-non-verbal::before {
+  color: rgba(255, 255, 255, 0.5);
   content: '[';
 }
 .word-wrapper.is-non-verbal::after {
+  color: rgba(255, 255, 255, 0.5);
   content: ']';
 }
 .sorted .word-wrapper {
@@ -340,6 +342,7 @@ li {
 }
 .non-word {
   display: inline-block;
+  color: rgba(255, 255, 255, 0.5);
 }
 .ghost-text {
   position: absolute;

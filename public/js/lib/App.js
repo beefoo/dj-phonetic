@@ -131,6 +131,11 @@ class App {
     this.audioPlayer.play(firstClip.start, lastClip.end, when, volume);
   }
 
+  randomizePattern() {
+    this.sequencer.selectRandomPattern();
+    this.sequencer.restart();
+  }
+
   setInstrumentsAutomatically() {
     const { instruments } = this.transcript.data;
     const clips = this.transcript.getClips();
@@ -142,12 +147,25 @@ class App {
     this.instruments = bestInstruments;
   }
 
+  stepPattern(amount) {
+    this.sequencer.stepPattern(amount);
+    this.sequencer.restart();
+  }
+
+  togglePlay($el) {
+    $el.toggleClass('active');
+    if ($el.hasClass('active')) this.sequencer.start();
+    else this.sequencer.stop();
+  }
+
   triggerControlFromElement(pointer, $el) {
-    if ($el.hasClass('toggle-play')) {
-      $el.toggleClass('active');
-      if ($el.hasClass('active')) this.sequencer.start();
-      else this.sequencer.stop();
-    }
+    const action = $el.attr('data-action');
+    const value = $el.attr('data-value');
+    if (action === undefined) return;
+    if (action === 'toggle-play') this.togglePlay($el);
+    else if (action === 'randomize-pattern') this.randomizePattern();
+    else if (action === 'next-pattern') this.stepPattern(1);
+    else if (action === 'previous-pattern') this.stepPattern(-1);
   }
 
   update() {
