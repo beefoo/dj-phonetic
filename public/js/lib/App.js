@@ -166,6 +166,7 @@ class App {
     else if (action === 'randomize-pattern') this.randomizePattern();
     else if (action === 'next-pattern') this.stepPattern(1);
     else if (action === 'previous-pattern') this.stepPattern(-1);
+    else if (action === 'toggle-instrument') this.sequencer.toggleInstrument($el, value);
   }
 
   update() {

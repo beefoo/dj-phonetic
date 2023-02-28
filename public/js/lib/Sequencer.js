@@ -73,6 +73,7 @@ class Sequencer {
       const groupTracks = group.map((track, i) => {
         const updatedTrack = _.clone(track);
         updatedTrack.groupIndex = i;
+        updatedTrack.volume = 1;
         updatedTrack.notes = track.notes.map((note, j) => {
           const updatedNote = _.clone(note);
           updatedNote.index = j;
@@ -147,6 +148,7 @@ class Sequencer {
     const loopCount = Math.floor((later - this.startTime) / pattern.duration);
 
     this.pattern.tracks.forEach((track, i) => {
+      if (track.volume <= 0) return;
       track.notes.forEach((note, j) => {
         if (note.time <= patternTimeTrigger && note.loopCount <= loopCount) {
           this.pattern.tracks[i].notes[j].loopCount = loopCount + 1;
@@ -181,6 +183,18 @@ class Sequencer {
       track.notes.forEach((note, j) => {
         this.pattern.tracks[i].notes[j].loopCount = 0;
       });
+    });
+  }
+
+  toggleInstrument($el, value) {
+    $el.toggleClass('active');
+    const isActive = $el.hasClass('active');
+    const volume = isActive ? 1 : 0;
+
+    this.pattern.tracks.forEach((track, i) => {
+      if (track.instrument === value) {
+        this.pattern.tracks[i].volume = volume;
+      }
     });
   }
 
