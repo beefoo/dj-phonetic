@@ -218,6 +218,10 @@ li {
 .controls .control:hover .icon path {
   fill: white;
 }
+.controls .control > option {
+  background: #292828;
+  color: white;
+}
 
 .main h1 {
   font-size: 1.6rem;

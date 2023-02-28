@@ -27,6 +27,7 @@ class Sequencer {
     this.audioPlayer = this.options.audioPlayer;
     this.pattern = false;
     this.startTime = false;
+    this.$patternSelect = $('#select-pattern');
     this.updateBPM(this.options.bpm);
     this.loadFromMidi('mid/drums.mid');
   }
@@ -37,6 +38,15 @@ class Sequencer {
       // console.log(midi);
       this.onLoadMidi(midi);
     });
+  }
+
+  loadPatternSelectOptions(patterns) {
+    let html = '';
+    _.times(patterns.length, (n) => {
+      html += `<option value="${n}">Drum pattern ${(n + 1)}</option>`;
+    });
+    this.$patternSelect.html(html);
+    this.$patternSelect.on('change', (e) => this.selectPattern(parseInt(this.$patternSelect.val(), 10)));
   }
 
   onLoadMidi(midi) {
@@ -89,18 +99,32 @@ class Sequencer {
       updatedPattern.index = index;
       return updatedPattern;
     });
+    this.loadPatternSelectOptions(this.patterns);
     this.selectRandomPattern();
   }
 
-  selectRandomPattern() {
-    if (this.patterns === undefined || this.patterns.length <= 0) return;
-    this.pattern = _.sample(this.patterns);
+  onPatternChange() {
+    const { index } = this.pattern;
+    const selectedIndex = parseInt(this.$patternSelect.val(), 10);
+    if (index !== selectedIndex) this.$patternSelect.val(index);
     console.log(this.pattern);
   }
 
   restart() {
     this.stop();
     this.start();
+  }
+
+  selectRandomPattern() {
+    if (this.patterns === undefined || this.patterns.length <= 0) return;
+    this.pattern = _.sample(this.patterns);
+    this.onPatternChange();
+  }
+
+  selectPattern(i) {
+    if (this.patterns === undefined || this.patterns.length <= 0) return;
+    this.pattern = this.patterns[i];
+    this.onPatternChange();
   }
 
   start() {
@@ -146,7 +170,7 @@ class Sequencer {
     const { index } = this.pattern;
     const newIndex = MathUtil.wrap(index + amount, 0, this.patterns.length);
     this.pattern = this.patterns[newIndex];
-    console.log(this.pattern);
+    this.onPatternChange();
   }
 
   stop() {
