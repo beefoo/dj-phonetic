@@ -1,9 +1,10 @@
 class App {
   constructor(options = {}) {
     const defaults = {
+      dataviz: false,
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
-      dataviz: false,
+      samplesPerInstrument: 8,
     };
     const q = StringUtil.queryParams();
     this.options = _.extend({}, defaults, options, q);
@@ -77,7 +78,7 @@ class App {
       when,
     } = props;
     if (!_.has(this.instruments, instrument)) return;
-    const clip = _.clone(this.instruments[instrument]);
+    const clip = _.clone(this.instruments[instrument].clip);
     if (duration < (clip.end - clip.start)) clip.end = clip.start + duration;
     this.playClips([clip], when, velocity);
   }
@@ -141,10 +142,25 @@ class App {
     const clips = this.transcript.getClips();
     const bestInstruments = {};
     instruments.forEach((instrument) => {
-      const bestClip = _.max(clips, (clip) => clip.instrumentScores[instrument.name]);
-      bestInstruments[instrument.name] = bestClip;
+      const bestClips = _.sortBy(clips, (clip) => -clip.instrumentScores[instrument.name]);
+      bestInstruments[instrument.name] = {
+        list: bestClips.slice(0, this.options.samplesPerInstrument),
+        index: 0,
+        clip: bestClips[0],
+      };
     });
     this.instruments = bestInstruments;
+  }
+
+  stepInstrument(amount, instrumentName) {
+    if (!_.has(this.instruments, instrumentName)) return;
+
+    const instrument = this.instruments[instrumentName];
+    const { list, index } = instrument;
+    const { samplesPerInstrument } = this.options;
+    const newIndex = MathUtil.wrap(index + amount, 0, samplesPerInstrument);
+    this.instruments[instrumentName].index = newIndex;
+    this.instruments[instrumentName].clip = list[newIndex];
   }
 
   stepPattern(amount) {
@@ -167,6 +183,8 @@ class App {
     else if (action === 'next-pattern') this.stepPattern(1);
     else if (action === 'previous-pattern') this.stepPattern(-1);
     else if (action === 'toggle-instrument') this.sequencer.toggleInstrument($el, value);
+    else if (action === 'previous-instrument') this.stepInstrument(-1, value);
+    else if (action === 'next-instrument') this.stepInstrument(1, value);
   }
 
   update() {
