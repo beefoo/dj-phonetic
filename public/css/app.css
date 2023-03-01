@@ -293,7 +293,8 @@ li {
   user-select: none;
   -webkit-user-drag: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  overflow: auto;
+  overflow: hidden;
+  overflow-y: auto;
   background: rgb(18, 18, 18);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
