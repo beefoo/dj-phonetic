@@ -50,17 +50,15 @@ li {
   display: flex;
   align-items: stretch;
   background: linear-gradient(#232121, #292828);
+  flex-direction: column-reverse;
 }
 
 .app > .controls {
-  flex-basis: 200px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  padding: 10px;
+  padding: 0 10px 10px;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   align-items: stretch;
+  justify-content: center;
   z-index: 200;
 }
 .app > .main {
@@ -73,73 +71,18 @@ li {
 }
 
 .controls > .control-group {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-.control-group > .top,
-.control-group > .bottom {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 66%;
-}
-.control-group > .top {
-  flex-basis: 34%;
+  padding: 6px;
 }
 .controls > .control-group-play {
-  flex-grow: 3;
-}
-.control-group-play > .top {
-  flex-basis: 25%;
-}
-.control-group-play > .bottom {
-  flex-basis: 75%;
-}
-.button-group,
-.select-group,
-.input-group {
   display: flex;
-  align-items: stretch;
 }
-.button-group button {
-  flex-grow: 1;
+.button-grid {
+  display: grid;
 }
-.button-group-3 button {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 33.33333333%;
+.button-grid.two-by-two {
+  grid-template-columns: auto auto;
 }
-.button-group-4 button {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: 25%;
-}
-.select-group select {
-  width: 100%;
-  text-indent: 3px;
-}
-.input-group {
-  position: relative;
-}
-.input-group label {
-  position: absolute;
-  height: 100%;
-  left: 55%;
-  top: 0px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  z-index: 2;
-}
-.input-group input {
-  width: 100%;
-  position: relative;
-  text-indent: 50px;
-  z-index: 1;
-}
+
 .control .active-on {
   display: none;
 }
@@ -163,11 +106,12 @@ li {
 .controls .text-icon {
   height: 36px;
   line-height: 36px;
-  font-size: 1.333rem;
+  font-size: 1rem;
+  white-space: nowrap;
 }
 .controls .control {
   margin: 0;
-  padding: 0;
+  padding: 0 1rem;
   background: linear-gradient(to top, #292828, #424040);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, .25);
   border: 3px solid #000;
@@ -179,48 +123,40 @@ li {
   align-items: center;
   justify-content: center;
 }
-.controls .control:first-child,
-.controls .control.bottom,
-.controls .group-1 .control {
+.controls .two-by-two .control:first-child,
+.controls .two-by-two .control:nth-child(3),
+.controls .control-group-play .control {
   border-left: 3px solid #000;
 }
-.controls .top .control,
-.controls .top.control {
+.controls .two-by-two .control:first-child,
+.controls .two-by-two .control:nth-child(2),
+.controls .control-group-play .control {
   border-top: 3px solid #000;
 }
-.controls .top .control:first-child,
-.controls .control.top,
-.controls .top.group-1 .control {
+.controls .two-by-two .control:first-child,
+.controls .control-group-play .control {
   border-top-left-radius: 6px;
 }
-.controls .top .control:last-child,
-.controls .control.top,
-.controls .top.group-1 .control {
+.controls .two-by-two .control:nth-child(2),
+.controls .control-group-play .control {
   border-top-right-radius: 6px;
 }
-.controls .bottom .control:first-child,
-.controls .control.bottom {
+.controls .two-by-two .control:nth-child(3),
+.controls .control-group-play .control {
   border-bottom-left-radius: 6px;
 }
-.controls .bottom .control:last-child,
-.controls .control.bottom {
+.controls .two-by-two .control:last-child,
+.controls .control-group-play .control {
   border-bottom-right-radius: 6px;
 }
 .controls .control .icon path {
   fill: rgba(255, 255, 255, 0.8);
-}
-.control .checkbox-label {
-  margin-left: 12px;
 }
 .controls .control:hover {
   color: white;
 }
 .controls .control:hover .icon path {
   fill: white;
-}
-.controls .control > option {
-  background: #292828;
-  color: white;
 }
 
 .main h1 {

@@ -100,14 +100,11 @@ class Sequencer {
       updatedPattern.index = index;
       return updatedPattern;
     });
-    this.loadPatternSelectOptions(this.patterns);
+    // this.loadPatternSelectOptions(this.patterns);
     this.selectRandomPattern();
   }
 
   onPatternChange() {
-    const { index } = this.pattern;
-    const selectedIndex = parseInt(this.$patternSelect.val(), 10);
-    if (index !== selectedIndex) this.$patternSelect.val(index);
     console.log(this.pattern);
   }
 
