@@ -22,6 +22,12 @@ class App {
     $.when(transcriptPromise, audioPromise).done(() => this.onReady());
   }
 
+  static onInstrumentChange(instrumentName, clip) {
+    const $el = $(`#${clip.id}`);
+    $('.clip').removeClass(instrumentName);
+    $el.addClass(instrumentName);
+  }
+
   onKeyboardClick(event) {
     const { pointerType } = event;
     // only account for keyboard click
@@ -143,11 +149,13 @@ class App {
     const bestInstruments = {};
     instruments.forEach((instrument) => {
       const bestClips = _.sortBy(clips, (clip) => -clip.instrumentScores[instrument.name]);
+      const clip = bestClips[0];
       bestInstruments[instrument.name] = {
         list: bestClips.slice(0, this.options.samplesPerInstrument),
         index: 0,
-        clip: bestClips[0],
+        clip,
       };
+      this.constructor.onInstrumentChange(instrument.name, clip);
     });
     this.instruments = bestInstruments;
   }
@@ -159,8 +167,10 @@ class App {
     const { list, index } = instrument;
     const { samplesPerInstrument } = this.options;
     const newIndex = MathUtil.wrap(index + amount, 0, samplesPerInstrument);
+    const clip = list[newIndex];
     this.instruments[instrumentName].index = newIndex;
-    this.instruments[instrumentName].clip = list[newIndex];
+    this.instruments[instrumentName].clip = clip;
+    this.constructor.onInstrumentChange(instrumentName, clip);
   }
 
   stepPattern(amount) {
