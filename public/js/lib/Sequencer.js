@@ -160,9 +160,12 @@ class Sequencer {
 
     this.pattern.tracks.forEach((track, i) => {
       if (track.volume <= 0) return;
+      let alreadyTriggered = false;
       track.notes.forEach((note, j) => {
         if (note.time <= patternTimeTrigger && note.loopCount <= loopCount) {
           this.pattern.tracks[i].notes[j].loopCount = loopCount + 1;
+          if (alreadyTriggered) return;
+          alreadyTriggered = true;
           // queue audio to play in the future (+latency seconds)
           const when = note.time > patternTime
             ? note.time - patternTime
