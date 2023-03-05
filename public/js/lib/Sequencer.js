@@ -4,6 +4,7 @@ class Sequencer {
       bpm: 120,
       latency: 0.5,
       onStep: (props) => {},
+      patternLoopCount: 1,
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -105,18 +106,22 @@ class Sequencer {
   }
 
   onPatternChange() {
+    this.restart();
     console.log(this.pattern);
   }
 
   restart() {
+    const isStopped = this.startTime === false;
     this.stop();
-    this.start();
+    if (!isStopped) this.start();
   }
 
   selectRandomPattern() {
     if (this.patterns === undefined || this.patterns.length <= 0) return;
+    this.isLoadingPattern = true;
     this.pattern = _.sample(this.patterns);
     this.onPatternChange();
+    this.isLoadingPattern = false;
   }
 
   selectPattern(i) {
@@ -130,7 +135,10 @@ class Sequencer {
   }
 
   step() {
-    if (!this.pattern || !this.audioPlayer || this.startTime === false) return;
+    if (!this.pattern
+        || !this.audioPlayer
+        || this.startTime === false
+        || this.isLoadingPattern) return;
 
     const { pattern } = this;
     const now = this.audioPlayer.ctx.currentTime;
@@ -143,6 +151,12 @@ class Sequencer {
       pattern.duration,
     );
     const loopCount = Math.floor((later - this.startTime) / pattern.duration);
+
+    // automatically step pattern
+    if (loopCount >= this.options.patternLoopCount) {
+      this.stepPattern();
+      return;
+    }
 
     this.pattern.tracks.forEach((track, i) => {
       if (track.volume <= 0) return;
@@ -164,12 +178,14 @@ class Sequencer {
     });
   }
 
-  stepPattern(amount) {
+  stepPattern(amount = 1) {
     if (this.patterns === undefined || this.patterns.length <= 0 || !this.pattern) return;
+    this.isLoadingPattern = true;
     const { index } = this.pattern;
     const newIndex = MathUtil.wrap(index + amount, 0, this.patterns.length);
     this.pattern = this.patterns[newIndex];
     this.onPatternChange();
+    this.isLoadingPattern = false;
   }
 
   stop() {
