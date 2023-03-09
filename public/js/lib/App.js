@@ -140,7 +140,6 @@ class App {
 
   randomizePattern() {
     this.sequencer.selectRandomPattern();
-    this.sequencer.restart();
   }
 
   setInstrumentsAutomatically() {
@@ -175,7 +174,6 @@ class App {
 
   stepPattern(amount) {
     this.sequencer.stepPattern(amount);
-    this.sequencer.restart();
   }
 
   togglePlay($el) {

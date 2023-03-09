@@ -29,6 +29,7 @@ class Sequencer {
     this.pattern = false;
     this.startTime = false;
     this.$patternSelect = $('#select-pattern');
+    this.isLoadingPattern = false;
     this.updateBPM(this.options.bpm);
     this.loadFromMidi('mid/drums.mid');
   }
@@ -116,12 +117,15 @@ class Sequencer {
     if (!isStopped) this.start();
   }
 
-  selectRandomPattern() {
+  selectRandomPattern(delay = 0) {
     if (this.patterns === undefined || this.patterns.length <= 0) return;
+    if (this.isLoadingPattern) return;
     this.isLoadingPattern = true;
-    this.pattern = _.sample(this.patterns);
-    this.onPatternChange();
-    this.isLoadingPattern = false;
+    setTimeout(() => {
+      this.pattern = _.sample(this.patterns);
+      this.onPatternChange();
+      this.isLoadingPattern = false;
+    }, delay);
   }
 
   selectPattern(i) {
@@ -154,7 +158,7 @@ class Sequencer {
 
     // automatically step pattern
     if (loopCount >= this.options.patternLoopCount) {
-      this.stepPattern();
+      this.stepPattern(1, this.beatDuration);
       return;
     }
 
@@ -181,14 +185,17 @@ class Sequencer {
     });
   }
 
-  stepPattern(amount = 1) {
+  stepPattern(amount = 1, delay = 0) {
     if (this.patterns === undefined || this.patterns.length <= 0 || !this.pattern) return;
+    if (this.isLoadingPattern) return;
     this.isLoadingPattern = true;
-    const { index } = this.pattern;
-    const newIndex = MathUtil.wrap(index + amount, 0, this.patterns.length);
-    this.pattern = this.patterns[newIndex];
-    this.onPatternChange();
-    this.isLoadingPattern = false;
+    setTimeout(() => {
+      const { index } = this.pattern;
+      const newIndex = MathUtil.wrap(index + amount, 0, this.patterns.length);
+      this.pattern = this.patterns[newIndex];
+      this.onPatternChange();
+      this.isLoadingPattern = false;
+    }, parseInt(delay * 1000, 10));
   }
 
   stop() {
@@ -216,6 +223,8 @@ class Sequencer {
 
   updateBPM(bpm) {
     this.tempo = this.constructor.bpmToTempo(bpm);
+    const { ticksPerBeat } = this;
+    this.beatDuration = this.constructor.tick2second(ticksPerBeat, ticksPerBeat, this.tempo);
     if (this.pattern === false) return;
     this.pattern = this.updatePatternTempo(this.pattern, this.tempo);
   }
