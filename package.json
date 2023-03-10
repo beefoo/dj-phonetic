@@ -1,5 +1,5 @@
 {
-  "name": "speakerbox",
+  "name": "dj-phonetic",
   "description": "Beatbox with historical speeches",
   "scripts": {
     "align": "mfa align --include_original_text audio english_us_arpa english_us_arpa audio/aligned",
