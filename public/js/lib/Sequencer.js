@@ -214,10 +214,15 @@ class Sequencer {
     const isActive = $el.hasClass('active');
     const volume = isActive ? 1 : 0;
 
-    this.pattern.tracks.forEach((track, i) => {
-      if (track.instrument === value) {
-        this.pattern.tracks[i].volume = volume;
-      }
+    this.patterns.forEach((pattern, i) => {
+      pattern.tracks.forEach((track, j) => {
+        if (track.instrument === value) {
+          this.patterns[i].tracks[j].volume = volume;
+          if (pattern.index === this.pattern.index) {
+            this.pattern.tracks[j].volume = volume;
+          }
+        }
+      });
     });
   }
 
