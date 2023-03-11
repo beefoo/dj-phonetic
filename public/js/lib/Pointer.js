@@ -20,6 +20,22 @@ class Pointer {
     this.reset();
   }
 
+  getDirection(xvalue = true, yvalue = true) {
+    const direction = {
+      up: false,
+      down: false,
+      left: false,
+      right: false,
+    };
+    if (!this.vector) return direction;
+    const { x, y } = this.vector;
+    if (x > 0) direction.right = xvalue;
+    else direction.left = xvalue;
+    if (y > 0) direction.down = yvalue;
+    else direction.up = yvalue;
+    return direction;
+  }
+
   static getEvent(event) {
     return _.extend({}, event, { time: Date.now() });
   }
@@ -32,18 +48,9 @@ class Pointer {
       const absY = Math.abs(y);
       if (absX >= swipeMin || absY >= swipeMin) {
         const $el = this.lastTargetId !== false ? $(`#${this.lastTargetId}`) : false;
-        const swipe = {
-          up: false,
-          down: false,
-          left: false,
-          right: false,
-        };
         const nx = MathUtil.clamp(MathUtil.norm(absX, swipeMin, swipeMax));
         const ny = MathUtil.clamp(MathUtil.norm(absY, swipeMax, swipeMax));
-        if (x > 0) swipe.right = nx;
-        else swipe.left = nx;
-        if (y > 0) swipe.down = ny;
-        else swipe.up = ny;
+        const swipe = this.getDirection(nx, ny);
         this.options.onSwipe(swipe, this, $el);
       }
     }

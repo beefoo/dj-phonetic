@@ -112,30 +112,37 @@ class App {
         this.dataviz.onChange(clip.features);
       }
     }
+
+    const pointerDirection = pointer.getDirection();
+    const isReverse = pointerDirection.left !== false;
     // highlight the phone
     if (clip.type === 'phone') {
-      this.playClips([clip]);
+      this.playClips([clip], 0, 1, isReverse);
     // if word, highlight each phone of the word
     } else if (clip.type === 'word') {
       this.playClips(clip.phones);
     }
   }
 
-  playClips(clips, when = 0, volume = 1) {
+  playClips(clips, when = 0, volume = 1, reverse = false) {
     if (clips.length <= 0) return;
     const now = Date.now();
     const firstClip = clips[0];
     const lastClip = _.last(clips);
+    const duration = lastClip.end - firstClip.start;
     clips.forEach((clip, i) => {
       const id = `${clip.id}-${now}`;
-      const scheduleWhen = clip.start - firstClip.start;
+      let scheduleWhen = clip.start - firstClip.start;
+      if (reverse) {
+        scheduleWhen = duration - scheduleWhen - (clip.end - clip.start);
+      }
       const $el = $(`#${clip.id}`);
       this.audioPlayer.schedule(id, scheduleWhen, () => {
         $el.removeClass('playing');
         setTimeout(() => $el.addClass('playing'), 1);
       });
     });
-    this.audioPlayer.play(firstClip.start, lastClip.end, when, volume);
+    this.audioPlayer.play(firstClip.start, lastClip.end, when, volume, reverse);
   }
 
   randomizePattern() {

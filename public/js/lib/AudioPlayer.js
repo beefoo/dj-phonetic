@@ -19,6 +19,26 @@ class AudioPlayer {
     this.queue = [];
   }
 
+  static getReversedAudioBuffer(audioBuffer, audioContext) {
+    const { numberOfChannels } = audioBuffer;
+
+    // create the new AudioBuffer
+    const newBuffer = audioContext.createBuffer(
+      audioBuffer.numberOfChannels,
+      audioBuffer.length,
+      audioBuffer.sampleRate,
+    );
+
+    // copy the cloned arrays to the new AudioBuffer
+    for (let i = 0; i < numberOfChannels; i += 1) {
+      const newChannel = new Float32Array(audioBuffer.getChannelData(i));
+      Array.prototype.reverse.call(newChannel);
+      newBuffer.getChannelData(i).set(newChannel);
+    }
+
+    return newBuffer;
+  }
+
   isReady() {
     return !this.isLoading && this.loadedId !== false;
   }
@@ -43,6 +63,7 @@ class AudioPlayer {
     fetch(url).then((response) => response.arrayBuffer()).then((audioData) => {
       this.ctx.decodeAudioData(audioData).then((buffer) => {
         this.audioBuffer = buffer;
+        this.audioBufferReversed = this.constructor.getReversedAudioBuffer(buffer, this.ctx);
         this.loadedId = url;
         this.isLoading = false;
         loadPromise.resolve(url);
@@ -52,18 +73,22 @@ class AudioPlayer {
     return loadPromise;
   }
 
-  play(start, end, when = 0, volume = 1) {
+  play(start, end, when = 0, volume = 1, reverse = false) {
     if (!this.isReady()) return;
     const { fadeIn, fadeOut } = this.options;
     const { ctx } = this;
     const dur = end - start + fadeIn + fadeOut;
-    const offsetStart = Math.max(0, start - fadeIn);
+    let offsetStart = Math.max(0, start - fadeIn);
+    if (reverse) {
+      offsetStart = this.audioBufferReversed.duration - offsetStart - dur;
+    }
     const audioSource = ctx.createBufferSource();
     const gainNode = ctx.createGain();
     const now = ctx.currentTime;
 
     // set audio buffer
-    audioSource.buffer = this.audioBuffer;
+    if (reverse) audioSource.buffer = this.audioBufferReversed;
+    else audioSource.buffer = this.audioBuffer;
 
     // fade in
     gainNode.gain.setValueAtTime(Number.EPSILON, now);
