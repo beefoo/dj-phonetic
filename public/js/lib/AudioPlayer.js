@@ -3,6 +3,7 @@ class AudioPlayer {
     const defaults = {
       fadeIn: 0.025,
       fadeOut: 0.025,
+      filters: {},
       reverb: 0.5,
       reverbImpulse: 'js/vendor/tuna/ir_rev_short.wav',
     };
@@ -17,6 +18,7 @@ class AudioPlayer {
     this.loadedId = false;
     this.isLoading = false;
     this.queue = [];
+    this.loadFilters(this.options.filters);
   }
 
   static getReversedAudioBuffer(audioBuffer, audioContext) {
@@ -39,6 +41,29 @@ class AudioPlayer {
     return newBuffer;
   }
 
+  createFilter(params) {
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = params.type;
+    if (_.has(params, 'frequency')) filter.frequency.value = params.frequency;
+    if (_.has(params, 'gain')) filter.gain.value = params.gain;
+    return filter;
+  }
+
+  createFilterChain(params) {
+    if (params.length <= 0) return false;
+    const lastParamIndex = params.length - 1;
+    const filters = [];
+    params.forEach((param, i) => {
+      const filter = this.createFilter(param);
+      filters.push(filter);
+      if (i > 0) {
+        filters[i - 1].connect(filters[i]);
+      }
+      if (i === lastParamIndex) filters[i].connect(this.destination);
+    });
+    return filters[0];
+  }
+
   isReady() {
     return !this.isLoading && this.loadedId !== false;
   }
@@ -53,6 +78,13 @@ class AudioPlayer {
     });
     effectNode.connect(ctx.destination);
     return effectNode;
+  }
+
+  loadFilters(filters) {
+    this.filters = {};
+    _.each(filters, (filterParams, key) => {
+      this.filters[key] = this.createFilterChain(filterParams);
+    });
   }
 
   loadFromURL(url) {
@@ -73,7 +105,7 @@ class AudioPlayer {
     return loadPromise;
   }
 
-  play(start, end, when = 0, volume = 1, reverse = false) {
+  play(start, end, when = 0, volume = 1, reverse = false, filterName = false) {
     if (!this.isReady()) return;
     const { fadeIn, fadeOut } = this.options;
     const { ctx } = this;
@@ -99,7 +131,11 @@ class AudioPlayer {
 
     // connect and play
     audioSource.connect(gainNode);
-    gainNode.connect(this.destination);
+    if (filterName && _.has(this.filters, filterName) && this.filters[filterName] !== false) {
+      gainNode.connect(this.filters[filterName]);
+    } else {
+      gainNode.connect(this.destination);
+    }
     audioSource.start(when, offsetStart, dur);
   }
 

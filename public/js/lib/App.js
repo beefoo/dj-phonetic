@@ -2,6 +2,7 @@ class App {
   constructor(options = {}) {
     const defaults = {
       dataviz: false,
+      filters: {},
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
       samplesPerInstrument: 8,
@@ -12,7 +13,9 @@ class App {
   }
 
   init() {
-    this.audioPlayer = new AudioPlayer();
+    this.audioPlayer = new AudioPlayer({
+      filters: this.options.filters,
+    });
     this.transcript = new Transcript();
     this.instruments = {};
     let transcriptFn = 'audio/afccal000001_speech_by_fiorello_h_la_guardia_excerpt_06-54.json';
@@ -86,7 +89,7 @@ class App {
     if (!_.has(this.instruments, instrument)) return;
     const clip = _.clone(this.instruments[instrument].clip);
     if (duration < (clip.end - clip.start)) clip.end = clip.start + duration;
-    this.playClips([clip], when, velocity);
+    this.playClips([clip], when, velocity, false, instrument);
   }
 
   onSwipe(vector, pointer, $el) {
@@ -124,7 +127,7 @@ class App {
     }
   }
 
-  playClips(clips, when = 0, volume = 1, reverse = false) {
+  playClips(clips, when = 0, volume = 1, reverse = false, filterName = false) {
     if (clips.length <= 0) return;
     const now = Date.now();
     const firstClip = clips[0];
@@ -142,7 +145,7 @@ class App {
         setTimeout(() => $el.addClass('playing'), 1);
       });
     });
-    this.audioPlayer.play(firstClip.start, lastClip.end, when, volume, reverse);
+    this.audioPlayer.play(firstClip.start, lastClip.end, when, volume, reverse, filterName);
   }
 
   randomizePattern() {
