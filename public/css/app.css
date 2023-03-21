@@ -324,48 +324,52 @@ li {
   background: transparent;
   border: none;
   padding: 0;
+  transition: color 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
-.clip:hover {
-  color: white;
+.clip:hover,
+.clip:focus {
   text-decoration: underline;
 }
 .clip:focus,
 .clip:focus:hover {
-  color: rgba(0, 0, 0, 0.7);
-  background: rgba(255, 255, 255, 0.8);
   outline: none;
 }
 .clip.kick,
 .clip.kick:hover {
   color: var(--kick-color);
 }
-.clip.kick:focus,
-.clip.kick:focus:hover {
+.clip.kick.selected,
+.clip.kick.selected:hover {
   background: var(--kick-color);
 }
 .clip.snare,
 .clip.snare:hover {
   color: var(--snare-color);
 }
-.clip.snare:focus,
-.clip.snare:focus:hover {
+.clip.snare.selected,
+.clip.snare.selected:hover {
   background: var(--snare-color);
 }
 .clip.hihat,
 .clip.hihat:hover {
   color: var(--hihat-color);
 }
-.clip.hihat:focus,
-.clip.hihat:focus:hover {
+.clip.hihat.selected,
+.clip.hihat.selected:hover {
   background: var(--hihat-color);
 }
 .clip.vocal,
 .clip.vocal:hover {
   color: var(--vocal-color);
 }
-.clip.vocal:focus,
-.clip.vocal:focus:hover {
+.clip.vocal.selected,
+.clip.vocal.selected:hover {
   background: var(--vocal-color);
+}
+.clip.selected,
+.clip.selected:hover {
+  color: var(--text-color);
+  border-radius: 2px;
 }
 .non-word {
   display: inline-block;

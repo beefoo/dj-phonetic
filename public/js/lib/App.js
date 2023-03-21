@@ -27,8 +27,8 @@ class App {
 
   static onInstrumentChange(instrumentName, clip) {
     const $el = $(`#${clip.id}`);
-    $('.clip').removeClass(instrumentName);
-    $el.addClass(instrumentName);
+    $(`.clip.${instrumentName}`).removeClass('selected');
+    $el.addClass('selected');
   }
 
   onKeyboardClick(event) {
@@ -152,19 +152,28 @@ class App {
     this.sequencer.selectRandomPattern();
   }
 
+  static setInstrument(instrumentName, clip) {
+    const $el = $(`#${clip.id}`);
+    $el.addClass(`instrument ${instrumentName}`);
+  }
+
   setInstrumentsAutomatically() {
     const { instruments } = this.transcript.data;
     const clips = this.transcript.getClips();
     const bestInstruments = {};
     instruments.forEach((instrument) => {
-      const bestClips = _.sortBy(clips, (clip) => -clip.instrumentScores[instrument.name]);
-      const clip = bestClips[0];
+      const sortedClips = _.sortBy(clips, (clip) => -clip.instrumentScores[instrument.name]);
+      const bestClips = sortedClips.slice(0, this.options.samplesPerInstrument);
+      const bestClip = bestClips[0];
       bestInstruments[instrument.name] = {
-        list: bestClips.slice(0, this.options.samplesPerInstrument),
+        list: bestClips,
         index: 0,
-        clip,
+        clip: bestClip,
       };
-      this.constructor.onInstrumentChange(instrument.name, clip);
+      bestClips.forEach((clip) => {
+        this.constructor.setInstrument(instrument.name, clip);
+      });
+      this.constructor.onInstrumentChange(instrument.name, bestClip);
     });
     this.instruments = bestInstruments;
   }
