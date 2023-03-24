@@ -35,15 +35,15 @@ class App {
     const { pointerType } = event;
     // only account for keyboard click
     if (pointerType !== '') return;
-    const fakePointer = { isPrimary: true };
-    this.playClipFromElement(fakePointer, $(event.currentTarget));
+    const fakePointer = { isPrimary: true, type: 'keyboard' };
+    this.playClipFromElement(fakePointer, $(event.currentTarget), 'keyboard');
   }
 
   onReady() {
     this.pointerManager = new PointerManager({
       childSelector: '.clip',
-      onPointerDown: (pointer, $el) => this.playClipFromElement(pointer, $el),
-      onPointerEnter: (pointer, $el) => this.playClipFromElement(pointer, $el),
+      onPointerDown: (pointer, $el) => this.playClipFromElement(pointer, $el, 'pointerdown'),
+      onPointerEnter: (pointer, $el) => this.playClipFromElement(pointer, $el, 'pointerenter'),
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
@@ -105,7 +105,7 @@ class App {
     this.playClips(phones);
   }
 
-  playClipFromElement(pointer, $el) {
+  playClipFromElement(pointer, $el, originEvent = 'unknown') {
     const clip = this.transcript.getClipFromElement($el);
     if (!clip) return;
 
@@ -114,10 +114,13 @@ class App {
       if (this.dataviz && _.has(clip, 'features')) {
         this.dataviz.onChange(clip.features);
       }
+      if (_.has(clip, 'instrument') && (originEvent === 'pointerdown' || originEvent === 'keyboard')) {
+        this.selectInstrument(clip.instrument, clip.id);
+      }
     }
 
-    const pointerDirection = pointer.getDirection();
-    const isReverse = pointerDirection.left !== false;
+    const pointerDirection = pointer.type === 'keyboard' ? {} : pointer.getDirection();
+    const isReverse = pointer.type === 'keyboard' ? false : pointerDirection.left !== false;
     // highlight the phone
     if (clip.type === 'phone') {
       this.playClips([clip], 0, 1, isReverse);
@@ -152,9 +155,20 @@ class App {
     this.sequencer.selectRandomPattern();
   }
 
-  static setInstrument(instrumentName, clip) {
+  selectInstrument(instrumentName, clipId) {
+    const { list } = this.instruments[instrumentName];
+    const index = _.findIndex(list, (clip) => clip.id === clipId);
+    if (index < 0) return;
+    const clip = list[index];
+    this.instruments[instrumentName].index = index;
+    this.instruments[instrumentName].clip = clip;
+    this.constructor.onInstrumentChange(instrumentName, clip);
+  }
+
+  setInstrument(instrumentName, clip) {
     const $el = $(`#${clip.id}`);
     $el.addClass(`instrument ${instrumentName}`);
+    this.transcript.setClipData(clip, 'instrument', instrumentName);
   }
 
   setInstrumentsAutomatically() {
@@ -171,7 +185,7 @@ class App {
         clip: bestClip,
       };
       bestClips.forEach((clip) => {
-        this.constructor.setInstrument(instrument.name, clip);
+        this.setInstrument(instrument.name, clip);
       });
       this.constructor.onInstrumentChange(instrument.name, bestClip);
     });

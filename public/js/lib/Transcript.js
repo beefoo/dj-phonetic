@@ -156,6 +156,15 @@ class Transcript {
 
   onLoad(url, data) {
     this.data = this.constructor.parseData(data);
+    this.clipDataMap = {};
+    this.data.words.forEach((word, i) => {
+      word.phones.forEach((phone, j) => {
+        this.clipDataMap[phone.id] = {
+          wordIndex: i,
+          phoneIndex: j,
+        };
+      });
+    });
     // console.log(this.data);
     this.isLoading = false;
     this.loadedId = url;
@@ -232,6 +241,11 @@ class Transcript {
   render(data) {
     const html = StringUtil.loadTemplateFromString(this.templateString, Mustache, data);
     this.$el.html(html);
+  }
+
+  setClipData(clip, key, value) {
+    const clipData = this.clipDataMap[clip.id];
+    this.data.words[clipData.wordIndex].phones[clipData.phoneIndex][key] = value;
   }
 
   sort(feature, direction) {
