@@ -275,6 +275,23 @@ li {
   font-size: 0.9rem;
   padding-left: 3px
 }
+.metadata > a {
+  display: inline-block;
+  vertical-align: middle;
+}
+.toggle-play-item {
+  border: 2px solid var(--inv-text-color);
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.toggle-play-item svg {
+  width: 16px;
+  height: 16px;
+}
 
 .transcript {
   flex-grow: 1;

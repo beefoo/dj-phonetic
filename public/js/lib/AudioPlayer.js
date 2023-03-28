@@ -21,6 +21,13 @@ class AudioPlayer {
     this.loadFilters(this.options.filters);
   }
 
+  cancelTasks(tag = false) {
+    if (tag === false) this.queue = [];
+    else {
+      this.queue = this.queue.filter((task) => task.tag !== tag);
+    }
+  }
+
   static getReversedAudioBuffer(audioBuffer, audioContext) {
     const { numberOfChannels } = audioBuffer;
 
@@ -106,7 +113,7 @@ class AudioPlayer {
   }
 
   play(start, end, when = 0, volume = 1, reverse = false, filterName = false) {
-    if (!this.isReady()) return;
+    if (!this.isReady()) return false;
     const { fadeIn, fadeOut } = this.options;
     const { ctx } = this;
     const dur = end - start + fadeIn + fadeOut;
@@ -137,9 +144,10 @@ class AudioPlayer {
       gainNode.connect(this.destination);
     }
     audioSource.start(when, offsetStart, dur);
+    return audioSource;
   }
 
-  schedule(id, when, task) {
+  schedule(id, when, task, tag = 'default') {
     if (when <= 0) task();
 
     const now = this.ctx.currentTime;
@@ -147,6 +155,7 @@ class AudioPlayer {
       id,
       task,
       when: when + now,
+      tag,
     });
   }
 

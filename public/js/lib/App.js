@@ -75,6 +75,7 @@ class App {
       });
     }
     $('#transcript').on('click', '.clip', (e) => this.onKeyboardClick(e));
+    $('#transcript-selector').on('click', '.toggle-play-item', (e) => this.togglePlayItem(e));
     this.update();
   }
 
@@ -130,8 +131,8 @@ class App {
     }
   }
 
-  playClips(clips, when = 0, volume = 1, reverse = false, filterName = false) {
-    if (clips.length <= 0) return;
+  playClips(clips, when = 0, volume = 1, reverse = false, filterName = false, tag = 'default') {
+    if (clips.length <= 0) return false;
     const now = Date.now();
     const firstClip = clips[0];
     const lastClip = _.last(clips);
@@ -146,9 +147,22 @@ class App {
       this.audioPlayer.schedule(id, scheduleWhen, () => {
         $el.removeClass('playing');
         setTimeout(() => $el.addClass('playing'), 1);
-      });
+      }, tag);
     });
-    this.audioPlayer.play(firstClip.start, lastClip.end, when, volume, reverse, filterName);
+    return this.audioPlayer.play(firstClip.start, lastClip.end, when, volume, reverse, filterName);
+  }
+
+  playItem(startingClip = false) {
+    if (this.itemAudioSource) {
+      this.stopItem();
+    }
+    const clips = this.transcript.getClips(startingClip);
+    this.itemAudioSource = this.playClips(clips, 0, 1, false, false, 'item');
+    if (this.itemAudioSource) {
+      this.itemAudioSource.onended = (event) => {
+        this.stopItem();
+      };
+    }
   }
 
   randomizePattern() {
@@ -209,10 +223,27 @@ class App {
     this.sequencer.stepPattern(amount);
   }
 
+  stopItem() {
+    if (this.itemAudioSource) {
+      this.itemAudioSource.onended = () => {};
+      this.itemAudioSource.stop();
+    }
+    this.itemAudioSource = false;
+    this.audioPlayer.cancelTasks('item');
+    $('.toggle-play-item').removeClass('active');
+  }
+
   togglePlay($el) {
     $el.toggleClass('active');
     if ($el.hasClass('active')) this.sequencer.start();
     else this.sequencer.stop();
+  }
+
+  togglePlayItem(event) {
+    const $el = $(event.currentTarget);
+    $el.toggleClass('active');
+    if ($el.hasClass('active')) this.playItem();
+    else this.stopItem();
   }
 
   triggerControlFromElement(pointer, $el) {

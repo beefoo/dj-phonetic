@@ -93,8 +93,15 @@ class Transcript {
     return this.getClipFromElement($el);
   }
 
-  getClips() {
-    return _.flatten(_.pluck(this.data.words, 'phones'));
+  getClips(startingClip = false) {
+    let clips = _.flatten(_.pluck(this.data.words, 'phones'));
+    if (startingClip !== false) {
+      const index = _.findIndex(clips, (clip) => clip.id === startingClip.id);
+      if (index >= 0) {
+        clips = clips.slice(index);
+      }
+    }
+    return clips;
   }
 
   getFeatures() {
