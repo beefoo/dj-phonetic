@@ -5,6 +5,7 @@ class PointerManager {
       onPointerDown: (pointer, $el) => {},
       onPointerEnter: (pointer, $el) => {},
       onPointerExit: (pointer, $el) => {},
+      onPointerUp: (pointer, $el) => {},
       onSwipe: (vector, pointer, $el) => {},
       target: '#touchable',
     };
@@ -112,6 +113,7 @@ class PointerManager {
 
   onPointerUp(event) {
     const pointer = this.getPointer(event);
+    this.options.onPointerUp(pointer, $(`#${pointer.currentTargetId}`));
     this.checkForPointerExit(pointer, event);
     pointer.onEnd(event);
     this.removePointers();

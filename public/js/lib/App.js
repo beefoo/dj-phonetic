@@ -25,6 +25,10 @@ class App {
     $.when(transcriptPromise, audioPromise).done(() => this.onReady());
   }
 
+  isItemPlaying() {
+    return this.itemAudioSource;
+  }
+
   static onInstrumentChange(instrumentName, clip) {
     const $el = $(`#${clip.id}`);
     $(`.clip.${instrumentName}`).removeClass('selected');
@@ -44,6 +48,7 @@ class App {
       childSelector: '.clip',
       onPointerDown: (pointer, $el) => this.playClipFromElement(pointer, $el, 'pointerdown'),
       onPointerEnter: (pointer, $el) => this.playClipFromElement(pointer, $el, 'pointerenter'),
+      onPointerUp: (pointer, $el) => this.playItemFromElement(pointer, $el),
       onSwipe: (vector, pointer, $el) => this.onSwipe(vector, pointer, $el),
       target: '#transcript',
     });
@@ -94,6 +99,7 @@ class App {
   }
 
   onSwipe(vector, pointer, $el) {
+    if (this.isItemPlaying() || this.queueItemPlay === true) return;
     if (vector.right === false || vector.right <= 0) return;
     if (vector.up || vector.down) return;
     const nVelocity = vector.right;
@@ -117,6 +123,10 @@ class App {
       }
       if (_.has(clip, 'instrument') && (originEvent === 'pointerdown' || originEvent === 'keyboard')) {
         this.selectInstrument(clip.instrument, clip.id);
+      }
+      if (this.isItemPlaying()) {
+        this.stopItem();
+        this.queueItemPlay = true;
       }
     }
 
@@ -153,7 +163,7 @@ class App {
   }
 
   playItem(startingClip = false) {
-    if (this.itemAudioSource) {
+    if (this.isItemPlaying()) {
       this.stopItem();
     }
     const clips = this.transcript.getClips(startingClip);
@@ -161,8 +171,18 @@ class App {
     if (this.itemAudioSource) {
       this.itemAudioSource.onended = (event) => {
         this.stopItem();
+        $('.toggle-play-item').removeClass('active');
       };
     }
+  }
+
+  playItemFromElement(pointer, $el) {
+    if (!pointer.isPrimary) return;
+    if (!this.isItemPlaying() && this.queueItemPlay !== true) return;
+    this.queueItemPlay = false;
+    const clip = this.transcript.getClipFromElement($el);
+    if (!clip) return;
+    this.playItem(clip);
   }
 
   randomizePattern() {
@@ -230,7 +250,6 @@ class App {
     }
     this.itemAudioSource = false;
     this.audioPlayer.cancelTasks('item');
-    $('.toggle-play-item').removeClass('active');
   }
 
   togglePlay($el) {
