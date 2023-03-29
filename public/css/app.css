@@ -357,7 +357,7 @@ li {
 }
 .clip.kick.selected,
 .clip.kick.selected:hover {
-  background: var(--kick-color);
+  outline: 2px solid var(--kick-color);
 }
 .clip.snare,
 .clip.snare:hover {
@@ -365,7 +365,7 @@ li {
 }
 .clip.snare.selected,
 .clip.snare.selected:hover {
-  background: var(--snare-color);
+  outline: 2px solid var(--snare-color);
 }
 .clip.hihat,
 .clip.hihat:hover {
@@ -373,7 +373,7 @@ li {
 }
 .clip.hihat.selected,
 .clip.hihat.selected:hover {
-  background: var(--hihat-color);
+  outline: 2px solid var(--hihat-color);
 }
 .clip.vocal,
 .clip.vocal:hover {
@@ -381,11 +381,10 @@ li {
 }
 .clip.vocal.selected,
 .clip.vocal.selected:hover {
-  background: var(--vocal-color);
+  outline: 2px solid var(--vocal-color);
 }
 .clip.selected,
 .clip.selected:hover {
-  color: var(--text-color);
   border-radius: 2px;
 }
 .non-word {
