@@ -54,6 +54,7 @@ class Sequencer {
   onLoadMidi(midi) {
     const ticksPerBeat = midi.header.ppq;
     this.ticksPerBeat = ticksPerBeat;
+    const ticksPerMeasure = ticksPerBeat * 4;
     const { tempo } = this;
     // group the tracks based on their names
     const updatedTracks = midi.tracks.map((track, i) => {
@@ -76,6 +77,8 @@ class Sequencer {
         const updatedTrack = _.clone(track);
         updatedTrack.groupIndex = i;
         updatedTrack.volume = 1;
+        const lastNote = _.max(track.notes, (note) => note.ticks + note.durationTicks);
+        updatedTrack.endOfTrackTicks = lastNote.ticks + lastNote.durationTicks;
         updatedTrack.notes = track.notes.map((note, j) => {
           const updatedNote = _.clone(note);
           updatedNote.index = j;
@@ -85,7 +88,9 @@ class Sequencer {
         });
         return updatedTrack;
       });
-      const { endOfTrackTicks } = _.min(groupTracks, 'endOfTrackTicks');
+      let { endOfTrackTicks } = _.max(groupTracks, 'endOfTrackTicks');
+      endOfTrackTicks = MathUtil.ceilToNearest(endOfTrackTicks, ticksPerMeasure);
+      // console.log(`${groupName}: ${endOfTrackTicks / ticksPerMeasure}`);
       // construct pattern object
       const pattern = {
         name: groupName,
