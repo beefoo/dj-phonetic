@@ -55,6 +55,7 @@ class Sequencer {
     const ticksPerBeat = midi.header.ppq;
     this.ticksPerBeat = ticksPerBeat;
     const ticksPerMeasure = ticksPerBeat * 4;
+    this.beatDuration = this.constructor.tick2second(ticksPerBeat, ticksPerBeat, this.tempo);
     const { tempo } = this;
     // group the tracks based on their names
     const updatedTracks = midi.tracks.map((track, i) => {
@@ -84,6 +85,8 @@ class Sequencer {
           updatedNote.index = j;
           updatedNote.trackIndex = i;
           updatedNote.loopCount = 0;
+          updatedNote.measure = Math.floor(note.ticks / ticksPerMeasure);
+          updatedNote.beatInMeasure = (note.ticks % ticksPerMeasure) / ticksPerBeat;
           return updatedNote;
         });
         return updatedTrack;
@@ -163,7 +166,7 @@ class Sequencer {
 
     // automatically step pattern
     if (loopCount >= this.options.patternLoopCount) {
-      this.stepPattern(1, this.beatDuration);
+      this.stepPattern(1);
       return;
     }
 
