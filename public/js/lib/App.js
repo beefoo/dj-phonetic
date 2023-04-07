@@ -80,7 +80,7 @@ class App {
       });
     }
     $('#transcript').on('click', '.clip', (e) => this.onKeyboardClick(e));
-    $('#transcript-selector').on('click', '.toggle-play-item', (e) => this.togglePlayItem(e));
+    $('#transcript-menu').on('click', '.toggle-play-item', (e) => this.togglePlayItem(e));
     this.update();
   }
 

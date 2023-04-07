@@ -237,7 +237,7 @@ li {
   white-space: nowrap;
 }
 
-.transcript-selector {
+.transcript-menu {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   padding: 6px;
@@ -245,7 +245,7 @@ li {
   border: 2px solid var(--border-color);
   box-sizing: border-box;
 }
-.transcript-selector .wrapper {
+.transcript-menu .wrapper {
   color: var(--inv-text-color);
   padding: 2px 4px 9px;
   box-sizing: border-box;
@@ -254,12 +254,12 @@ li {
   background: linear-gradient(to top, var(--inv-bg-color-light), var(--inv-bg-color));
   box-shadow: inset 0 1px 2px rgb(0, 0, 0, 0.33);
 }
-.transcript-selector a {
+.transcript-menu a,
+.transcript-menu label {
   color: var(--inv-text-color);
 }
 .transcript-selector label {
   display: block;
-  color: var(--inv-text-color);
   width: 100%;
   font-size: 0.9rem;
   margin-top: 6px;
@@ -270,27 +270,84 @@ li {
   font-size: 1.2rem;
   background: transparent;
 }
-.metadata {
+
+.item-container {
   margin-top: 6px;
-  font-size: 0.9rem;
-  padding-left: 3px
+  padding: 0 3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.metadata > a {
+.item-metadata {
+  font-size: 0.9rem;
+}
+.item-metadata > a {
   display: inline-block;
   vertical-align: middle;
+}
+.item-controls {
+  display: flex;
+}
+.item-controls .control {
+  margin-right: 3px;
+}
+.item-controls .control:last-child {
+  margin-right: 0;
 }
 .toggle-play-item {
   border: 2px solid var(--inv-text-color);
   background: transparent;
-  padding: 0;
+  padding: 0 3px 0 0;
   margin: 0;
   display: inline-block;
   vertical-align: middle;
   cursor: pointer;
+  line-height: 1;
+  color: var(--inv-text-color);
+}
+.toggle-play-item .active-off {
+  display: flex;
+}
+.toggle-play-item.active .active-on {
+  display: flex;
+}
+.toggle-play-item.active .active-off {
+  display: none;
 }
 .toggle-play-item svg {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
+}
+.radio-toggle {
+  display: flex;
+  padding: 0;
+  border: 2px solid var(--inv-text-color);
+}
+.radio-wrapper {
+  position: relative;
+}
+.radio-button {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+.radio-button:checked {
+  cursor: default;
+}
+.radio-button + label {
+  background: var(--inv-text-color);
+  color: var(--inv-bg-color);
+  padding: 0 3px;
+  cursor: pointer;
+}
+.radio-button:checked + label {
+  background: transparent;
+  color: var(--bg-color);
+  cursor: default;
 }
 
 .transcript {

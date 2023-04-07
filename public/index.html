@@ -90,19 +90,41 @@
         <img src="icon.png" alt="DJ Phonetic logo comprised of an open mouth with a red speaker s a tongue" class="icon" />
         <span class="text title">DJ Phonetic</span> <small class="text tagline">"Beatbox with historical speeches"</small>
       </h1>
-      <div id="transcript-selector" class="transcript-selector">
+      <div id="transcript-menu" class="transcript-menu">
         <div class="wrapper">
-          <label for="transcript-select">Select a transcript:</label>
-          <select id="transcript-select" class="transcript-select">
-            <option value="0">Speech by Fiorello H. La Guardia, New York</option>
-          </select>
-          <div id="metadata" class="metadata">
-            <a href="#" target="_blank">Source: Library of Congress</a>
-            <button id="toggle-play-item" class="control toggle-play-item">
-              <span class="visually-hidden">Toggle playing of full clip</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-off icon icon-play" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="toggle active-on icon icon-stop" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4 H 20 V 20 H 4 L 4 4"/></svg>
-            </button>
+          <div id="transcript-selector" class="transcript-selector">
+            <label for="transcript-select">Select a transcript:</label>
+            <select id="transcript-select" class="transcript-select">
+              <option value="0">Speech by Fiorello H. La Guardia, New York</option>
+            </select>
+          </div>
+          <div class="item-container">
+            <div id="item-metadata" class="item-metadata">
+              <a href="#" target="_blank">Source: Library of Congress</a>
+            </div>
+            <div class="item-controls">
+              <button id="toggle-play-item" class="control toggle-play-item">
+                <div class="toggle active-off">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-play" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2v2z"/></svg>
+                  <span>Play audio</span>
+                </div>
+                <div class="toggle active-on">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-stop" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4 H 20 V 20 H 4 L 4 4"/></svg>
+                  <span>Stop audio</span>
+                </div>
+              </button>
+              <fieldset class="radio-toggle control">
+                <legend class="visually-hidden">Toggle International Phonetic Alphabet</legend>
+                <div class="radio-wrapper">
+                  <input type="radio" name="text-display" id="text-display-text" class="radio-button" checked>
+                  <label for="text-display-text">Text</label>
+                </div>
+                <div class="radio-wrapper">
+                  <input type="radio" name="text-display" id="text-display-phones" class="radio-button">
+                  <label for="text-display-phones">Phones</label>
+                </div>
+              </fieldset>
+            </div>
           </div>
         </div>
       </div>
