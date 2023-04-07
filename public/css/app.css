@@ -34,6 +34,7 @@
   --snare-color: #e4695e;
   --hihat-color: #fbd324;
   --vocal-color: #fb3be4;
+  --focus-color: #ffd414;
 }
 
 
@@ -51,10 +52,13 @@ body {
 a {
   color: var(--text-color);
 }
-a:focus {
+a:focus,
+button:focus,
+select:focus {
   outline-style: solid;
-  outline-color: #a80000;
-  outline-width: 3px;
+  outline-color: var(--focus-color);
+  outline-width: 2px;
+  z-index: 100;
 }
 
 p,
@@ -146,6 +150,10 @@ li {
   align-items: center;
   justify-content: center;
   position: relative;
+}
+.controls button.control:focus {
+  outline: 1px solid var(--focus-color);
+  box-shadow: 0 0 4px 2px var(--focus-color);
 }
 .controls .control.toggle-sound {
   color: rgba(255, 255, 255, 0.5);
@@ -350,6 +358,10 @@ li {
   color: var(--inv-bg-color);
   padding: 0 3px;
   cursor: pointer;
+}
+.radio-button:focus + label {
+  outline: 2px solid var(--focus-color);
+  color: white;
 }
 .radio-button:hover + label {
   color: white;
