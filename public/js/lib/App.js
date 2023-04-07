@@ -13,6 +13,7 @@ class App {
   }
 
   init() {
+    this.$el = $('#app');
     this.audioPlayer = new AudioPlayer({
       filters: this.options.filters,
     });
@@ -83,7 +84,13 @@ class App {
     this.$transcript.on('click', '.clip', (e) => this.onKeyboardClick(e));
     $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
     $('.toggle-phones').on('change', () => this.togglePhones());
+    const delayedResize = _.debounce(() => this.onResize(), 300);
+    $(window).on('resize', delayedResize);
     this.update();
+  }
+
+  onResize() {
+    this.transcript.onResize();
   }
 
   onStep(props) {
@@ -262,8 +269,13 @@ class App {
 
   togglePlay($el) {
     $el.toggleClass('active');
-    if ($el.hasClass('active')) this.sequencer.start();
-    else this.sequencer.stop();
+    if ($el.hasClass('active')) {
+      this.sequencer.start();
+      this.$el.addClass('is-playing');
+    } else {
+      this.sequencer.stop();
+      this.$el.removeClass('is-playing');
+    }
   }
 
   togglePlayItem(event) {

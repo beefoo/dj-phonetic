@@ -176,7 +176,12 @@ class Transcript {
     this.isLoading = false;
     this.loadedId = url;
     this.render(this.data);
+    this.updateFontSize();
     this.loadPromise.resolve(url);
+  }
+
+  onResize() {
+    this.updateFontSize();
   }
 
   static parseData(data) {
@@ -267,5 +272,38 @@ class Transcript {
     this.sortValue = false;
     const modifiedData = this.filterAndSort();
     this.render(modifiedData);
+  }
+
+  updateFontSize() {
+    const { $el, data } = this;
+    const width = $el.width();
+    const height = $el.height();
+    const textRatio = 0.4; // adjust this if text height is changed
+    const fontSizeRatio = 2.25; // decrease this if still overflowing
+    const minTextSize = 12;
+    const maxTextSize = 54;
+    const text = _.reduce(data.words, (memo, word) => {
+      let newText = memo;
+      if (_.has(word, 'prepend')) newText += ` ${word.prepend}`;
+      if (_.has(word, 'isNonVerbal')) newText += ` [${word.text}]`;
+      else newText += ` ${word.text}`;
+      if (_.has(word, 'append')) newText += word.append;
+      return newText;
+    }, '');
+    const chars = text.length;
+    const testWidth = width * fontSizeRatio;
+    const testHeight = height * fontSizeRatio;
+    let finalTextSize = minTextSize;
+    for (let textSize = minTextSize; textSize <= maxTextSize; textSize += 1) {
+      const textHeight = textSize / textRatio;
+      const charsPerRow = Math.floor(testWidth / textSize);
+      const rows = Math.ceil(chars / charsPerRow);
+      const rowsHeight = rows * textHeight;
+      if (rowsHeight > testHeight) {
+        break;
+      }
+      finalTextSize = textSize;
+    }
+    $el.css('font-size', `${finalTextSize}px`);
   }
 }

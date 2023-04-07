@@ -393,6 +393,9 @@ li {
   box-sizing: border-box;
   box-shadow: inset 0 1px 2px rgb(0, 0, 0);
 }
+.is-playing .transcript {
+  overflow: hidden;
+}
 .word-wrapper {
   display: inline-block;
   margin-right: 0.5rem;
@@ -489,6 +492,7 @@ li {
 }
 .phone-text {
   display: none;
+  font-size: 0.9em;
 }
 .show-phones .phone-text {
   display: inline;
