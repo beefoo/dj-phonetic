@@ -116,11 +116,11 @@
               <fieldset class="radio-toggle control">
                 <legend class="visually-hidden">Toggle International Phonetic Alphabet</legend>
                 <div class="radio-wrapper">
-                  <input type="radio" name="text-display" id="text-display-text" class="radio-button" checked>
+                  <input type="radio" name="text-display" id="text-display-text" class="radio-button toggle-phones" value="text" checked>
                   <label for="text-display-text">Text</label>
                 </div>
                 <div class="radio-wrapper">
-                  <input type="radio" name="text-display" id="text-display-phones" class="radio-button">
+                  <input type="radio" name="text-display" id="text-display-phones" class="radio-button toggle-phones" value="phones">
                   <label for="text-display-phones">Phones</label>
                 </div>
               </fieldset>
@@ -144,16 +144,10 @@
         {{/hasPrepend}}
         {{#phones}}
           <button id="{{id}}" class="clip phone{{className}}" data-word="{{wordIndex}}" data-phone="{{index}}">
-          <span class="original-text">{{{displayText}}}</span>
-          <span class="ghost-text">{{{displayText}}}</span>
-          <span class="phone-text">{{text}}</span>
+          <span class="original-text"><span class="letter-text">{{{displayText}}}</span><span class="phone-text">{{text}}</span></span>
+          <span class="ghost-text"><span class="letter-text">{{{displayText}}}</span><span class="phone-text">{{text}}</span></span>
           </button>
         {{/phones}}
-        <!-- {{#text}}
-        <button id="{{id}}" class="clip word" data-word="{{index}}">
-        <span class="visually-hidden">{{text}}</span>
-        </button>
-        {{/text}} -->
         {{#hasAppend}}
           <div class="non-word append">{{append}}</div>
         {{/hasAppend}}

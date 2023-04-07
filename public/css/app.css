@@ -44,6 +44,10 @@ html {
   background: var(--bg-color);
 }
 
+body {
+  overflow: hidden;
+}
+
 a {
   color: var(--text-color);
 }
@@ -305,6 +309,9 @@ li {
   line-height: 1;
   color: var(--inv-text-color);
 }
+.toggle-play-item:hover {
+  background: white;
+}
 .toggle-play-item .active-off {
   display: flex;
 }
@@ -344,10 +351,16 @@ li {
   padding: 0 3px;
   cursor: pointer;
 }
+.radio-button:hover + label {
+  color: white;
+}
 .radio-button:checked + label {
   background: transparent;
   color: var(--bg-color);
   cursor: default;
+}
+.radio-button:checked:hover + label {
+  color: var(--bg-color);
 }
 
 .transcript {
@@ -462,48 +475,18 @@ li {
 .phone .original-text {
   position: relative;
 }
-.phone .phone-text {
-  position: absolute;
-  bottom: 6px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.6);
+.phone-text {
   display: none;
 }
-.clip:focus:hover .phone-text,
-.clip:focus .phone-text {
-  color: rgba(0, 0, 0, 0.4);
+.show-phones .phone-text {
+  display: inline;
+}
+.show-phones .letter-text {
+  display: none;
 }
 .clip.playing:focus:hover .ghost-text,
 .clip.playing:focus .ghost-text {
   color: rgba(255, 255, 255, 0.8);
-}
-.word {
-  position: absolute;
-  width: 100%;
-  height: 24px;
-  bottom: -24px;
-  box-sizing: border-box;
-  left: 0;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  border: 3px solid #000;
-  display: none;
-}
-.word::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 90%;
-  height: 4px;
-  margin-left: -45%;
-  margin-top: -2px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top: none;
 }
 .clip:hover::before {
   border-color: white;

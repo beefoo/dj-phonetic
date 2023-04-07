@@ -17,6 +17,7 @@ class App {
       filters: this.options.filters,
     });
     this.transcript = new Transcript();
+    this.$transcript = $('#transcript');
     this.instruments = {};
     let transcriptFn = 'audio/afccal000001_speech_by_fiorello_h_la_guardia_excerpt_06-54.json';
     if (this.options.dataviz !== false) transcriptFn = transcriptFn.replace('.json', '-with-features.json');
@@ -79,8 +80,9 @@ class App {
         },
       });
     }
-    $('#transcript').on('click', '.clip', (e) => this.onKeyboardClick(e));
-    $('#transcript-menu').on('click', '.toggle-play-item', (e) => this.togglePlayItem(e));
+    this.$transcript.on('click', '.clip', (e) => this.onKeyboardClick(e));
+    $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
+    $('.toggle-phones').on('change', () => this.togglePhones());
     this.update();
   }
 
@@ -250,6 +252,12 @@ class App {
     }
     this.itemAudioSource = false;
     this.audioPlayer.cancelTasks('item');
+  }
+
+  togglePhones() {
+    const value = $('.toggle-phones:checked').val();
+    if (value === 'phones') this.$transcript.addClass('show-phones');
+    else this.$transcript.removeClass('show-phones');
   }
 
   togglePlay($el) {
