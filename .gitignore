@@ -4,3 +4,4 @@ node_modules/
 *.log
 package-lock.json
 s3_website.yml
+audio/aligned/*.csv
