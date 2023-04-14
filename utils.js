@@ -62,8 +62,8 @@ module.exports = {
     });
   },
 
-  writeJSON(fs, filename, data) {
-    const jsonString = JSON.stringify(data);
+  writeJSON(fs, filename, data, prepend = '', append = '') {
+    const jsonString = `${prepend}${JSON.stringify(data)}${append}`;
     this.writeFile(fs, filename, jsonString);
   },
 };

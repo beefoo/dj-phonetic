@@ -6,6 +6,7 @@ class App {
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
       samplesPerInstrument: 8,
+      transcripts: [],
     };
     const q = StringUtil.queryParams();
     this.options = _.extend({}, defaults, options, q);
@@ -17,6 +18,7 @@ class App {
     this.audioPlayer = new AudioPlayer({
       filters: this.options.filters,
     });
+    this.transcriptManager = new TranscriptManager({ transcripts: this.options.transcripts });
     this.transcript = new Transcript();
     this.$transcript = $('#transcript');
     this.instruments = {};
