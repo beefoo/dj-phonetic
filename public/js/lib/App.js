@@ -15,22 +15,39 @@ class App {
 
   init() {
     this.$el = $('#app');
-    this.audioPlayer = new AudioPlayer({
-      filters: this.options.filters,
+    this.transcriptManager = new TranscriptManager({
+      onChange: (transcript) => this.onChangeTranscript(transcript),
+      transcripts: this.options.transcripts,
     });
-    this.transcriptManager = new TranscriptManager({ transcripts: this.options.transcripts });
-    this.transcript = new Transcript();
     this.$transcript = $('#transcript');
     this.instruments = {};
-    let transcriptFn = 'audio/loc_afccal000001_speech_by_fiorello_h_la_guardia_excerpt_06-54.json';
-    if (this.options.dataviz !== false) transcriptFn = transcriptFn.replace('.json', '-with-features.json');
-    const transcriptPromise = this.transcript.loadFromURL(transcriptFn);
-    const audioPromise = this.audioPlayer.loadFromURL('audio/loc_afccal000001_speech_by_fiorello_h_la_guardia_excerpt_06-54.mp3');
-    $.when(transcriptPromise, audioPromise).done(() => this.onReady());
+    this.isReady = false;
+    this.onChangeTranscript(this.transcriptManager.selectedTranscript);
   }
 
   isItemPlaying() {
     return this.itemAudioSource;
+  }
+
+  onChangeTranscript(newTranscript) {
+    const { id } = newTranscript;
+    let transcriptFn = `audio/${id}.json`;
+    const audioFn = `audio/${id}.mp3`;
+    if (this.options.dataviz !== false) transcriptFn = transcriptFn.replace('.json', '-with-features.json');
+    const audioPlayer = new AudioPlayer({
+      filters: this.options.filters,
+    });
+    const transcript = new Transcript();
+    const transcriptPromise = transcript.loadFromURL(transcriptFn);
+    const audioPromise = audioPlayer.loadFromURL(audioFn);
+    $.when(transcriptPromise, audioPromise).done(() => {
+      this.audioPlayer = audioPlayer;
+      this.transcript = transcript;
+      if (!this.isReady) this.onReady();
+      else this.sequencer.restart();
+      this.transcript.onReady();
+      this.setInstrumentsAutomatically();
+    });
   }
 
   static onInstrumentChange(instrumentName, clip) {
@@ -61,11 +78,11 @@ class App {
       onPointerExit: (pointer, $el) => this.triggerControlFromElement(pointer, $el),
       target: '#controls',
     });
-    this.setInstrumentsAutomatically();
     this.sequencer = new Sequencer({
       audioPlayer: this.audioPlayer,
       onStep: (props) => this.onStep(props),
     });
+    this.transcriptManager.loadListeners();
     if (this.options.dataviz !== false) {
       this.dataviz = new DataViz({
         features: this.transcript.getFeatures(),
@@ -89,6 +106,7 @@ class App {
     const delayedResize = _.debounce(() => this.onResize(), 300);
     $(window).on('resize', delayedResize);
     this.update();
+    this.isReady = true;
   }
 
   onResize() {

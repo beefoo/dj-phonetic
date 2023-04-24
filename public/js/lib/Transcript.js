@@ -175,9 +175,12 @@ class Transcript {
     // console.log(this.data);
     this.isLoading = false;
     this.loadedId = url;
+    this.loadPromise.resolve(url);
+  }
+
+  onReady() {
     this.render(this.data);
     this.updateFontSize();
-    this.loadPromise.resolve(url);
   }
 
   onResize() {
