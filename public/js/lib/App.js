@@ -41,6 +41,8 @@ class App {
     const transcriptPromise = transcript.loadFromURL(transcriptFn);
     const audioPromise = audioPlayer.loadFromURL(audioFn);
     $.when(transcriptPromise, audioPromise).done(() => {
+      this.stopItem();
+      $('.toggle-play-item').removeClass('active');
       this.audioPlayer = audioPlayer;
       this.transcript = transcript;
       if (!this.isReady) this.onReady();
@@ -278,6 +280,7 @@ class App {
       this.itemAudioSource.stop();
     }
     this.itemAudioSource = false;
+    if (!this.audioPlayer) return;
     this.audioPlayer.cancelTasks('item');
   }
 
