@@ -282,6 +282,22 @@ li {
   font-size: 1.2rem;
   background: transparent;
 }
+.transcript-select-controls {
+  display: flex;
+  align-items: center;
+}
+.transcript-select-controls .control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.transcript-select-controls .control .icon {
+  width: 32px;
+  height: 32px;
+}
 
 .item-container {
   margin-top: 6px;
