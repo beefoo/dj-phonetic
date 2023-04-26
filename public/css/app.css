@@ -281,6 +281,7 @@ li {
   border: none;
   font-size: 1.2rem;
   background: transparent;
+  flex-grow: 1;
 }
 .transcript-select-controls {
   display: flex;
