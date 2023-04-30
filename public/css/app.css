@@ -249,6 +249,18 @@ li {
   white-space: nowrap;
 }
 
+@media (max-width: 460px) {
+  .controls > .control-group {
+    padding: 2px;
+  }
+  .controls .control {
+    padding: 0;
+  }
+  .main h1 .tagline {
+    font-size: 0.9rem;
+  }
+}
+
 .transcript-menu {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -277,13 +289,21 @@ li {
   margin-top: 6px;
   padding-left: 3px
 }
+.transcript-select-wrapper {
+  flex-grow: 1;
+  overflow: hidden;
+}
 .transcript-selector select {
   border: none;
   font-size: 1.2rem;
   background: transparent;
-  flex-grow: 1;
+  width: 100%;
 }
 .transcript-select-controls {
+  display: flex;
+  align-items: center;
+}
+.transcript-select-buttons {
   display: flex;
   align-items: center;
 }
@@ -306,6 +326,7 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 .item-metadata {
   font-size: 0.9rem;
@@ -313,6 +334,7 @@ li {
 .item-metadata > a {
   display: inline-block;
   vertical-align: middle;
+  padding-bottom: 0.3rem;
 }
 .item-controls {
   display: flex;
@@ -333,6 +355,7 @@ li {
   cursor: pointer;
   line-height: 1;
   color: var(--inv-text-color);
+  white-space: nowrap;
 }
 .toggle-play-item:hover {
   background: white;
