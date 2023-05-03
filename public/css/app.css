@@ -249,18 +249,6 @@ li {
   white-space: nowrap;
 }
 
-@media (max-width: 460px) {
-  .controls > .control-group {
-    padding: 2px;
-  }
-  .controls .control {
-    padding: 0;
-  }
-  .main h1 .tagline {
-    font-size: 0.9rem;
-  }
-}
-
 .transcript-menu {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -380,6 +368,7 @@ li {
 }
 .radio-wrapper {
   position: relative;
+  display: flex;
 }
 .radio-button {
   opacity: 0;
@@ -641,4 +630,27 @@ li {
   position: absolute;
   white-space: nowrap;
   width: 1px;
+}
+
+@media (max-width: 460px) {
+  .controls > .control-group {
+    padding: 2px;
+  }
+  .controls .control {
+    padding: 0;
+  }
+  .main h1 .tagline {
+    font-size: 0.9rem;
+  }
+  .transcript-selector label,
+  .item-metadata {
+    font-size: 0.8rem;
+  }
+  .transcript-selector select {
+    font-size: 0.9rem;
+  }
+  .transcript-select-controls .control .icon {
+    width: 24px;
+    height: 24px;
+  }
 }
