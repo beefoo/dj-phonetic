@@ -425,6 +425,32 @@ li {
 .is-playing .transcript {
   overflow: hidden;
 }
+.loading {
+  width: 182px;
+  margin: 0.3rem 0;
+}
+.loading p {
+  margin: 0;
+  overflow: hidden;
+  border-right: 4px solid var(--text-color);
+  white-space: nowrap;
+  margin: 0 auto;
+  line-height: 1;
+  animation: 
+    typing 2s steps(10, end),
+    blink-caret .5s step-end infinite;
+}
+#loading p {
+  font-size: 1.8rem;
+}
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--text-color) }
+}
 .word-wrapper {
   display: inline-block;
   margin-right: 0.5rem;
