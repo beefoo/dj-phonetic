@@ -80,6 +80,20 @@ class App {
       onPointerExit: (pointer, $el) => this.triggerControlFromElement(pointer, $el),
       target: '#controls',
     });
+    this.keyboardManager = new KeyboardManager({
+      keyMap: {
+        r: () => { this.sequencer.toggleInstrument(false, 'kick'); },
+        d: () => { this.stepInstrument(-1, 'kick'); },
+        f: () => { this.stepInstrument(1, 'kick'); },
+        y: () => { this.sequencer.toggleInstrument(false, 'snare'); },
+        g: () => { this.stepInstrument(-1, 'snare'); },
+        h: () => { this.stepInstrument(1, 'snare'); },
+        i: () => { this.sequencer.toggleInstrument(false, 'hihat'); },
+        j: () => { this.stepInstrument(-1, 'hihat'); },
+        k: () => { this.stepInstrument(1, 'hihat'); },
+        ' ': () => { this.togglePlay(false); },
+      },
+    });
     this.sequencer = new Sequencer({
       audioPlayer: this.audioPlayer,
       onStep: (props) => this.onStep(props),
@@ -291,8 +305,12 @@ class App {
   }
 
   togglePlay($el) {
-    $el.toggleClass('active');
-    if ($el.hasClass('active')) {
+    let $elCopy = $el;
+    if ($elCopy === false) {
+      $elCopy = $('#toggle-play');
+    }
+    $elCopy.toggleClass('active');
+    if ($elCopy.hasClass('active')) {
       this.sequencer.start();
       this.$el.addClass('is-playing');
     } else {

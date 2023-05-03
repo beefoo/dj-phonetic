@@ -218,8 +218,12 @@ class Sequencer {
   }
 
   toggleInstrument($el, value) {
-    $el.toggleClass('active');
-    const isActive = $el.hasClass('active');
+    let $elCopy = $el;
+    if ($elCopy === false) {
+      $elCopy = $(`#toggle-${value}`);
+    }
+    $elCopy.toggleClass('active');
+    const isActive = $elCopy.hasClass('active');
     const volume = isActive ? 1 : 0;
 
     this.patterns.forEach((pattern, i) => {
