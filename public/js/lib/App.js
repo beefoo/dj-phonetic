@@ -3,6 +3,7 @@ class App {
     const defaults = {
       dataviz: false,
       filters: {},
+      instruments: [],
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
       samplesPerInstrument: 8,
@@ -20,6 +21,15 @@ class App {
       transcripts: this.options.transcripts,
     });
     this.$transcript = $('#transcript');
+    this.$togglePlay = $('#toggle-play');
+    this.instrumentEls = _.object(this.options.instruments.map((value) => {
+      const els = {
+        $next: $(`#next-${value}`),
+        $prev: $(`#prev-${value}`),
+        $toggle: $(`#toggle-${value}`),
+      };
+      return [value, els];
+    }));
     this.instruments = {};
     this.isReady = false;
     this.onChangeTranscript(this.transcriptManager.selectedTranscript);
@@ -82,16 +92,16 @@ class App {
     });
     this.keyboardManager = new KeyboardManager({
       keyMap: {
-        r: () => { this.sequencer.toggleInstrument(false, 'kick'); },
+        r: () => { this.sequencer.toggleInstrument(this.instrumentEls.kick.$toggle, 'kick'); },
         d: () => { this.stepInstrument(-1, 'kick'); },
         f: () => { this.stepInstrument(1, 'kick'); },
-        y: () => { this.sequencer.toggleInstrument(false, 'snare'); },
+        y: () => { this.sequencer.toggleInstrument(this.instrumentEls.snare.$toggle, 'snare'); },
         g: () => { this.stepInstrument(-1, 'snare'); },
         h: () => { this.stepInstrument(1, 'snare'); },
-        i: () => { this.sequencer.toggleInstrument(false, 'hihat'); },
+        i: () => { this.sequencer.toggleInstrument(this.instrumentEls.hihat.$toggle, 'hihat'); },
         j: () => { this.stepInstrument(-1, 'hihat'); },
         k: () => { this.stepInstrument(1, 'hihat'); },
-        ' ': () => { this.togglePlay(false); },
+        ' ': () => { this.togglePlay(); },
       },
     });
     this.sequencer = new Sequencer({
@@ -304,13 +314,10 @@ class App {
     else this.$transcript.removeClass('show-phones');
   }
 
-  togglePlay($el) {
-    let $elCopy = $el;
-    if ($elCopy === false) {
-      $elCopy = $('#toggle-play');
-    }
-    $elCopy.toggleClass('active');
-    if ($elCopy.hasClass('active')) {
+  togglePlay() {
+    const $el = this.$togglePlay;
+    $el.toggleClass('active');
+    if ($el.hasClass('active')) {
       this.sequencer.start();
       this.$el.addClass('is-playing');
     } else {
@@ -330,7 +337,7 @@ class App {
     const action = $el.attr('data-action');
     const value = $el.attr('data-value');
     if (action === undefined) return;
-    if (action === 'toggle-play') this.togglePlay($el);
+    if (action === 'toggle-play') this.togglePlay();
     else if (action === 'randomize-pattern') this.randomizePattern();
     else if (action === 'next-pattern') this.stepPattern(1);
     else if (action === 'previous-pattern') this.stepPattern(-1);

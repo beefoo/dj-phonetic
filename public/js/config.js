@@ -30,6 +30,6 @@ const CONFIG = {
         frequency: 1000,
       },
     ],
-    vocal: [],
   },
+  instruments: ['kick', 'snare', 'hihat'],
 };
