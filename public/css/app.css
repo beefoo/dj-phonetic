@@ -473,7 +473,7 @@ li {
   margin-right: 0;
 }
 .clip {
-  margin: 0;
+  margin: 3px 0;
   display: inline-block;
   position: relative;
   color: rgba(255, 255, 255, 0.8);
@@ -482,6 +482,7 @@ li {
   border: none;
   padding: 0;
   transition: color 0.5s ease-in-out, background-color 0.5s ease-in-out;
+  line-height: 1;
 }
 .clip:hover,
 .clip:focus {
@@ -568,6 +569,64 @@ li {
 .text small {
   font-size: 0.5em;
   vertical-align: middle;
+}
+
+.controls .control.toggle-sound::before {
+  display: inline-block;
+  content: " ";
+  margin-right: 6px;
+}
+.clip.selected::after {
+  display: block;
+  content: " ";
+  position: absolute;
+  left: 50%;
+  transform-origin: 50% 75%;
+  transform: scale3d(0.8, 0.8, 1);
+  bottom: -12px;
+}
+.controls .control.toggle-sound.kick::before,
+.clip.selected.kick::after {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+.controls .control.kick.active::before,
+.clip.selected.kick::after {
+  background: var(--kick-color);
+}
+.clip.selected.kick::after {
+  margin-left: -5px;
+}
+.controls .control.snare::before,
+.clip.selected.snare::after {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate3d(0, 0, 1, 45deg);
+}
+.controls .control.snare.active::before,
+.clip.selected.snare::after {
+  background: var(--snare-color);
+}
+.clip.selected.snare::after {
+  margin-left: -4px;
+}
+.controls .control.hihat::before,
+.clip.selected.hihat::after {
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 8px solid rgba(255, 255, 255, 0.5);
+}
+.controls .control.hihat.active::before,
+.clip.selected.hihat::after {
+  border-bottom: 8px solid var(--hihat-color);
+}
+.clip.selected.hihat::after {
+  margin-left: -5px;
 }
 
 .dataviz {
