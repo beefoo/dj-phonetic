@@ -629,6 +629,42 @@ li {
   margin-left: -5px;
 }
 
+.context-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--bg-color-dark);
+  border-radius: 3px;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  box-sizing: border-box;
+  box-shadow: 0 1px 2px rgb(0, 0, 0);
+  display: none;
+}
+.context-menu.active {
+  display: block;
+  z-index: 100000;
+}
+.clip-instrument-fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.clip-instrument-fieldset label {
+  display: block;
+  padding: 4px 8px;
+  color: #ccc;
+}
+.clip-instrument-fieldset label.kick {
+  color: var(--kick-color);
+}
+.clip-instrument-fieldset label.snare {
+  color: var(--snare-color);
+}
+.clip-instrument-fieldset label.hihat {
+  color: var(--hihat-color);
+}
+
 .dataviz {
   position: fixed;
   z-index: 1000;
