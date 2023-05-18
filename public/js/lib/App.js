@@ -22,6 +22,7 @@ class App {
     });
     this.$transcript = $('#transcript');
     this.$togglePlay = $('#toggle-play');
+    this.$contextMenu = $('#context-menu');
     this.instrumentEls = _.object(this.options.instruments.map((value) => {
       const els = {
         $next: $(`#next-${value}`),
@@ -60,6 +61,23 @@ class App {
       this.transcript.onReady();
       this.setInstrumentsAutomatically();
     });
+  }
+
+  onContextMenu(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const { pageX, pageY } = event;
+    const $el = $(event.currentTarget);
+    const clip = this.transcript.getClipFromElement($el);
+    if (!clip) return;
+    let instrument = _.has(clip, 'instrument') ? clip.instrument : 'none';
+    if (this.options.instruments.indexOf(instrument) < 0) instrument = 'none';
+    $(`#clip-instrument-${instrument}`).prop('checked', true);
+    this.$contextMenu.css({
+      left: `${pageX}px`,
+      top: `${pageY}px`,
+    });
+    this.$contextMenu.addClass('active');
   }
 
   static onInstrumentChange(instrumentName, clip) {
@@ -127,6 +145,10 @@ class App {
       });
     }
     this.$transcript.on('click', '.clip', (e) => this.onKeyboardClick(e));
+    this.$transcript.on('contextmenu', '.clip', (e) => this.onContextMenu(e));
+    $('.close-context-menu').on('click', (e) => {
+      this.$contextMenu.removeClass('active');
+    });
     $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
     $('.toggle-phones').on('change', () => this.togglePhones());
     const delayedResize = _.debounce(() => this.onResize(), 300);
