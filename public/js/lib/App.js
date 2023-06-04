@@ -33,6 +33,7 @@ class App {
     }));
     this.instruments = {};
     this.isReady = false;
+    this.activeMenuClip = false;
     this.onChangeTranscript(this.transcriptManager.selectedTranscript);
   }
 
@@ -63,6 +64,51 @@ class App {
     });
   }
 
+  onClipInstrumentChange(event) {
+    const { activeMenuClip, instruments } = this;
+    if (activeMenuClip === false || _.isEmpty(instruments)) return;
+    const instrumentName = $('input[name="clip-instrument"]:checked').val();
+    // console.log(activeMenuClip, instrumentName);
+    const { id } = activeMenuClip;
+    const oldInstrument = activeMenuClip.instrument;
+    _.each(instruments, (instrument, key) => {
+      const isOld = oldInstrument === key;
+      const isNew = instrumentName === key;
+      if (!isOld && !isNew) return;
+      const isActive = instrument.clip ? instrument.clip.id === id : false;
+      const listMatch = _.findWhere(instrument.list, { id });
+      const isInList = listMatch !== undefined;
+      // add clip to list if new
+      if (isNew && !isInList) {
+        this.instruments[instrumentName].list.push(activeMenuClip);
+      }
+      // make it active also
+      if (isNew && isActive) {
+        const newIndex = this.instruments[instrumentName].list.findIndex((clip) => clip.id === id);
+        if (newIndex >= 0) {
+          this.instruments[instrumentName].index = newIndex;
+          this.instruments[instrumentName].clip = activeMenuClip;
+        }
+      }
+      // remove clip from list if old
+      if (isOld && isInList) {
+        const oldList = this.instruments[oldInstrument].list;
+        this.instruments[oldInstrument].list = oldList.filter((clip) => clip.id !== id);
+      }
+      // re-assign active clip when removed
+      if (isOld && isActive) {
+        this.instruments[oldInstrument].index = 0;
+        if (this.instruments[oldInstrument].list.length <= 0) {
+          this.instruments[oldInstrument].clip = false;
+        } else {
+          this.instruments[oldInstrument].clip = this.instruments[oldInstrument].list[0];
+          this.selectInstrument(oldInstrument, this.instruments[oldInstrument].clip.id);
+        }
+      }
+    });
+    this.setInstrument(instrumentName, activeMenuClip);
+  }
+
   onContextMenu(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -70,6 +116,7 @@ class App {
     const $el = $(event.currentTarget);
     const clip = this.transcript.getClipFromElement($el);
     if (!clip) return;
+    this.activeMenuClip = clip;
     let instrument = _.has(clip, 'instrument') ? clip.instrument : 'none';
     if (this.options.instruments.indexOf(instrument) < 0) instrument = 'none';
     $(`#clip-instrument-${instrument}`).prop('checked', true);
@@ -149,6 +196,7 @@ class App {
     $('.close-context-menu').on('click', (e) => {
       this.$contextMenu.removeClass('active');
     });
+    $('input[name="clip-instrument"]').on('change', (e) => this.onClipInstrumentChange(e));
     $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
     $('.toggle-phones').on('change', () => this.togglePhones());
     const delayedResize = _.debounce(() => this.onResize(), 300);
@@ -170,6 +218,7 @@ class App {
       when,
     } = props;
     if (!_.has(this.instruments, instrument)) return;
+    if (this.instruments[instrument].clip === false) return;
     const clip = _.clone(this.instruments[instrument].clip);
     if (duration < (clip.end - clip.start)) clip.end = clip.start + duration;
     this.playClips([clip], when, velocity, false, instrument);
@@ -278,7 +327,10 @@ class App {
 
   setInstrument(instrumentName, clip) {
     const $el = $(`#${clip.id}`);
-    $el.addClass(`instrument ${instrumentName}`);
+    const classNames = this.options.instruments.join(' ');
+    $el.removeClass(classNames);
+    $el.removeClass('instrument none');
+    if (instrumentName !== 'none') $el.addClass(`instrument ${instrumentName}`);
     this.transcript.setClipData(clip, 'instrument', instrumentName);
   }
 
@@ -308,8 +360,9 @@ class App {
 
     const instrument = this.instruments[instrumentName];
     const { list, index } = instrument;
-    const { samplesPerInstrument } = this.options;
-    const newIndex = MathUtil.wrap(index + amount, 0, samplesPerInstrument);
+    const sampleLength = list.length;
+    if (sampleLength <= 0) return;
+    const newIndex = MathUtil.wrap(index + amount, 0, sampleLength);
     const clip = list[newIndex];
     this.instruments[instrumentName].index = newIndex;
     this.instruments[instrumentName].clip = clip;
