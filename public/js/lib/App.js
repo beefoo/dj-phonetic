@@ -83,12 +83,8 @@ class App {
         this.instruments[instrumentName].list.push(activeMenuClip);
       }
       // make it active also
-      if (isNew && isActive) {
-        const newIndex = this.instruments[instrumentName].list.findIndex((clip) => clip.id === id);
-        if (newIndex >= 0) {
-          this.instruments[instrumentName].index = newIndex;
-          this.instruments[instrumentName].clip = activeMenuClip;
-        }
+      if (isNew) {
+        this.selectInstrument(instrumentName, activeMenuClip.id);
       }
       // remove clip from list if old
       if (isOld && isInList) {
@@ -101,12 +97,13 @@ class App {
         if (this.instruments[oldInstrument].list.length <= 0) {
           this.instruments[oldInstrument].clip = false;
         } else {
-          this.instruments[oldInstrument].clip = this.instruments[oldInstrument].list[0];
-          this.selectInstrument(oldInstrument, this.instruments[oldInstrument].clip.id);
+          const firstClip = this.instruments[oldInstrument].list[0];
+          this.selectInstrument(oldInstrument, firstClip.id);
         }
       }
     });
     this.setInstrument(instrumentName, activeMenuClip);
+    this.activeMenuClip.instrument = instrumentName;
   }
 
   onContextMenu(event) {
