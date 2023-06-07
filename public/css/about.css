@@ -1,0 +1,88 @@
+@font-face {
+  font-family: "VT323-Regular";
+  src: url("../fonts/VT323-Regular.woff2") format("woff2");
+}
+
+:root {
+  --bg-color: #232121;
+  --bg-color-dark: #121212;
+  --bg-color-light: #292828;
+  --text-color: white;
+  --inv-bg-color: #777;
+  --inv-bg-color-light: #999;
+  --inv-text-color: #222;
+  --border-color: #414141;
+  --icon-color: white;
+  --icon-width: 36px;
+  --kick-color: #9695ff;
+  --snare-color: #e4695e;
+  --hihat-color: #fbd324;
+  --vocal-color: #fb3be4;
+  --focus-color: #ffd414;
+}
+
+
+html {
+  font: 24px monospace;
+  font-family: 'VT323-Regular', monospace;
+  color: var(--text-color);
+  background: var(--bg-color);
+}
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0.5rem 1rem;
+}
+
+a {
+  color: var(--text-color);
+}
+a:focus,
+button:focus {
+  outline-style: solid;
+  outline-color: var(--focus-color);
+  outline-width: 2px;
+}
+
+p,
+li {
+  line-height: 1.8;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-weight: normal;
+}
+h1 {
+  margin: 0;
+}
+h2 {
+  margin: 0;
+}
+h3 {
+  color: var(--hihat-color);
+  margin: 2rem 0 0;
+  font-size: 1.4rem;
+}
+
+h3 + p {
+  margin-top: 0.2rem;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+}
+.icon {
+  flex-basis: 80px;
+  width: 80px;
+  height: 80px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.title .text {
+  padding-left: 20px;
+}
