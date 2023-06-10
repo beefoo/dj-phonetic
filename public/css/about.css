@@ -86,3 +86,15 @@ h3 + p {
 .title .text {
   padding-left: 20px;
 }
+
+.button {
+  background: #ff3e3e;
+  color: black;
+  padding: 0.5rem 1rem;
+  font-size: 2rem;
+  text-decoration: none;
+  border-radius: 3px;
+}
+.button:hover {
+  background: #ff6363;
+}

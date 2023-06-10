@@ -252,6 +252,17 @@ li {
   white-space: nowrap;
 }
 
+.about-link {
+  display: block;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+.about-link .icon {
+  width: 42px;
+  height: 42px;
+}
+
 .transcript-menu {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
