@@ -54,9 +54,11 @@
 
     <h3>How do you choose what parts of speech correspond to different drums?</h3>
 
-    <p>I simply mapped specific <a href="https://en.wikipedia.org/wiki/Phoneme" target="_blank">phonemes</a> (/b/ in "ball", /k/ in "kite", /t/ in "tap") to specific drums (kick, snare, hihat.) This is obviously a subjective process. For reference and inspiration, I looked to <a href="https://en.wikipedia.org/wiki/Beatboxing">beatboxing</a>, the art mimicking drum sounds with one's one's mouth, lips, tongue, and voice.</p>
+    <p>I simply mapped specific <a href="https://en.wikipedia.org/wiki/Phoneme" target="_blank">phonemes</a> (/b/ in "ball", /k/ in "kite", /t/ in "tap") to specific drums (kick, snare, hihat.) This is obviously a subjective process. For reference and inspiration, I looked to <a href="https://en.wikipedia.org/wiki/Beatboxing">beatboxing</a>, the art mimicking drum sounds with one's one's mouth, lips, tongue, and voice. I then used basic audio analysis techniques to select the best drum candidates based on audio characteristics such as audio brightness, sharpness, tonality, and loudness. For example, a snare sound would be loud and short with high sharpness and low tonality.</p>
 
     <h3>How did you align the transcript to the audio so precisely?</h3>
+
+    <p>I use a tool called the <a href="https://montreal-forced-aligner.readthedocs.io/en/latest/index.html" target="_blank">Montreal Forced Aligner</a> to automatically align the source audio to the transcript with precision down to the phoneme. The Montreal Forced Aligner is built on top of <a href="https://github.com/kaldi-asr/kaldi" target="_blank">Kaldi</a>, an open source speech recognition toolkit.</p>
 
     <h3>Are the drum sounds really just from speech?</h3>
 
@@ -64,7 +66,7 @@
 
     <h3>Can I download what I create?</h3>
 
-    <p>Unfortunately, this feature is not available. However, you can record your screen while you use DJ Phonetic to capture your performance.</p>
+    <p>Unfortunately, this feature is not available. This app focuses on playing with human speech to make beats rather than be a full-blown drum machine or DAW. However, you can record your screen while you use DJ Phonetic to capture your performance.</p>
 
     <!-- <h3>Can I download the audio as a drum kit?</h3> -->
 
