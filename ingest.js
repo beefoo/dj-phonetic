@@ -409,6 +409,7 @@ function convertAudioFiles(items) {
     const fnOut = `${config.audioDirectoryOut}${item.id}.mp3`;
     if (fs.existsSync(fnOut)) return;
     const args = ['-i', fnIn, '-b:a', '128k', fnOut];
+    console.log(args.join(' '));
     spawnSync('ffmpeg', args);
   });
 }
