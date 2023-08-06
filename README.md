@@ -51,4 +51,5 @@ npm start
 
 ## Sources
 
+- Transcript alignment: [Montreal Forced Aligner](https://montreal-forced-aligner.readthedocs.io/en/latest/index.html)
 - Icon source: [Pixel Art Icons](https://icon-sets.iconify.design/pixelarticons/)

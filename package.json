@@ -2,8 +2,8 @@
   "name": "dj-phonetic",
   "description": "Beatbox with historical speeches",
   "scripts": {
-    "align": "mfa align --include_original_text audio english_us_arpa english_us_arpa audio/aligned",
-    "align-clean": "mfa align --include_original_text --clean audio english_us_arpa english_us_arpa audio/aligned",
+    "align": "mfa align --fine_tune --include_original_text --no_clean --no-overwrite audio english_us_arpa english_us_arpa audio/aligned",
+    "align-clean": "mfa align --fine_tune --clean --include_original_text --overwrite audio english_us_arpa english_us_arpa audio/aligned",
     "ingest": "node ingest.js",
     "ingest-clean": "node ingest.js -clean",
     "lint": "./node_modules/.bin/eslint",
