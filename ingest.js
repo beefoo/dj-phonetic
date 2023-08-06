@@ -21,6 +21,8 @@ if (argv.clean) {
 function parseRows(rows) {
   const items = [];
   rows.forEach((row) => {
+    if (row.active === 'FALSE') return;
+
     const audioFn = `${config.audioDirectoryIn}${row.audio}`;
     const textFn = `${config.textDirectoryIn}${row.id}.txt`;
     const textgridFn = `${config.textgridDirectoryIn}${row.id}.TextGrid`;
@@ -67,6 +69,7 @@ function addPhones(word, phones) {
 function parseItems(items) {
   const parsedItems = [];
   items.forEach((item, i) => {
+    console.log(`=== Parsing ${item.textgrid} ===`);
     const textgridString = utils.readFile(fs, item.textgrid);
     const textString = utils.readFile(fs, item.text);
     const tg = textgrid.TextGrid.textgridToJSON(textgridString);
@@ -161,6 +164,7 @@ function removePhones(oldPhones, count) {
 }
 function alignPhones(items) {
   return items.map((item, i) => {
+    console.log(`=== Aligning phones for ${item.id} ===`);
     const alignedItem = _.clone(item);
     alignedItem.words = item.words.map((word, j) => {
       const alignedWord = _.clone(word);
@@ -171,7 +175,7 @@ function alignPhones(items) {
       chars.forEach((c, k) => {
         if (!c.match(/[a-z]/i)) {
           const lastIndex = nchars.length - 1;
-          if (k > 0) nchars[lastIndex] = nchars[lastIndex].concat(c);
+          if (k > 0 && lastIndex >= 0) nchars[lastIndex] = nchars[lastIndex].concat(c);
         } else {
           nchars.push(c);
         }
@@ -433,6 +437,7 @@ utils.readCSV(fs, csv, config.metadataFile, (rows) => {
   console.log('Analyzing audio...');
   items = analyzeAudio(items);
   items = classifyInstruments(items);
+  if (argv.validate) return;
   writeDataFiles(items);
   console.log('Converting audio files...');
   convertAudioFiles(items);

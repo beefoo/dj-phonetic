@@ -1,11 +1,12 @@
 {
   "name": "dj-phonetic",
-  "description": "Beatbox with historical speeches",
+  "description": "Beatbox with historical speech",
   "scripts": {
     "align": "node align.js",
-    "align-overwrite": "node align.js -overwrite",
+    "align-overwrite": "node align.js --overwrite",
     "ingest": "node ingest.js",
-    "ingest-clean": "node ingest.js -clean",
+    "ingest-clean": "node ingest.js --clean",
+    "ingest-validate": "node ingest.js --validate",
     "lint": "./node_modules/.bin/eslint",
     "start": "node server.js",
     "validate": "mfa validate audio english_us_arpa english_us_arpa"
