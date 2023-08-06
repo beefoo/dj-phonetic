@@ -1,6 +1,7 @@
 {
     "audioDirectoryIn": "./audio/",
     "audioDirectoryOut": "./public/audio/",
+    "audioDirectoryQueue": "./queue/",
     "audioFeatures": [
         {"name": "duration", "description": "Length of audio clip"},
         {"name": "energy", "description": "Indicator to the loudness of the signal"},

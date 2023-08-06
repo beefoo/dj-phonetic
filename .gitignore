@@ -5,3 +5,5 @@ node_modules/
 package-lock.json
 s3_website.yml
 audio/aligned/*.csv
+queue/*
+!queue/.keep

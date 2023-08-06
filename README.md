@@ -21,7 +21,7 @@ mfa validate audio english_us_arpa english_us_arpa
 
 ## Ingesting new audio
 
-Place audio (e.g. .mp3, .wav) and transcript (.txt) files in folder `./audio/`; respective audio and text should have the same name (except their file extensions).
+Place audio (.wav) and transcript (.txt) files in folder `./queue/`; respective audio and text should have the same name (except their file extensions).
 
 _Hint: transcript should transcribe *exactly* what is in the audio, including non-verbals such as "um" or "ha", otherwise the transcript alignment may be off_ 
 
@@ -31,10 +31,12 @@ Run the following to align the transcripts:
 npm run align
 
 // or if you want to overwrite existing alignments:
-npm run align-clean
+npm run align-overwrite
 ```
 
-Then ingest the new data into the web app:
+Audio and alignment  (.TextGr)id files should show up in the folders `./audio/` and `./audio/aligned/`. Optionally, you can edit the alignment files and place them in `./audio/edited/`. You can now safely remove the original audio and txt files from the queue folder.
+
+Next, update `metadata.csv` with the appropriate fields, then ingest the new data into the web app:
 
 ```
 npm run ingest
