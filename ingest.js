@@ -419,7 +419,7 @@ function convertAudioFiles(items) {
 }
 
 function writeMetadata(rows, directory) {
-  const columns = ['id', 'url', 'title', 'source', 'source_url', 'start'];
+  const columns = ['id', 'url', 'speakers', 'source', 'source_url', 'start'];
   const dataOut = {
     cols: columns,
     rows: rows.map((row) => columns.map((col) => row[col])),

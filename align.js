@@ -23,6 +23,7 @@ function processQueue(files) {
   const args = ['align', '--fine_tune', '--clean', '--include_original_text', '--overwrite', audioTargetDir, 'english_us_arpa', 'english_us_arpa', alignedTargetDir];
   console.log(`Running: mfa ${args.join(' ')}`);
   spawnSync('mfa', args);
+  if (argv.debug) return;
   // move synced files over
   const alignedFiles = fs.readdirSync(alignedTargetDir);
   let count = 0;

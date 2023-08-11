@@ -46,7 +46,7 @@ class TranscriptManager {
     let html = '';
     transcripts.forEach((transcript, i) => {
       const selected = i === selectedIndex ? ' selected' : '';
-      html += `<option value="${i}"${selected}>${transcript.title}</option>`;
+      html += `<option value="${i}"${selected}>${transcript.speakers}</option>`;
     });
     $select.html(html);
     this.$select = $select;

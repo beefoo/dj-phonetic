@@ -3,6 +3,7 @@
   "description": "Beatbox with historical speech",
   "scripts": {
     "align": "node align.js",
+    "align-debug": "node align.js --debug",
     "align-overwrite": "node align.js --overwrite",
     "ingest": "node ingest.js",
     "ingest-clean": "node ingest.js --clean",
