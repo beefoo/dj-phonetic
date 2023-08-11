@@ -10,7 +10,8 @@
     "ingest-validate": "node ingest.js --validate",
     "lint": "./node_modules/.bin/eslint",
     "start": "node server.js",
-    "validate": "mfa validate audio english_us_arpa english_us_arpa"
+    "validate": "mfa validate audio english_us_arpa english_us_arpa",
+    "validate-alignments": "node validate.js"
   },
   "dependencies": {
     "csv-parser": "^3.0.0",
