@@ -7,6 +7,7 @@ class App {
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
       samplesPerInstrument: 8,
+      speaker: false,
       transcripts: [],
     };
     const q = StringUtil.queryParams();
@@ -16,9 +17,11 @@ class App {
 
   init() {
     this.$el = $('#app');
+    const transcripts = _.sortBy(this.options.transcripts, (t) => t.speakers);
     this.transcriptManager = new TranscriptManager({
       onChange: (transcript) => this.onChangeTranscript(transcript),
-      transcripts: this.options.transcripts,
+      speaker: this.options.speaker,
+      transcripts,
     });
     this.$transcript = $('#transcript');
     this.$togglePlay = $('#toggle-play');
@@ -62,6 +65,7 @@ class App {
       this.transcript.onReady();
       this.setInstrumentsAutomatically();
     });
+    StringUtil.pushURLState({speaker: newTranscript.speakers});
   }
 
   onClipInstrumentChange(event) {

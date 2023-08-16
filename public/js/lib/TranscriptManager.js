@@ -3,7 +3,7 @@ class TranscriptManager {
     const defaults = {
       metadataTemplate: '#item-metadata-template',
       onChange: (transcript) => {},
-      selectedIndex: 0,
+      speaker: false,
       transcripts: [],
     };
     this.options = _.extend({}, defaults, options);
@@ -13,7 +13,11 @@ class TranscriptManager {
   init() {
     this.transcripts = this.options.transcripts;
     this.count = this.transcripts.length;
-    this.selectedIndex = this.options.selectedIndex;
+    this.selectedIndex = 0;
+    if (this.options.speaker !== false) {
+      const index = _.findIndex(this.transcripts, (t) => t.speakers === this.options.speaker);
+      if (index >= 0) this.selectedIndex = index;
+    }
     this.selectedTranscript = this.transcripts[this.selectedIndex];
     this.metadataTemplateString = $(this.options.metadataTemplate).html();
     this.$metadata = $('#item-metadata');
