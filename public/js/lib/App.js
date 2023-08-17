@@ -65,7 +65,7 @@ class App {
       this.transcript.onReady();
       this.setInstrumentsAutomatically();
     });
-    StringUtil.pushURLState({speaker: newTranscript.speakers});
+    StringUtil.pushURLState({ speaker: newTranscript.speakers });
   }
 
   onClipInstrumentChange(event) {
