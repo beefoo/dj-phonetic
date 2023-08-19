@@ -40,8 +40,30 @@ class App {
     this.onChangeTranscript(this.transcriptManager.selectedTranscript);
   }
 
+  closeContextMenu() {
+    this.$contextMenu.removeClass('active');
+  }
+
+  downloadCurrentClip() {
+    const { activeMenuClip } = this;
+    if (activeMenuClip === false) return;
+    console.log(activeMenuClip);
+  }
+
   isItemPlaying() {
     return this.itemAudioSource;
+  }
+
+  loadListeners() {
+    this.$transcript.on('click', '.clip', (e) => this.onKeyboardClick(e));
+    this.$transcript.on('contextmenu', '.clip', (e) => this.onContextMenu(e));
+    $('.close-context-menu').on('click', (e) => this.closeContextMenu());
+    $('.download-clip').on('click', (e) => this.downloadCurrentClip());
+    $('input[name="clip-instrument"]').on('change', (e) => this.onClipInstrumentChange(e));
+    $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
+    $('.toggle-phones').on('change', () => this.togglePhones());
+    const delayedResize = _.debounce(() => this.onResize(), 300);
+    $(window).on('resize', delayedResize);
   }
 
   onChangeTranscript(newTranscript) {
@@ -192,22 +214,14 @@ class App {
         },
       });
     }
-    this.$transcript.on('click', '.clip', (e) => this.onKeyboardClick(e));
-    this.$transcript.on('contextmenu', '.clip', (e) => this.onContextMenu(e));
-    $('.close-context-menu').on('click', (e) => {
-      this.$contextMenu.removeClass('active');
-    });
-    $('input[name="clip-instrument"]').on('change', (e) => this.onClipInstrumentChange(e));
-    $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
-    $('.toggle-phones').on('change', () => this.togglePhones());
-    const delayedResize = _.debounce(() => this.onResize(), 300);
-    $(window).on('resize', delayedResize);
+    this.loadListeners();
     this.update();
     this.isReady = true;
   }
 
   onResize() {
     this.transcript.onResize();
+    this.closeContextMenu();
   }
 
   onStep(props) {

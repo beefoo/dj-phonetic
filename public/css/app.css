@@ -686,18 +686,30 @@ li {
 .clip-instrument-fieldset label.hihat {
   color: var(--hihat-color);
 }
-.close-context-menu {
+.context-menu-buttons {
+  display: flex;
+}
+.close-context-menu,
+.download-clip {
   margin: 0;
   padding: 0 6px;
   background: linear-gradient(to top, #2c1d1d, #442e2e);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, .25);
   border: 3px solid #000;
   color: rgba(255, 255, 255, 0.8);
-  width: 100%;
   cursor: pointer;
 }
 .close-context-menu:hover {
   background: linear-gradient(to top, #3e2a2a, #574343);
+}
+.download-clip {
+  background: linear-gradient(to top, #222c1d, #32442e);
+  border-right: none;
+  display: flex;
+  align-items: center;
+}
+.download-clip:hover {
+  background: linear-gradient(to top, #34442c, #3f573a);
 }
 
 .dataviz {
