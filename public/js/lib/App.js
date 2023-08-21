@@ -37,6 +37,8 @@ class App {
     this.instruments = {};
     this.isReady = false;
     this.activeMenuClip = false;
+    this.audioPlayer = false;
+    this.audioDownloader = false;
     this.onChangeTranscript(this.transcriptManager.selectedTranscript);
   }
 
@@ -45,9 +47,27 @@ class App {
   }
 
   downloadCurrentClip() {
-    const { activeMenuClip } = this;
-    if (activeMenuClip === false) return;
-    console.log(activeMenuClip);
+    const { activeMenuClip, audioDownloader } = this;
+    if (activeMenuClip === false || audioDownloader === false) return;
+    // console.log(activeMenuClip);
+    const { start, end } = activeMenuClip;
+    const when = 0;
+    const volume = 0.9;
+    const reverse = false;
+    let filterName = _.has(activeMenuClip, 'instrument') ? activeMenuClip.instrument : 'none';
+    if (filterName === 'none') filterName = false;
+    const filename = filterName !== false ? `${filterName}.wav` : 'clip.wav';
+
+    audioDownloader.play(start, end, when, volume, reverse, filterName);
+    audioDownloader.renderOffline().then((renderedBuffer) => {
+      AudioUtil.audioBufferToWavfile(renderedBuffer, filename);
+      // OfflineAudioContext can only be rendered once; re-initialize
+      this.audioDownloader = new AudioPlayer({
+        buffer: audioDownloader.audioBuffer,
+        filters: this.options.filters,
+        offline: true,
+      });
+    });
   }
 
   isItemPlaying() {
@@ -81,6 +101,11 @@ class App {
       this.stopItem();
       $('.toggle-play-item').removeClass('active');
       this.audioPlayer = audioPlayer;
+      this.audioDownloader = new AudioPlayer({
+        buffer: audioPlayer.audioBuffer,
+        filters: this.options.filters,
+        offline: true,
+      });
       this.transcript = transcript;
       if (!this.isReady) this.onReady();
       else this.sequencer.restart();

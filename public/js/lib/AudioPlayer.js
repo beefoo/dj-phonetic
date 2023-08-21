@@ -1,9 +1,12 @@
 class AudioPlayer {
   constructor(options = {}) {
     const defaults = {
+      buffer: false,
       fadeIn: 0.025,
       fadeOut: 0.025,
       filters: {},
+      offline: false,
+      offlineRenderLength: 2, // in seconds
       reverb: 0.5,
       reverbImpulse: 'js/vendor/tuna/ir_rev_short.wav',
     };
@@ -12,11 +15,21 @@ class AudioPlayer {
   }
 
   init() {
-    this.ctx = new AudioContext();
-    this.effectNode = this.loadEffects();
-    this.destination = this.effectNode;
+    if (this.options.offline === true && this.options.buffer !== false) {
+      const { numberOfChannels, sampleRate } = this.options.buffer;
+      const ctxLength = this.options.offlineRenderLength * sampleRate;
+      this.ctx = new OfflineAudioContext(numberOfChannels, ctxLength, sampleRate);
+    } else {
+      this.ctx = new AudioContext();
+    }
     this.loadedId = false;
     this.isLoading = false;
+    if (this.options.buffer !== false) {
+      this.audioBuffer = this.options.buffer;
+      this.loadedId = 'default';
+    }
+    this.effectNode = this.loadEffects();
+    this.destination = this.effectNode;
     this.queue = [];
     this.loadFilters(this.options.filters);
   }
@@ -145,6 +158,17 @@ class AudioPlayer {
     }
     audioSource.start(when, offsetStart, dur);
     return audioSource;
+  }
+
+  renderOffline() {
+    const promise = $.Deferred();
+    if (this.options.offline !== true) {
+      return promise.reject();
+    }
+    this.ctx.startRendering().then((renderedBuffer) => {
+      promise.resolve(renderedBuffer);
+    });
+    return promise;
   }
 
   schedule(id, when, task, tag = 'default') {
