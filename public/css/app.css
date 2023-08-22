@@ -303,6 +303,7 @@ li {
   font-size: 1.2rem;
   background: transparent;
   width: 100%;
+  color: var(--inv-text-color);
 }
 .transcript-select-controls {
   display: flex;
@@ -319,6 +320,7 @@ li {
   background: none;
   border: none;
   cursor: pointer;
+  color: var(--inv-text-color);
 }
 .transcript-select-controls .control .icon {
   width: 32px;

@@ -49,6 +49,7 @@ button:focus {
 p,
 li {
   line-height: 1.8;
+  font-size: 1.2rem;
 }
 h1,
 h2,
