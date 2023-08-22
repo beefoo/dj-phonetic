@@ -17,6 +17,7 @@ class App {
 
   init() {
     this.$el = $('#app');
+    this.setAppSize();
     const transcripts = _.sortBy(this.options.transcripts, (t) => t.speakers);
     this.transcriptManager = new TranscriptManager({
       onChange: (transcript) => this.onChangeTranscript(transcript),
@@ -26,6 +27,8 @@ class App {
     this.$transcript = $('#transcript');
     this.$togglePlay = $('#toggle-play');
     this.$contextMenu = $('#context-menu');
+    this.contextMenuW = this.$contextMenu.width();
+    this.contextMenuH = this.$contextMenu.height();
     this.instrumentEls = _.object(this.options.instruments.map((value) => {
       const els = {
         $next: $(`#next-${value}`),
@@ -160,6 +163,9 @@ class App {
   onContextMenu(event) {
     event.preventDefault();
     event.stopPropagation();
+    const {
+      w, h, contextMenuW, contextMenuH,
+    } = this;
     const { pageX, pageY } = event;
     const $el = $(event.currentTarget);
     const clip = this.transcript.getClipFromElement($el);
@@ -168,9 +174,13 @@ class App {
     let instrument = _.has(clip, 'instrument') ? clip.instrument : 'none';
     if (this.options.instruments.indexOf(instrument) < 0) instrument = 'none';
     $(`#clip-instrument-${instrument}`).prop('checked', true);
+    let left = pageX;
+    let top = pageY;
+    if ((left + contextMenuW) > w) left -= contextMenuW;
+    if ((top + contextMenuH) > h) top -= contextMenuH;
     this.$contextMenu.css({
-      left: `${pageX}px`,
-      top: `${pageY}px`,
+      left: `${left}px`,
+      top: `${top}px`,
     });
     this.$contextMenu.addClass('active');
   }
@@ -245,6 +255,7 @@ class App {
   }
 
   onResize() {
+    this.setAppSize();
     this.transcript.onResize();
     this.closeContextMenu();
   }
@@ -363,6 +374,11 @@ class App {
     this.instruments[instrumentName].index = index;
     this.instruments[instrumentName].clip = clip;
     this.constructor.onInstrumentChange(instrumentName, clip);
+  }
+
+  setAppSize() {
+    this.w = this.$el.width();
+    this.h = this.$el.height();
   }
 
   setInstrument(instrumentName, clip) {
