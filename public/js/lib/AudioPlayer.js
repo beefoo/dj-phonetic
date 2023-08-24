@@ -8,7 +8,6 @@ class AudioPlayer {
       offline: false,
       offlineRenderLength: 2, // in seconds
       reverb: 0.5,
-      reverbImpulse: 'js/vendor/tuna/ir_rev_short.wav',
     };
     this.options = _.extend({}, defaults, options);
     this.init();
@@ -28,10 +27,6 @@ class AudioPlayer {
       this.audioBuffer = this.options.buffer;
       this.loadedId = 'default';
     }
-    this.effectNode = this.loadEffects();
-    this.destination = this.effectNode;
-    this.queue = [];
-    this.loadFilters(this.options.filters);
   }
 
   cancelTasks(tag = false) {
@@ -62,11 +57,11 @@ class AudioPlayer {
   }
 
   createFilter(params) {
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = params.type;
-    if (_.has(params, 'frequency')) filter.frequency.value = params.frequency;
-    if (_.has(params, 'gain')) filter.gain.value = params.gain;
-    return filter;
+    const audioFilter = this.ctx.createBiquadFilter();
+    audioFilter.type = params.type;
+    if (_.has(params, 'frequency')) audioFilter.frequency.value = params.frequency;
+    if (_.has(params, 'gain')) audioFilter.gain.value = params.gain;
+    return audioFilter;
   }
 
   createFilterChain(params) {
@@ -74,12 +69,12 @@ class AudioPlayer {
     const lastParamIndex = params.length - 1;
     const filters = [];
     params.forEach((param, i) => {
-      const filter = this.createFilter(param);
-      filters.push(filter);
+      const audioFilter = this.createFilter(param);
+      filters.push(audioFilter);
       if (i > 0) {
         filters[i - 1].connect(filters[i]);
       }
-      if (i === lastParamIndex) filters[i].connect(this.destination);
+      if (i === lastParamIndex) filters[i].connect(this.destination.input);
     });
     return filters[0];
   }
@@ -88,16 +83,28 @@ class AudioPlayer {
     return !this.isLoading && this.loadedId !== false;
   }
 
+  load() {
+    const readyPromise = $.Deferred();
+    const effectsPromise = this.loadEffects();
+    this.queue = [];
+
+    $.when(effectsPromise).done(() => {
+      this.destination = this.reverbFilter;
+      this.loadFilters(this.options.filters);
+      this.destination.output.connect(this.ctx.destination);
+      readyPromise.resolve();
+    });
+    return readyPromise;
+  }
+
   loadEffects() {
     const { ctx } = this;
-    const { reverb, reverbImpulse } = this.options;
-    const tuna = new Tuna(ctx);
-    const effectNode = new tuna.Convolver({
-      impulse: reverbImpulse,
+    const { reverb } = this.options;
+    this.reverbFilter = new AudioReverbFilter({
+      context: ctx,
       wetLevel: reverb,
     });
-    effectNode.connect(ctx.destination);
-    return effectNode;
+    return this.reverbFilter.load();
   }
 
   loadFilters(filters) {
@@ -154,7 +161,7 @@ class AudioPlayer {
     if (filterName && _.has(this.filters, filterName) && this.filters[filterName] !== false) {
       gainNode.connect(this.filters[filterName]);
     } else {
-      gainNode.connect(this.destination);
+      gainNode.connect(this.destination.input);
     }
     audioSource.start(when, offsetStart, dur);
     return audioSource;

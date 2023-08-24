@@ -50,8 +50,15 @@ class App {
   }
 
   downloadCurrentClip() {
-    const { activeMenuClip, audioDownloader } = this;
-    if (activeMenuClip === false || audioDownloader === false) return;
+    const { activeMenuClip, audioPlayer } = this;
+    if (activeMenuClip === false || audioPlayer === false) return;
+
+    const audioDownloader = new AudioPlayer({
+      buffer: audioPlayer.audioBuffer,
+      filters: this.options.filters,
+      offline: true,
+    });
+    const audioPlayerReady = audioDownloader.load();
     // console.log(activeMenuClip);
     const { start, end } = activeMenuClip;
     const when = 0;
@@ -61,14 +68,10 @@ class App {
     if (filterName === 'none') filterName = false;
     const filename = filterName !== false ? `${filterName}.wav` : 'clip.wav';
 
-    audioDownloader.play(start, end, when, volume, reverse, filterName);
-    audioDownloader.renderOffline().then((renderedBuffer) => {
-      AudioUtil.audioBufferToWavfile(renderedBuffer, filename);
-      // OfflineAudioContext can only be rendered once; re-initialize
-      this.audioDownloader = new AudioPlayer({
-        buffer: audioDownloader.audioBuffer,
-        filters: this.options.filters,
-        offline: true,
+    $.when(audioPlayerReady).done(() => {
+      audioDownloader.play(start, end, when, volume, reverse, filterName);
+      audioDownloader.renderOffline().then((renderedBuffer) => {
+        AudioUtil.audioBufferToWavfile(renderedBuffer, filename);
       });
     });
   }
@@ -99,16 +102,12 @@ class App {
     });
     const transcript = new Transcript();
     const transcriptPromise = transcript.loadFromURL(transcriptFn);
+    const audioPlayerPromise = audioPlayer.load();
     const audioPromise = audioPlayer.loadFromURL(audioFn);
-    $.when(transcriptPromise, audioPromise).done(() => {
+    $.when(transcriptPromise, audioPlayerPromise, audioPromise).done(() => {
       this.stopItem();
       $('.toggle-play-item').removeClass('active');
       this.audioPlayer = audioPlayer;
-      this.audioDownloader = new AudioPlayer({
-        buffer: audioPlayer.audioBuffer,
-        filters: this.options.filters,
-        offline: true,
-      });
       this.transcript = transcript;
       if (!this.isReady) this.onReady();
       else this.sequencer.restart();
