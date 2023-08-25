@@ -113,6 +113,7 @@ class App {
       else this.sequencer.restart();
       this.transcript.onReady();
       this.setInstrumentsAutomatically();
+      this.$el.removeClass('is-loading');
     });
     StringUtil.pushURLState({ speaker: newTranscript.speakers });
   }

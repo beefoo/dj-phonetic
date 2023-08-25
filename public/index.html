@@ -21,7 +21,7 @@
 </head>
 
 <body>
-  <div id="app" class="app">
+  <div id="app" class="app is-loading">
 
     <nav id="controls" class="nav controls">
 
@@ -204,7 +204,8 @@
   </div>
 
   <div id="item-metadata-template" class="template">
-    <a href="{{url}}" target="_blank">Source: {{source}}</a>
+    <div class="loading">Loading</div>
+    <div class="active"><a href="{{url}}" target="_blank">Source: {{source}}</a></div>
   </div>
 
   <div id="dataviz-template" class="template">

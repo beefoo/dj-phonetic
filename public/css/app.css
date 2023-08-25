@@ -338,10 +338,37 @@ li {
 .item-metadata {
   font-size: 0.9rem;
 }
-.item-metadata > a {
+.item-metadata a {
   display: inline-block;
   vertical-align: middle;
   padding-bottom: 0.3rem;
+}
+.item-metadata .loading,
+.app.is-loading .item-metadata .active {
+  display: none;
+}
+.app.is-loading .item-metadata .loading {
+  display: block;
+}
+@keyframes dots {
+  0%, 20% {
+    color: rgba(0,0,0,0);
+    text-shadow: .25em 0 0 rgba(0,0,0,0), 5em 0 0 rgba(0,0,0,0);
+  }
+  40% {
+    color: black;
+    text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);
+  }
+  60% {
+    text-shadow: .25em 0 0 black, .5em 0 0 rgba(0,0,0,0);
+  }
+  80%, 100% {
+    text-shadow: .25em 0 0 black, .5em 0 0 black;
+  }
+}
+.item-metadata .loading::after {
+  content: '.';
+  animation: dots 1s steps(5, end) infinite;
 }
 .item-controls {
   display: flex;
@@ -444,23 +471,21 @@ li {
 /* .is-playing .transcript {
   overflow: hidden;
 } */
-.loading {
+.transcript .loading {
   width: 182px;
   margin: 0.3rem 0;
 }
-.loading p {
+.transcript .loading p {
   margin: 0;
   overflow: hidden;
   border-right: 4px solid var(--text-color);
   white-space: nowrap;
   margin: 0 auto;
   line-height: 1;
+  font-size: 1.8rem;
   animation: 
     typing 2s steps(10, end),
     blink-caret .5s step-end infinite;
-}
-#loading p {
-  font-size: 1.8rem;
 }
 @keyframes typing {
   from { width: 0 }

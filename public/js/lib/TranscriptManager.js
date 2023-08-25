@@ -20,6 +20,7 @@ class TranscriptManager {
     }
     this.selectedTranscript = this.transcripts[this.selectedIndex];
     this.metadataTemplateString = $(this.options.metadataTemplate).html();
+    this.$app = $('#app');
     this.$metadata = $('#item-metadata');
     this.renderTranscripts(this.transcripts);
     this.renderMetadata(this.selectedTranscript);
@@ -58,7 +59,11 @@ class TranscriptManager {
 
   select() {
     const selectedIndex = parseInt(this.$select.val(), 10);
-    if (selectedIndex === this.selectedIndex) return;
+    if (selectedIndex === this.selectedIndex) {
+      this.$app.removeClass('is-loading');
+      return;
+    }
+    this.$app.addClass('is-loading');
     this.selectedIndex = selectedIndex;
     this.selectedTranscript = this.transcripts[selectedIndex];
     this.renderMetadata(this.selectedTranscript);
@@ -66,6 +71,7 @@ class TranscriptManager {
   }
 
   stepSelect(amount) {
+    this.$app.addClass('is-loading');
     const currentIndex = parseInt(this.$select.val(), 10);
     const newIndex = MathUtil.wrap(currentIndex + amount, 0, this.count);
     this.$select.val(newIndex);
