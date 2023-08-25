@@ -7,7 +7,7 @@ class App {
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
       samplesPerInstrument: 8,
-      speaker: false,
+      speaker: 'Fiorello La Guardia',
       transcripts: [],
     };
     const q = StringUtil.queryParams();
