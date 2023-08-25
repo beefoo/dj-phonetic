@@ -23,9 +23,11 @@ class AudioPlayer {
     }
     this.loadedId = false;
     this.isLoading = false;
+    this.firstLoaded = false;
     if (this.options.buffer !== false) {
       this.audioBuffer = this.options.buffer;
       this.loadedId = 'default';
+      this.firstLoaded = true;
     }
   }
 
@@ -80,7 +82,7 @@ class AudioPlayer {
   }
 
   isReady() {
-    return !this.isLoading && this.loadedId !== false;
+    return this.firstLoaded && this.loadedId !== false;
   }
 
   load() {
@@ -125,6 +127,7 @@ class AudioPlayer {
         this.audioBufferReversed = this.constructor.getReversedAudioBuffer(buffer, this.ctx);
         this.loadedId = url;
         this.isLoading = false;
+        this.firstLoaded = true;
         loadPromise.resolve(url);
       });
     });

@@ -97,23 +97,29 @@ class App {
     let transcriptFn = `audio/${id}.json`;
     const audioFn = `audio/${id}.mp3`;
     if (this.options.dataviz !== false) transcriptFn = transcriptFn.replace('.json', '-with-features.json');
-    const audioPlayer = new AudioPlayer({
-      filters: this.options.filters,
-    });
+    let audioPlayerPromise;
+    if (this.audioPlayer === false) {
+      this.audioPlayer = new AudioPlayer({
+        filters: this.options.filters,
+      });
+      audioPlayerPromise = this.audioPlayer.load();
+    } else {
+      audioPlayerPromise = $.Deferred().resolve();
+    }
     const transcript = new Transcript();
     const transcriptPromise = transcript.loadFromURL(transcriptFn);
-    const audioPlayerPromise = audioPlayer.load();
-    const audioPromise = audioPlayer.loadFromURL(audioFn);
-    $.when(transcriptPromise, audioPlayerPromise, audioPromise).done(() => {
-      this.stopItem();
-      $('.toggle-play-item').removeClass('active');
-      this.audioPlayer = audioPlayer;
-      this.transcript = transcript;
-      if (!this.isReady) this.onReady();
-      else this.sequencer.restart();
-      this.transcript.onReady();
-      this.setInstrumentsAutomatically();
-      this.$el.removeClass('is-loading');
+    $.when(transcriptPromise, audioPlayerPromise).done(() => {
+      const audioPromise = this.audioPlayer.loadFromURL(audioFn);
+      $.when(audioPromise).done(() => {
+        this.stopItem();
+        $('.toggle-play-item').removeClass('active');
+        this.transcript = transcript;
+        if (!this.isReady) this.onReady();
+        else this.sequencer.restart();
+        this.transcript.onReady();
+        this.setInstrumentsAutomatically();
+        this.$el.removeClass('is-loading');
+      });
     });
     StringUtil.pushURLState({ speaker: newTranscript.speakers });
   }
