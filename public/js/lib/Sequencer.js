@@ -4,6 +4,7 @@ class Sequencer {
       bpm: 120,
       latency: 0.5,
       onStep: (props) => {},
+      patternIndex: false,
       patternLoopCount: 1,
     };
     this.options = _.extend({}, defaults, options);
@@ -111,7 +112,8 @@ class Sequencer {
       return updatedPattern;
     });
     // this.loadPatternSelectOptions(this.patterns);
-    this.selectRandomPattern();
+    if (this.options.patternIndex !== false) this.selectPattern(this.options.patternIndex);
+    else this.selectRandomPattern();
   }
 
   onPatternChange() {

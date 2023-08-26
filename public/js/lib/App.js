@@ -4,6 +4,7 @@ class App {
       dataviz: false,
       filters: {},
       instruments: [],
+      pattern: false,
       phraseDurationMin: 200,
       phraseDurationMax: 2000,
       samplesPerInstrument: 8,
@@ -233,6 +234,7 @@ class App {
     });
     this.sequencer = new Sequencer({
       audioPlayer: this.audioPlayer,
+      patternIndex: this.options.pattern !== false ? parseInt(this.options.pattern, 10) : false,
       onStep: (props) => this.onStep(props),
     });
     this.transcriptManager.loadListeners();
