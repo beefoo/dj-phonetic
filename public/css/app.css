@@ -366,7 +366,8 @@ li {
     text-shadow: .25em 0 0 black, .5em 0 0 black;
   }
 }
-.item-metadata .loading::after {
+.item-metadata .loading::after,
+.transcript .loading p::after {
   content: '.';
   animation: dots 1s steps(5, end) infinite;
 }
@@ -477,23 +478,9 @@ li {
 }
 .transcript .loading p {
   margin: 0;
-  overflow: hidden;
-  border-right: 4px solid var(--text-color);
   white-space: nowrap;
-  margin: 0 auto;
   line-height: 1;
   font-size: 1.8rem;
-  animation: 
-    typing 2s steps(10, end),
-    blink-caret .5s step-end infinite;
-}
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
-}
-@keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: var(--text-color) }
 }
 .word-wrapper {
   display: inline-block;
