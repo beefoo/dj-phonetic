@@ -27,6 +27,7 @@ class App {
     this.$transcript = $('#transcript');
     this.$togglePlay = $('#toggle-play');
     this.$contextMenu = $('#context-menu');
+    this.$togglePlayItem = $('#toggle-play-item');
     this.contextMenuW = this.$contextMenu.width();
     this.contextMenuH = this.$contextMenu.height();
     this.instrumentEls = _.object(this.options.instruments.map((value) => {
@@ -40,9 +41,14 @@ class App {
     this.instruments = {};
     this.isReady = false;
     this.activeMenuClip = false;
-    this.audioPlayer = false;
+    this.audioPlayer = new AudioPlayer({
+      filters: this.options.filters,
+    });
+    const audioPlayerPromise = this.audioPlayer.load();
     this.audioDownloader = false;
-    this.onChangeTranscript(this.transcriptManager.selectedTranscript);
+    $.when(audioPlayerPromise).done(() => {
+      this.onChangeTranscript(this.transcriptManager.selectedTranscript);
+    });
   }
 
   closeContextMenu() {
@@ -86,7 +92,7 @@ class App {
     $('.close-context-menu').on('click', (e) => this.closeContextMenu());
     $('.download-clip').on('click', (e) => this.downloadCurrentClip());
     $('input[name="clip-instrument"]').on('change', (e) => this.onClipInstrumentChange(e));
-    $('.toggle-play-item').on('click', (e) => this.togglePlayItem(e));
+    $('.toggle-play-item').on('click', (e) => this.togglePlayItem());
     $('.toggle-phones').on('change', () => this.togglePhones());
     const delayedResize = _.debounce(() => this.onResize(), 300);
     $(window).on('resize', delayedResize);
@@ -97,18 +103,9 @@ class App {
     let transcriptFn = `audio/${id}.json`;
     const audioFn = `audio/${id}.mp3`;
     if (this.options.dataviz !== false) transcriptFn = transcriptFn.replace('.json', '-with-features.json');
-    let audioPlayerPromise;
-    if (this.audioPlayer === false) {
-      this.audioPlayer = new AudioPlayer({
-        filters: this.options.filters,
-      });
-      audioPlayerPromise = this.audioPlayer.load();
-    } else {
-      audioPlayerPromise = $.Deferred().resolve();
-    }
     const transcript = new Transcript();
     const transcriptPromise = transcript.loadFromURL(transcriptFn);
-    $.when(transcriptPromise, audioPlayerPromise).done(() => {
+    $.when(transcriptPromise).done(() => {
       const audioPromise = this.audioPlayer.loadFromURL(audioFn);
       $.when(audioPromise).done(() => {
         this.stopItem();
@@ -231,6 +228,7 @@ class App {
         j: () => { this.stepInstrument(-1, 'hihat'); },
         k: () => { this.stepInstrument(1, 'hihat'); },
         ' ': () => { this.togglePlay(); },
+        p: () => { this.togglePlayItem(); },
       },
     });
     this.sequencer = new Sequencer({
@@ -463,8 +461,8 @@ class App {
     }
   }
 
-  togglePlayItem(event) {
-    const $el = $(event.currentTarget);
+  togglePlayItem() {
+    const $el = this.$togglePlayItem;
     $el.toggleClass('active');
     if ($el.hasClass('active')) this.playItem();
     else this.stopItem();

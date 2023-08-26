@@ -14,6 +14,9 @@ class AudioPlayer {
   }
 
   init() {
+    this.loadedId = false;
+    this.isLoading = false;
+
     if (this.options.offline === true && this.options.buffer !== false) {
       const { numberOfChannels, sampleRate } = this.options.buffer;
       const ctxLength = this.options.offlineRenderLength * sampleRate;
@@ -21,13 +24,10 @@ class AudioPlayer {
     } else {
       this.ctx = new AudioContext();
     }
-    this.loadedId = false;
-    this.isLoading = false;
-    this.firstLoaded = false;
+
     if (this.options.buffer !== false) {
       this.audioBuffer = this.options.buffer;
       this.loadedId = 'default';
-      this.firstLoaded = true;
     }
   }
 
@@ -82,7 +82,11 @@ class AudioPlayer {
   }
 
   isReady() {
-    return this.firstLoaded && this.loadedId !== false;
+    return this.loadedId !== false;
+  }
+
+  isRunning() {
+    return this.ctx.state === 'running';
   }
 
   load() {
@@ -179,6 +183,10 @@ class AudioPlayer {
       promise.resolve(renderedBuffer);
     });
     return promise;
+  }
+
+  resume() {
+    this.ctx.resume();
   }
 
   schedule(id, when, task, tag = 'default') {
