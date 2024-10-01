@@ -1,6 +1,6 @@
 # DJ Phonetic
 
-Beatbox with historical speech.  Under construction, please do not use or share yet.
+Beatbox with historical speech.  [Check it out](https://djphonetic.brianfoo.com/)
 
 ## Intallation
 
